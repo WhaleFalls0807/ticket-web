@@ -1,6 +1,6 @@
 <template>
   <el-card shadow="never" class="aui-card--fill">
-    <div class="mod-home">
+    <!-- <div class="mod-home">
       <h3>项目介绍</h3>
       <ul>
         <li>renren-security是一个轻量级的，前后端分离的Java快速开发平台，能快速开发项目并交付【接私活利器】</li>
@@ -17,7 +17,7 @@
         <li>Git地址：<a href="https://gitee.com/renrenio/renren-security" target="_blank">https://gitee.com/renrenio/renren-security</a></li>
         <li>如需关注项目最新动态，请Watch、Star项目，同时也是对项目最好的支持</li>
       </ul>
-    </div>
+    </div> -->
   </el-card>
 </template>
 
