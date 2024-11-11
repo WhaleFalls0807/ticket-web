@@ -2,6 +2,7 @@
 import "@/assets/css/app.less";
 import "@/assets/theme/index.less";
 import "@/assets/theme/mobile.less";
+import "@/assets/css/custom.less";
 import FullscreenLayout from "@/layout/fullscreen-layout.vue";
 import Layout from "@/layout/index.vue";
 import { ElConfigProvider } from "element-plus";
@@ -33,7 +34,10 @@ export default defineComponent({
       () => [route.path, route.query, route.fullPath],
       ([path, query, fullPath]) => {
         store.updateState({ activeTabName: fullPath });
-        state.layout = app.fullscreenPages.includes(path as string) || (query as IObject)["pop"] ? EPageLayoutEnum.fullscreen : EPageLayoutEnum.page;
+        state.layout =
+          app.fullscreenPages.includes(path as string) || (query as IObject)["pop"]
+            ? EPageLayoutEnum.fullscreen
+            : EPageLayoutEnum.page;
       }
     );
     return {
@@ -46,9 +50,15 @@ export default defineComponent({
 </script>
 <template>
   <el-config-provider>
-    <div v-if="!store.state.appIsRender" v-loading="true" :element-loading-fullscreen="true" :element-loading-lock="true" style="width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; z-index: 99999; background: #fff"></div>
+    <div
+      v-if="!store.state.appIsRender"
+      v-loading="true"
+      :element-loading-fullscreen="true"
+      :element-loading-lock="true"
+      style="width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; z-index: 99999; background: #fff"
+    ></div>
     <template v-if="store.state.appIsReady">
-      <layout v-if="state.layout === pageTag"> </layout>
+      <layout v-if="state.layout === pageTag"></layout>
       <fullscreen-layout v-else></fullscreen-layout>
     </template>
   </el-config-provider>

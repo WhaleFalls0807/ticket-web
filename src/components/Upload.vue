@@ -1,7 +1,13 @@
 <template>
-  <el-dialog v-model="visible" title="上传文件" :close-on-click-modal="false" :close-on-press-escape="false">
+  <el-dialog
+    v-model="visible"
+    title="上传文件"
+    :close-on-click-modal="false"
+    :close-on-press-escape="false"
+    :before-close="close"
+  >
     <el-upload
-      :action="url"
+      :action="uploadUrl"
       :file-list="fileList"
       drag
       multiple
@@ -19,25 +25,31 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { getToken } from "@/utils/cache";
 import { IObject } from "@/types/interface";
 import app from "@/constants/app";
 import { ElMessage } from "element-plus";
+const props = defineProps(['url'])
 const emit = defineEmits(["refreshDataList"]);
 
 const visible = ref(false);
-const url = ref("");
 const num = ref(0);
 const fileList = ref<IObject[]>();
 
+const uploadUrl = computed(()=>{
+  return `${app.api}${props.url}?token=${getToken()}`;
+})
 const init = () => {
   visible.value = true;
-  url.value = `${app.api}/sys/oss/upload?token=${getToken()}`;
   num.value = 0;
   fileList.value = [];
 };
-
+const close = () => {
+  visible.value = false;
+  num.value = 0;
+  fileList.value = [];
+};
 // 上传之前
 const beforeUploadHandle = (file: IObject) => {
   if (
@@ -47,6 +59,9 @@ const beforeUploadHandle = (file: IObject) => {
     file.type !== "image/gif"
   ) {
     ElMessage.error("只支持jpg、png、gif格式文件！");
+    return false;
+  } else if (file.size / 1024 / 1024 > 2) {
+    ElMessage.error("文件大小不能超过 2MB!");
     return false;
   }
   num.value++;
