@@ -2,35 +2,69 @@
   <div class="rr-login">
     <div class="rr-login-wrap">
       <div class="rr-login-left hidden-sm-and-down">
-        <p class="rr-login-left-title">xx</p>
+        <img :src="logo" class="logo-img" :alt="app.companyName" />
+        <p class="rr-login-left-title">{{ app.companyName }}</p>
       </div>
 
       <div class="rr-login-right">
         <div class="rr-login-right-main">
           <h4 class="rr-login-right-main-title">登录</h4>
-          <el-form ref="formRef" label-width="80px" :status-icon="true" :model="login" :rules="rules" @keyup.enter="onLogin">
+          <el-form
+            ref="formRef"
+            label-width="80px"
+            :status-icon="true"
+            :model="login"
+            :rules="rules"
+            @keyup.enter="onLogin"
+          >
             <el-form-item label-width="0" prop="username">
               <el-input v-model="login.username" placeholder="用户名" prefix-icon="user" autocomplete="off"></el-input>
             </el-form-item>
             <el-form-item label-width="0" prop="password">
-              <el-input placeholder="密码" v-model="login.password" prefix-icon="lock" autocomplete="off" show-password></el-input>
+              <el-input
+                placeholder="密码"
+                v-model="login.password"
+                prefix-icon="lock"
+                autocomplete="off"
+                show-password
+              ></el-input>
             </el-form-item>
             <el-form-item label-width="0" prop="captcha">
               <el-space class="rr-login-right-main-code">
                 <el-input v-model="login.captcha" placeholder="验证码" prefix-icon="first-aid-kit"></el-input>
-                <img style="vertical-align: middle; height: 40px; cursor: pointer" :src="state.captchaUrl" @click="onRefreshCode" alt="" />
+                <img
+                  style="vertical-align: middle; height: 40px; cursor: pointer"
+                  :src="state.captchaUrl"
+                  @click="onRefreshCode"
+                  alt=""
+                />
               </el-space>
             </el-form-item>
             <el-form-item label-width="0">
-              <el-button type="primary" size="small" :disabled="state.loading" @click="onLogin" class="rr-login-right-main-btn"> 登录 </el-button>
+              <el-button
+                type="primary"
+                size="small"
+                :disabled="state.loading"
+                @click="onLogin"
+                class="rr-login-right-main-btn"
+              >
+                登录
+              </el-button>
             </el-form-item>
           </el-form>
         </div>
       </div>
     </div>
     <div class="login-footer">
-      <p><a href="https://www.renren.io/enterprise" target="_blank">企业版</a> | <a href="https://www.renren.io/cloud" target="_blank">微服务版</a></p>
-      <p><a href="https://www.renren.io/" target="_blank">rr-header-ctx-logo-img-wrap</a>{{ state.year }} © renren.io</p>
+      <p>
+        <a href="https://www.renren.io/enterprise" target="_blank">企业版</a>
+        |
+        <a href="https://www.renren.io/cloud" target="_blank">微服务版</a>
+      </p>
+      <p>
+        <a href="https://www.renren.io/" target="_blank">rr-header-ctx-logo-img-wrap</a>
+        {{ state.year }} © renren.io
+      </p>
     </div>
   </div>
 </template>
@@ -46,6 +80,7 @@ import app from "@/constants/app";
 import SvgIcon from "@/components/base/svg-icon/index";
 import { useAppStore } from "@/store";
 import { useRouter } from "vue-router";
+import logo from "@/assets/images/logo.png";
 
 const store = useAppStore();
 const router = useRouter();
@@ -91,7 +126,7 @@ const onLogin = () => {
           if (res.code === 0) {
             setCache(CacheToken, res.data, true);
             ElMessage.success("登录成功");
-            router.push("/");
+            router.push("/home");
           } else {
             ElMessage.error(res.msg);
           }
@@ -263,5 +298,9 @@ const onLogin = () => {
   .animate-down {
     animation-name: animate-down;
   }
+}
+
+.logo-img {
+  width: 300px;
 }
 </style>

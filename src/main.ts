@@ -15,6 +15,7 @@ import * as ElementPlusIcons from "@element-plus/icons-vue";
 
 import axios from "axios";
 import "virtual:svg-icons-register";
+import appConstans from "@/constants/app";
 
 const app = createApp(App);
 Object.keys(ElementPlusIcons).forEach((iconName) => {
@@ -32,3 +33,5 @@ app
   .mount("#app");
 
 window.axios = axios;
+
+document.title = appConstans.companyName;

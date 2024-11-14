@@ -5,6 +5,7 @@ import { defineComponent, reactive } from "vue";
 import BaseSidebar from "./base-sidebar.vue";
 import Logo from "../header/logo.vue";
 import logoUrl from "@/assets/images/logo.png";
+import app from "@/constants/app";
 
 /**
  * 移动端侧边栏菜单
@@ -22,7 +23,7 @@ export default defineComponent({
     const onSelect = () => {
       state.show = false;
     };
-    return { state, onSelect, logoUrl };
+    return { state, onSelect, logoUrl ,app};
   }
 });
 </script>
@@ -30,7 +31,7 @@ export default defineComponent({
 <template>
   <el-drawer v-model="state.show" :append-to-body="false" size="230" :withHeader="false" direction="ltr" class="rr-setting-wrap">
     <div class="rr-header-ctx-logo rr-header-ctx-logo-mobile">
-      <logo :logoUrl="logoUrl" logoName="xx"></logo>
+      <logo :logoUrl="logoUrl" :logoName="app.companyName"></logo>
     </div>
     <div class="rr-sidebar-mobile-inner" style="overflow: auto; height: calc(100vh - 50px); width: initial !important">
       <base-sidebar :router="true" mode="vertical" :isMobile="true" :onSelect="onSelect"></base-sidebar>

@@ -28,7 +28,7 @@ export default defineComponent({
       router.back();
     };
     const onToHome = () => {
-      router.replace("/");
+      router.replace("/home");
     };
     return { tip, onBack, onToHome };
   }

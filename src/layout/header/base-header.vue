@@ -12,6 +12,7 @@ import Expand from "./expand.vue";
 import HeaderMixNavMenus from "./header-mix-nav-menus.vue";
 import Logo from "./logo.vue";
 import "@/assets/css/header.less";
+import app from "@/constants/app";
 
 /**
  * 顶部主区域
@@ -30,18 +31,21 @@ export default defineComponent({
     const onRefresh = () => {
       emits.emit(EMitt.OnReloadTabPage);
     };
-    return { store, state, onRefresh, logo, ESidebarLayoutEnum };
+    return { store, state, onRefresh, logo, ESidebarLayoutEnum, app };
   }
 });
 </script>
 <template>
   <div class="rr-header-ctx">
     <div class="rr-header-ctx-logo hidden-xs-only">
-      <logo :logoUrl="logo" logoName="xx"></logo>
+      <logo :logoUrl="logo" :logoName="app.companyName"></logo>
     </div>
     <div class="rr-header-right">
       <div class="rr-header-right-left">
-        <div class="rr-header-right-items rr-header-action" :style="`display:${state.sidebarLayout === ESidebarLayoutEnum.Top ? 'none' : ''}`">
+        <div
+          class="rr-header-right-items rr-header-action"
+          :style="`display:${state.sidebarLayout === ESidebarLayoutEnum.Top ? 'none' : ''}`"
+        >
           <collapse-sidebar-btn></collapse-sidebar-btn>
           <div @click="onRefresh" style="cursor: pointer">
             <div class="el-badge">
@@ -50,7 +54,11 @@ export default defineComponent({
           </div>
         </div>
         <div class="rr-header-right-left-br ele-scrollbar-hide hidden-xs-only">
-          <base-sidebar v-if="state.sidebarLayout === ESidebarLayoutEnum.Top" mode="horizontal" :router="true"></base-sidebar>
+          <base-sidebar
+            v-if="state.sidebarLayout === ESidebarLayoutEnum.Top"
+            mode="horizontal"
+            :router="true"
+          ></base-sidebar>
           <header-mix-nav-menus v-else-if="state.sidebarLayout === ESidebarLayoutEnum.Mix"></header-mix-nav-menus>
           <breadcrumb v-else></breadcrumb>
         </div>

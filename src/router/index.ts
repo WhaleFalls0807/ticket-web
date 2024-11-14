@@ -43,7 +43,7 @@ router.beforeEach((to, from, next) => {
   const token = getToken();
   const isPop = to.query.pop === "true"; //新窗口打开内页
   NProgress.start();
-  if (to.path !== "/login") {
+  if (to.path !== "/" && to.path !== "/login") {
     if (store.state.routes.length) {
       if (to.name === "error") {
         const isMatched = autoRegisterDynamicToRouterAndNext(to);

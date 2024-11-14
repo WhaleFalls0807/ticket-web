@@ -13,13 +13,14 @@
           v-model="dataForm.remark"
           type="textarea"
           :autosize="{ minRows: 3, maxRows: 6 }"
-          placeholder="通过/驳回原因"
+          placeholder="通过/驳回/删除 原因"
         />
       </el-form-item>
     </el-form>
     <template v-slot:footer>
-      <el-button type="danger" @click="dataFormSubmitHandle(false)" :loading="loading2">驳回</el-button>
-      <el-button type="success" @click="dataFormSubmitHandle(true)" :loading="loading1">通过</el-button>
+      <el-button @click="dataFormSubmitHandle(3)" :loading="loading3">删除</el-button>
+      <el-button type="danger" @click="dataFormSubmitHandle(2)" :loading="loading2">驳回</el-button>
+      <el-button type="success" @click="dataFormSubmitHandle(1)" :loading="loading1">通过</el-button>
     </template>
   </el-dialog>
 </template>
@@ -33,11 +34,13 @@ const emit = defineEmits(["refreshDataList"]);
 const visible = ref(false);
 const loading1 = ref(false);
 const loading2 = ref(false);
+const loading3 = ref(false);
 const dataFormRef = ref();
 
-const dataForm = reactive({
-  id: "",
-  remark: ""
+const dataForm: any = reactive({
+  orderId: [],
+  remark: "",
+  pass: 1
 });
 
 const rules = ref({
@@ -48,32 +51,25 @@ const close = () => {
   visible.value = false;
   dataFormRef.value.resetFields();
 };
-const init = (id: string) => {
+const init = (ids: string[]) => {
   visible.value = true;
-  dataForm.id = id;
-
-  getAssign();
-};
-
-// 获取信息
-const getAssign = () => {
-  // baseService.get(`/sys/schedule/page`).then((res) => {
-  //   options.value = res.data;
-  // });
+  dataForm.orderId = ids;
 };
 
 // 表单提交
-const dataFormSubmitHandle = (status: Boolean) => {
+const dataFormSubmitHandle = (status: number) => {
   dataFormRef.value.validate((valid: boolean) => {
     if (!valid) {
       return false;
     }
-    if (status) {
+    if (status === 1) {
       loading1.value = true;
-    } else {
+    } else if (status === 2) {
       loading2.value = true;
+    } else {
+      loading3.value = true;
     }
-    const fn = baseService.post("/sys/schedule", { ...dataForm, status });
+    const fn = baseService.post("/order/review", { ...dataForm, pass: status });
     fn.then((res) => {
       ElMessage.success({
         message: "操作成功",
@@ -84,18 +80,22 @@ const dataFormSubmitHandle = (status: Boolean) => {
         }
       });
 
-      if (status) {
+      if (status === 1) {
         loading1.value = false;
-      } else {
+      } else if (status === 2) {
         loading2.value = false;
+      } else {
+        loading3.value = false;
       }
       // 关闭页面
       close();
     }).catch(() => {
-      if (status) {
+      if (status === 1) {
         loading1.value = false;
-      } else {
+      } else if (status === 2) {
         loading2.value = false;
+      } else {
+        loading3.value = false;
       }
     });
   });

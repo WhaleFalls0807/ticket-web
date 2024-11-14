@@ -2,12 +2,14 @@
 import SvgIcon from "@/components/base/svg-icon";
 import baseService from "@/service/baseService";
 import { useFullscreen } from "@vueuse/core";
-import { defineComponent } from "vue";
+import { defineComponent, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useAppStore } from "@/store";
 import userLogo from "@/assets/images/user.png";
 import "@/assets/css/header.less";
 import { ElMessageBox } from "element-plus";
+import AddOrder from "@/components/order-add.vue";
+import { checkPermission } from "@/utils/utils";
 
 interface IExpand {
   userName?: string;
@@ -18,11 +20,12 @@ interface IExpand {
  */
 export default defineComponent({
   name: "Expand",
-  components: { SvgIcon },
+  components: { SvgIcon, AddOrder },
   props: {
     userName: String
   },
   setup(props: IExpand) {
+    const addOrderRef = ref();
     const router = useRouter();
     const store = useAppStore();
     const { isFullscreen, toggle } = useFullscreen();
@@ -46,41 +49,59 @@ export default defineComponent({
         router.push(path);
       }
     };
+
+    const addOrder = () => {
+      console.log(addOrderRef.value);
+      addOrderRef.value.init();
+    };
+    const hasPermission = (key: string) => {
+      return checkPermission(store.state.permissions as string[], key);
+    };
     return {
       props,
       store,
       isFullscreen,
       userLogo,
       onClickUserMenus,
-      toggle
+      toggle,
+      addOrderRef,
+      addOrder,
+      hasPermission
     };
   }
 });
 </script>
 <template>
   <div class="rr-header-right-items">
-    <div>
+    <div v-if="hasPermission('sys:inner_order:save')">
+      <el-button type="success" size="large" @click="addOrder">创建工单</el-button>
+    </div>
+    <!-- <div>
       <a href="https://www.renren.io/community" target="_blank">
         <svg-icon name="icon-earth"></svg-icon>
       </a>
-    </div>
-    <div>
+    </div> -->
+    <!-- <div>
       <a href="https://gitee.com/renrenio/renren-security" target="_blank">
         <svg-icon name="icon-gitee"></svg-icon>
       </a>
-    </div>
-    <div @click="toggle" class="hidden-xs-only">
+    </div> -->
+    <!-- <div @click="toggle" class="hidden-xs-only">
       <span>
         <svg-icon :name="isFullscreen ? 'tuichuquanping' : 'fullscreen2'"></svg-icon>
       </span>
-    </div>
+    </div> -->
     <div style="display: flex; justify-content: center; align-items: center">
-      <img :src="userLogo" :alt="props.userName" style="width: 30px; height: 30px; border-radius: 50%; margin-top: 3px; margin-right: 5px" />
+      <img
+        :src="userLogo"
+        :alt="props.userName"
+        style="width: 30px; height: 30px; border-radius: 50%; margin-top: 3px; margin-right: 5px"
+      />
       <el-dropdown @command="onClickUserMenus">
         <template #dropdown>
           <el-dropdown-menu>
-            <el-dropdown-item icon="lock" command="/user/password"> 修改密码 </el-dropdown-item>
-            <el-dropdown-item icon="switch-button" divided command="/login"> 退出登录 </el-dropdown-item>
+            <el-dropdown-item icon="lock" command="/user/password">修改密码</el-dropdown-item>
+            <el-dropdown-item icon="switch-button" divided command="/login">退出登录</el-dropdown-item>
           </el-dropdown-menu>
         </template>
         <span class="el-dropdown-link" style="display: flex">
@@ -90,4 +111,5 @@ export default defineComponent({
       </el-dropdown>
     </div>
   </div>
+  <AddOrder ref="addOrderRef" />
 </template>

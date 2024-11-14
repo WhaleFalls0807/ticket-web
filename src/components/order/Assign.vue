@@ -8,8 +8,8 @@
     :before-close="close"
   >
     <el-form :model="dataForm" :rules="rules" ref="dataFormRef" label-width="120px">
-      <el-form-item prop="assignId" label="指派给：">
-        <el-select v-model="dataForm.assignId" placeholder="Select" style="width: 240px">
+      <el-form-item prop="userId" label="指派给：">
+        <el-select v-model="dataForm.userId" placeholder="Select" style="width: 240px">
           <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
       </el-form-item>
@@ -30,37 +30,36 @@ const emit = defineEmits(["refreshDataList"]);
 const visible = ref(false);
 const dataFormRef = ref();
 
-const dataForm = reactive({
-  id: "",
-  assignId: ""
+const dataForm: any = reactive({
+  orderIds: [],
+  userId: ""
 });
 
-const options = ref([
-  {
-    value: "Option1",
-    label: "Option1"
-  }
-]);
+const options: any = ref([]);
 const rules = ref({
-  assignId: [{ required: true, message: "必填项不能为空", trigger: "blur" }]
+  userId: [{ required: true, message: "必填项不能为空", trigger: "blur" }]
 });
 
 const close = () => {
   visible.value = false;
   dataFormRef.value.resetFields();
 };
-const init = (id: string) => {
+const init = (ids: string[]) => {
   visible.value = true;
-  dataForm.id = id;
+  dataForm.orderIds = ids;
 
   getAssign();
 };
 
 // 获取信息
 const getAssign = () => {
-  // baseService.get(`/sys/schedule/page`).then((res) => {
-  //   options.value = res.data;
-  // });
+  baseService
+    .get(`/sys/user/list/byPerm`, {
+      permission: "order:assign"
+    })
+    .then((res) => {
+      options.value = res.data;
+    });
 };
 
 // 表单提交
@@ -69,8 +68,7 @@ const dataFormSubmitHandle = () => {
     if (!valid) {
       return false;
     }
-    const fn = !dataForm.id ? baseService.post("/sys/schedule", dataForm) : baseService.put("/sys/schedule", dataForm);
-    fn.then((res) => {
+    baseService.post("/order/distribute", dataForm).then((res) => {
       ElMessage.success({
         message: "成功",
         duration: 500,

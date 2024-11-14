@@ -2,19 +2,34 @@
   <div>
     <el-form :inline="true" :model="state.dataForm">
       <el-form-item>
-        <el-input v-model="state.dataForm.customerName" placeholder="客户名称" clearable></el-input>
+        <el-input v-model="state.dataForm.keyword" placeholder="关键字" clearable></el-input>
+      </el-form-item>
+      <el-form-item v-if="state.dataForm.hasOwnProperty('orderStatus')">
+        <ren-select v-model="state.dataForm.orderStatus" dict-type="orderStatus" placeholder="orderStatus"></ren-select>
+      </el-form-item>
+      <el-form-item label="负责人">
+        <el-select v-model="state.dataForm.ownerId">
+          <el-option v-for="item in ownerUserList" :key="item.id" :label="item.username" :value="item.id" />
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-date-picker
+          v-model="selectTime"
+          type="datetimerange"
+          value-format="x"
+          :shortcuts="shortcuts"
+          range-separator="-"
+          start-placeholder="开始时间"
+          end-placeholder="结束时间"
+        />
       </el-form-item>
       <el-form-item>
         <el-button @click="state.getDataList()">查询</el-button>
-      </el-form-item>
-      <el-form-item>
-        <el-button v-if="state.hasPermission('sys:schedule:pause')" type="primary" @click="grabOrder()">抢单</el-button>
-      </el-form-item>
-      <el-form-item>
-        <el-button v-if="state.hasPermission('sys:schedule:resume')" type="danger" @click="seas()">放回公海</el-button>
-      </el-form-item>
-      <el-form-item>
-        <el-button v-if="state.hasPermission('sys:schedule:run')" type="danger" @click="assign()">指派</el-button>
+        <el-button v-if="showOperate.grab" type="primary" @click="grabOrder()">抢单</el-button>
+        <el-button v-if="showOperate.seas" type="danger" @click="seas()">放回公海</el-button>
+        <el-button v-if="showOperate.assign" type="danger" @click="assign()">指派</el-button>
+        <el-button v-if="showOperate.approve" type="danger" @click="approve()">审批</el-button>
+        <el-button v-if="showOperate.delete" type="danger" @click="state.deleteHandle()">删除</el-button>
       </el-form-item>
       <el-form-item>
         <!-- <CountDown :nextTime="1731124800000" /> -->
@@ -92,6 +107,9 @@
           >
             审批
           </el-button>
+          <el-button v-if="showOperate.delete" type="primary" link @click="state.deleteHandle(scope.row.id)">
+            删除
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -109,7 +127,7 @@
     <!-- 审批 -->
     <Approve ref="approveRef" @refreshDataList="state.getDataList" />
     <!-- 详情 -->
-    <CustomerDetails
+    <OrderDetails
       ref="detailRef"
       @refreshDataList="state.getDataList"
       :showOperate="showOperate"
@@ -117,59 +135,133 @@
       @seas="seas"
       @assign="assign"
       @approve="approve"
+      @deleteHandle="state.deleteHandle"
+      @addOrUpdateHandle="addOrUpdateHandle"
     />
+    <!-- 弹窗, 新增 / 修改 -->
+    <add-or-update ref="addOrUpdateRef" @refreshDataList="state.getDataList"></add-or-update>
   </div>
 </template>
 
 <script lang="ts" setup>
 import useView from "@/hooks/useView";
-import { computed, reactive, ref, toRefs } from "vue";
+import { computed, reactive, ref, toRefs, onMounted } from "vue";
 import baseService from "@/service/baseService";
 import { IObject } from "@/types/interface";
 import Assign from "./Assign.vue";
 import Approve from "./Approve.vue";
-import CustomerDetails from "./CustomerDetails.vue";
+import OrderDetails from "./OrderDetails.vue";
 import { ElMessage, ElMessageBox } from "element-plus";
-import CountDown from "./CountDown.vue";
-const props = defineProps(["type"]);
-const emit = defineEmits(["refreshDataList"]);
+import AddOrUpdate from "./order-update.vue";
 
-const view = reactive({
-  getDataListURL: "/sys/oss/page",
-  getDataListIsPage: true,
-  dataForm: {
-    type: props.type,
-    customerName: ""
+const props = defineProps(["type", "getDataListURL", "dataForm"]);
+const emit = defineEmits(["refreshDataList"]);
+const selectTime = ref("");
+const shortcuts = [
+  {
+    text: "Last week",
+    value: () => {
+      const end = new Date();
+      const start = new Date();
+      start.setDate(start.getDate() - 7);
+      return [start, end];
+    }
+  },
+  {
+    text: "Last month",
+    value: () => {
+      const end = new Date();
+      const start = new Date();
+      start.setMonth(start.getMonth() - 1);
+      return [start, end];
+    }
+  },
+  {
+    text: "Last 3 months",
+    value: () => {
+      const end = new Date();
+      const start = new Date();
+      start.setMonth(start.getMonth() - 3);
+      return [start, end];
+    }
   }
+];
+
+const dataForm: any = {
+  keyword: "",
+  ownerId: "",
+  startDate: selectTime.value ? selectTime.value[0] : "",
+  endDate: selectTime.value ? selectTime.value[1] : ""
+};
+if (props.type === "seas") {
+  dataForm.deal = 0;
+} else if (props.type === "todo") {
+  dataForm.deal = 1;
+} else if (props.type === "completed") {
+  dataForm.deal = 2;
+} else if (props.type === "awaitingApproval") {
+  dataForm.reviewType = 1;
+} else if (props.type === "approved") {
+  dataForm.reviewType = 2;
+}
+const view = reactive({
+  getDataListURL: props.getDataListURL,
+  getDataListIsPage: true,
+  deleteURL: "/order/delete",
+  deleteIsBatch: true,
+  dataForm: { ...dataForm }
+  // dataForm: {
+  // keyword: "",
+  // ownerId: "",
+  // startDate: selectTime.value ? selectTime.value[0] : "",
+  // endDate: selectTime.value ? selectTime.value[1] : "",
+  // orderStatus: "",
+  // deal: 0,
+  // reviewType: 0
+  // }
 });
 
-const state = reactive({
+const state: any = reactive({
   ...useView(view),
   ...toRefs(view),
-  dataList: [
-    {
-      id: "123qwe",
-      customerName: "test",
-      type: "test-type",
-      priority: 1,
-      createDate: "2024"
-    }
-  ]
+  dataList: []
+});
+const ownerUserList: any = ref([]);
+
+// 获取负责人列表
+const getOwnerUserList = () => {
+  baseService
+    .get(`/sys/user/list/byPerm`, {
+      permission: "order:grab"
+    })
+    .then((res) => {
+      ownerUserList.value = res.data;
+    });
+};
+onMounted(() => {
+  getOwnerUserList();
 });
 const showOperate = computed(() => {
   return {
     grab:
-      (props.type === "daiban" && state.hasPermission("order:grab")) ||
-      (props.type === "gonghai" && state.hasPermission("seas:grab")),
+      (props.type === "todo" && state.hasPermission("order:grab")) ||
+      (props.type === "seas" && state.hasPermission("seas:grab")),
     seas:
-      (props.type === "daiban" && state.hasPermission("order:seas")) ||
-      (props.type === "yiban" && state.hasPermission("order:seas")) ||
-      (props.type === "daishenpi" && state.hasPermission("approve:seas")),
+      (props.type === "todo" && state.hasPermission("order:seas")) ||
+      (props.type === "completed" && state.hasPermission("order:seas")) ||
+      (props.type === "awaitingApproval" && state.hasPermission("approve:seas")),
     assign:
-      (props.type === "daiban" && state.hasPermission("order:assign")) ||
-      (props.type === "yiban" && state.hasPermission("order:assign")) ||
-      (props.type === "gonghai" && state.hasPermission("approve:assign")),
-    approve: props.type === "daishenpi" && state.hasPermission("approve:approve")
+      (props.type === "todo" && state.hasPermission("order:assign")) ||
+      (props.type === "completed" && state.hasPermission("order:assign")) ||
+      (props.type === "seas" && state.hasPermission("seas:assign")),
+    approve: props.type === "awaitingApproval" && state.hasPermission("approve:approve"),
+    delete:
+      (props.type === "todo" && state.hasPermission("order:delete")) ||
+      (props.type === "seas" && state.hasPermission("seas:delete")),
+
+    update:
+      (props.type === "todo" && state.hasPermission("order:update")) ||
+      (props.type === "seas" && state.hasPermission("seas:update"))
   };
 });
 // 抢单
@@ -188,10 +280,10 @@ const grabOrder = (customerName?: string, id?: string) => {
   })
     .then(() => {
       baseService
-        .put(
-          "/sys/schedule/pause",
-          id ? [id] : state.dataListSelections && state.dataListSelections.map((item: IObject) => item.id)
-        )
+        .post(`/order/choose`, {
+          userId: state.user.id,
+          orderIds: id ? [id] : state.dataListSelections && state.dataListSelections.map((item: IObject) => item.id)
+        })
         .then((res) => {
           ElMessage.success({
             message: "抢单成功",
@@ -255,16 +347,39 @@ const seas = (customerName?: string, id?: string) => {
 // 指派
 const assignRef = ref();
 const assign = (customerName?: string, id?: string) => {
-  assignRef.value.init(id);
+  if (!id && state.dataListSelections && state.dataListSelections.length <= 0) {
+    return ElMessage({
+      message: "请选择操作项",
+      type: "warning",
+      duration: 500
+    });
+  }
+  assignRef.value.init(
+    id ? [id] : state.dataListSelections && state.dataListSelections.map((item: IObject) => item.id)
+  );
 };
 // 审批
 const approveRef = ref();
 const approve = (customerName?: string, id?: string) => {
-  approveRef.value.init(id);
+  if (!id && state.dataListSelections && state.dataListSelections.length <= 0) {
+    return ElMessage({
+      message: "请选择操作项",
+      type: "warning",
+      duration: 500
+    });
+  }
+  approveRef.value.init(
+    id ? [id] : state.dataListSelections && state.dataListSelections.map((item: IObject) => item.id)
+  );
 };
 // 查看详情
 const detailRef = ref();
 const showDetail = (id: string, customerName: string) => {
   detailRef.value.init(id, customerName);
+};
+// 添加或编辑
+const addOrUpdateRef = ref();
+const addOrUpdateHandle = (id?: number) => {
+  addOrUpdateRef.value.init(id);
 };
 </script>

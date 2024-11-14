@@ -3,15 +3,14 @@ import Error from "@/views/error.vue";
 import { RouteRecordRaw } from "vue-router";
 import Login from "@/views/login.vue";
 import Iframe from "@/views/iframe.vue";
-
+import Web from "@/views/web/index.vue";
 /**
  * 框架基础路由
  */
 const routes: Array<RouteRecordRaw> = [
   {
-    path: "/",
+    path: "/home",
     component: Layout,
-    redirect: "/home",
     meta: { title: "工作台", icon: "icon-desktop" },
     children: [
       {
@@ -21,6 +20,12 @@ const routes: Array<RouteRecordRaw> = [
       }
     ]
   },
+  {
+    path: "/",
+    component: Web,
+    meta: { title: "web", isNavigationMenu: false }
+  },
+
   {
     path: "/login",
     component: Login,

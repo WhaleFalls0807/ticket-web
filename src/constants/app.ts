@@ -37,5 +37,9 @@ export default {
   /**
    * 全屏渲染的页面
    */
-  fullscreenPages: ["/login"]
+  fullscreenPages: ["/", "/login"],
+  /**
+   * 公司名称
+   */
+  companyName: "江苏嘉泽知识产权代理有限公司"
 };
