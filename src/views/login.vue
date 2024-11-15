@@ -56,15 +56,15 @@
       </div>
     </div>
     <div class="login-footer">
-      <p>
+      <!-- <p>
         <a href="https://www.renren.io/enterprise" target="_blank">企业版</a>
         |
         <a href="https://www.renren.io/cloud" target="_blank">微服务版</a>
-      </p>
-      <p>
+      </p> -->
+      <!-- <p>
         <a href="https://www.renren.io/" target="_blank">rr-header-ctx-logo-img-wrap</a>
         {{ state.year }} © renren.io
-      </p>
+      </p> -->
     </div>
   </div>
 </template>

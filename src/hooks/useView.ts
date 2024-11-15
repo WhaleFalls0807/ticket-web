@@ -102,6 +102,8 @@ const useView = (props: IViewHooksOptions | IObject): IViewHooks => {
         })
         .then((res) => {
           state.dataListLoading = false;
+          console.log("res.data.list", res.data.list);
+          console.log('state.dataList',state.dataList);
           state.dataList = state.getDataListIsPage ? res.data.list : res.data;
           state.total = state.getDataListIsPage ? res.data.total : 0;
         })

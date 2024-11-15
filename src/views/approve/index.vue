@@ -2,10 +2,10 @@
   <!-- 审批 -->
   <div>
     <el-tabs v-model="activeName" type="border-card">
-      <el-tab-pane label="待审批" name="first" v-if="state.hasPermission('approve:awaitingApproval')">
+      <el-tab-pane label="待审批" name="first">
         <Order type="awaitingApproval" getDataListURL="/order/review/all/page" />
       </el-tab-pane>
-      <el-tab-pane label="已审批" name="second" v-if="state.hasPermission('approve:approved')">
+      <el-tab-pane label="已审批" name="second">
         <Order type="approved" getDataListURL="/order/review/all/page" />
       </el-tab-pane>
     </el-tabs>

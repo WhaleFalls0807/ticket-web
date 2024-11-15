@@ -7,7 +7,7 @@
       <el-form-item v-if="state.dataForm.hasOwnProperty('orderStatus')">
         <ren-select v-model="state.dataForm.orderStatus" dict-type="orderStatus" placeholder="orderStatus"></ren-select>
       </el-form-item>
-      <el-form-item label="负责人">
+      <el-form-item label="负责人" v-if="state.dataForm.hasOwnProperty('ownerId')">
         <el-select v-model="state.dataForm.ownerId">
           <el-option v-for="item in ownerUserList" :key="item.id" :label="item.username" :value="item.id" />
         </el-select>
@@ -195,6 +195,7 @@ const dataForm: any = {
 };
 if (props.type === "seas") {
   dataForm.deal = 0;
+  delete dataForm.ownerId;
 } else if (props.type === "todo") {
   dataForm.deal = 1;
 } else if (props.type === "completed") {
@@ -223,8 +224,7 @@ const view = reactive({
 
 const state: any = reactive({
   ...useView(view),
-  ...toRefs(view),
-  dataList: []
+  ...toRefs(view)
 });
 const ownerUserList: any = ref([]);
 
@@ -232,7 +232,7 @@ const ownerUserList: any = ref([]);
 const getOwnerUserList = () => {
   baseService
     .get(`/sys/user/list/byPerm`, {
-      permission: "order:grab"
+      permission: "order:list,order:info"
     })
     .then((res) => {
       ownerUserList.value = res.data;
@@ -243,9 +243,7 @@ onMounted(() => {
 });
 const showOperate = computed(() => {
   return {
-    grab:
-      (props.type === "todo" && state.hasPermission("order:grab")) ||
-      (props.type === "seas" && state.hasPermission("seas:grab")),
+    grab: props.type === "seas" && state.hasPermission("seas:grab"),
     seas:
       (props.type === "todo" && state.hasPermission("order:seas")) ||
       (props.type === "completed" && state.hasPermission("order:seas")) ||
@@ -255,10 +253,13 @@ const showOperate = computed(() => {
       (props.type === "completed" && state.hasPermission("order:assign")) ||
       (props.type === "seas" && state.hasPermission("seas:assign")),
     approve: props.type === "awaitingApproval" && state.hasPermission("approve:approve"),
-    delete:
-      (props.type === "todo" && state.hasPermission("order:delete")) ||
-      (props.type === "seas" && state.hasPermission("seas:delete")),
 
+    delete:
+      (props.type === "seas" && state.hasPermission("seas:delete")) ||
+      (props.type === "todo" && state.hasPermission("order:delete")) ||
+      (props.type === "completed" && state.hasPermission("order:delete")) ||
+      (props.type === "awaitingApproval" && state.hasPermission("approve:delete")) ||
+      (props.type === "approved" && state.hasPermission("approve:delete")),
     update:
       (props.type === "todo" && state.hasPermission("order:update")) ||
       (props.type === "seas" && state.hasPermission("seas:update"))

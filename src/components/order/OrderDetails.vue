@@ -9,6 +9,19 @@
           编辑
         </el-button>
         <el-button type="danger" v-if="showOperate.delete" @click="emit('deleteHandle', detail.id)">删除</el-button>
+
+        <el-button v-if="showOperate.grab" type="primary" link @click="emit('grabOrder', detail.orderName, detail.id)">
+          抢单
+        </el-button>
+        <el-button v-if="showOperate.seas" type="primary" link @click="emit('seas', detail.orderName, detail.id)">
+          放回公海
+        </el-button>
+        <el-button v-if="showOperate.assign" type="primary" link @click="emit('assign', detail.orderName, detail.id)">
+          指派
+        </el-button>
+        <el-button v-if="showOperate.approve" type="primary" link @click="emit('approve', detail.orderName, detail.id)">
+          审批
+        </el-button>
       </div>
     </template>
     <template #default>
@@ -19,9 +32,7 @@
         <div class="drawer-header">
           <div>
             <el-descriptions direction="vertical" :column="5">
-              <el-descriptions-item label="类型" width="100px">test-type</el-descriptions-item>
-              <el-descriptions-item label="优先级" width="100px">1</el-descriptions-item>
-              <el-descriptions-item label="创建时间" width="100px">2024</el-descriptions-item>
+              <el-descriptions-item label="创建时间" width="100px">{{ detail.createDate }}</el-descriptions-item>
             </el-descriptions>
           </div>
         </div>
@@ -69,50 +80,18 @@
                 </el-form-item>
               </el-form>
             </el-tab-pane>
-            <el-tab-pane label="操作">
+            <!-- <el-tab-pane label="操作">
               <el-space>
-                <el-button type="primary" @click="uploadHandle()">上传附件</el-button>
-                <el-button
-                  v-if="showOperate.grab"
-                  type="primary"
-                  link
-                  @click="emit('grabOrder', detail.orderName, detail.id)"
-                >
-                  抢单
-                </el-button>
-                <el-button
-                  v-if="showOperate.seas"
-                  type="primary"
-                  link
-                  @click="emit('seas', detail.orderName, detail.id)"
-                >
-                  放回公海
-                </el-button>
-                <el-button
-                  v-if="showOperate.assign"
-                  type="primary"
-                  link
-                  @click="emit('assign', detail.orderName, detail.id)"
-                >
-                  指派
-                </el-button>
-                <el-button
-                  v-if="showOperate.approve"
-                  type="primary"
-                  link
-                  @click="emit('approve', detail.orderName, detail.id)"
-                >
-                  审批
-                </el-button>
+
               </el-space>
-            </el-tab-pane>
+            </el-tab-pane> -->
           </el-tabs>
         </div>
       </template>
     </template>
   </el-drawer>
   <!-- 上传文件 -->
-  <Upload ref="uploadRef" url="xxx" @refreshDataList="getInfo"></Upload>
+  <Upload ref="uploadRef" :url="`/sys/oss/upload/${detail.id}`" @refreshDataList="getInfo(detail.id)"></Upload>
 </template>
 
 <script lang="ts" setup>
@@ -137,7 +116,7 @@ const emit = defineEmits([
 
 const drawer = ref(false);
 let loading = ref(false);
-const detail = reactive({
+const detail: any = reactive({
   id: "",
   orderName: "xxx",
   content: "",
@@ -148,18 +127,10 @@ const detail = reactive({
   applyMethod: "",
   commitOption: "",
   fileList: [
-    {
-      fileName: "哈哈啊哈这是客户详情哈哈啊哈这是客户详情哈哈啊哈这是.xslx",
-      url: "https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100"
-    },
-    {
-      fileName: "哈哈啊哈这是哈哈啊哈这是哈哈啊哈这是哈哈啊哈这是客户详情哈哈啊哈这是客户详情哈哈啊哈这是.xslx",
-      url: "https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100"
-    },
-    {
-      fileName: "tupian.png",
-      url: "https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100"
-    }
+    // {
+    //   fileName: "哈哈啊哈这是客户详情哈哈啊哈这是客户详情哈哈啊哈这是.xslx",
+    //   url: "https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100"
+    // }
   ]
 });
 const view = reactive({
@@ -171,7 +142,7 @@ const isMobile = useMediaQuery("(max-width: 768px)");
 const uploadRef = ref();
 const uploadHandle = () => {
   nextTick(() => {
-    uploadRef.value.init();
+    uploadRef.value.init(detail.id);
   });
 };
 const saveDesc = (callback: any) => {
@@ -264,5 +235,9 @@ defineExpose({
 
 :deep(.el-form-item__content) {
   line-height: 24px !important;
+}
+
+.operate-btn {
+  margin-right: 10px;
 }
 </style>

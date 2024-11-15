@@ -4,9 +4,9 @@
       <el-form-item label="关键字">
         <el-input v-model="state.dataForm.keyword" placeholder="名称" clearable></el-input>
       </el-form-item>
-      <el-form-item label="成交状态">
+      <!-- <el-form-item label="成交状态">
         <ren-select v-model="state.dataForm.dealStatus" dict-type="dealStatus"></ren-select>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="负责人">
         <el-select v-model="state.dataForm.ownerId">
           <el-option v-for="item in ownerUserList" :key="item.id" :label="item.username" :value="item.id" />
@@ -120,7 +120,7 @@ const view = reactive({
   deleteIsBatch: true,
   dataForm: {
     keyword: "",
-    dealStatus: "",
+    dealStatus: 1,
     ownerId: ""
   }
 });
@@ -144,7 +144,7 @@ const ownerUserList: any = ref([]);
 const getOwnerUserList = () => {
   baseService
     .get(`/sys/user/list/byPerm`, {
-      permission: "order:grab"
+      permission: "customer:page,customer:info"
     })
     .then((res) => {
       ownerUserList.value = res.data;

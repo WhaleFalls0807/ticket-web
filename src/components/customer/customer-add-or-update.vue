@@ -99,9 +99,9 @@ const validateName = (rule: any, value: any, callback: any) => {
       })
       .then((res) => {
         if (res.data) {
-          callback();
-        } else {
           callback(new Error("名称已存在！"));
+        } else {
+          callback();
         }
       });
   }

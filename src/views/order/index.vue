@@ -2,10 +2,10 @@
   <!-- 抢单 -->
   <div>
     <el-tabs v-model="activeName" type="border-card">
-      <el-tab-pane label="待办" name="first" v-if="state.hasPermission('order:todo')">
+      <el-tab-pane label="待办" name="first">
         <Order type="todo" getDataListURL="/order/all/page" />
       </el-tab-pane>
-      <el-tab-pane label="已办" name="second" v-if="state.hasPermission('order:completed')">
+      <el-tab-pane label="已办" name="second">
         <Order type="completed" getDataListURL="/order/all/page" />
       </el-tab-pane>
     </el-tabs>

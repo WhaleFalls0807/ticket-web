@@ -17,9 +17,6 @@
     >
       <el-icon class="el-icon--upload"><upload-filled /></el-icon>
       <div class="el-upload__text">将文件拖到此处，或点击上传</div>
-      <template v-slot:tip>
-        <div class="el-upload__tip">只支持jpg、png、gif格式文件！</div>
-      </template>
     </el-upload>
   </el-dialog>
 </template>
@@ -30,16 +27,16 @@ import { getToken } from "@/utils/cache";
 import { IObject } from "@/types/interface";
 import app from "@/constants/app";
 import { ElMessage } from "element-plus";
-const props = defineProps(['url'])
+const props = defineProps(["url"]);
 const emit = defineEmits(["refreshDataList"]);
 
 const visible = ref(false);
 const num = ref(0);
 const fileList = ref<IObject[]>();
 
-const uploadUrl = computed(()=>{
+const uploadUrl = computed(() => {
   return `${app.api}${props.url}?token=${getToken()}`;
-})
+});
 const init = () => {
   visible.value = true;
   num.value = 0;
@@ -52,15 +49,7 @@ const close = () => {
 };
 // 上传之前
 const beforeUploadHandle = (file: IObject) => {
-  if (
-    file.type !== "image/jpg" &&
-    file.type !== "image/jpeg" &&
-    file.type !== "image/png" &&
-    file.type !== "image/gif"
-  ) {
-    ElMessage.error("只支持jpg、png、gif格式文件！");
-    return false;
-  } else if (file.size / 1024 / 1024 > 2) {
+  if (file.size / 1024 / 1024 > 2) {
     ElMessage.error("文件大小不能超过 2MB!");
     return false;
   }

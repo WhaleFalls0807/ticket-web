@@ -55,7 +55,7 @@ const init = (ids: string[]) => {
 const getAssign = () => {
   baseService
     .get(`/sys/user/list/byPerm`, {
-      permission: "order:assign"
+      permission: "approve:list,approve:info"
     })
     .then((res) => {
       options.value = res.data;
