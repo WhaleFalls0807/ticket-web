@@ -1,6 +1,14 @@
 <template>
-  <el-select v-model="value" @change="$emit('update:modelValue', $event)" :placeholder="placeholder" clearable>
-    <el-option :label="data.dictLabel" v-for="data in dataList" :key="data.dictValue" :value="data.dictValue">{{ data.dictLabel }}</el-option>
+  <el-select
+    v-model="value"
+    @change="$emit('update:modelValue', $event)"
+    @clear="$emit('update:modelValue', '')"
+    :placeholder="placeholder"
+    clearable
+  >
+    <el-option :label="data.dictLabel" v-for="data in dataList" :key="data.dictValue" :value="data.dictValue">
+      {{ data.dictLabel }}
+    </el-option>
   </el-select>
 </template>
 <script lang="ts">

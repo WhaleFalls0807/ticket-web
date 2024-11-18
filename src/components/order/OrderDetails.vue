@@ -80,11 +80,7 @@
                 </el-form-item>
               </el-form>
             </el-tab-pane>
-            <!-- <el-tab-pane label="操作">
-              <el-space>
-
-              </el-space>
-            </el-tab-pane> -->
+            <el-tab-pane label="跟进记录">123</el-tab-pane>
           </el-tabs>
         </div>
       </template>

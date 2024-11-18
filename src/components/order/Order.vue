@@ -63,7 +63,7 @@
         align="center"
         width="180"
       ></el-table-column>
-      <el-table-column prop="" label="详情" header-align="center" align="center">
+      <el-table-column label="详情" header-align="center" align="center" v-if="showDetailVisible">
         <template v-slot="scope">
           <el-button @click="showDetail(scope.row.id, scope.row.customerName)">查看</el-button>
         </template>
@@ -249,6 +249,14 @@ const getOwnerUserList = () => {
 };
 onMounted(() => {
   getOwnerUserList();
+});
+const showDetailVisible = computed(() => {
+  return (
+    props.type === "todo" ||
+    props.type === "completed" ||
+    props.type === "awaitingApproval" ||
+    props.type === "approved"
+  );
 });
 const showOperate = computed(() => {
   return {
