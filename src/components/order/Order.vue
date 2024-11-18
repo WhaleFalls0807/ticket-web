@@ -5,7 +5,7 @@
         <el-input v-model="state.dataForm.keyword" placeholder="关键字" clearable></el-input>
       </el-form-item>
       <el-form-item v-if="state.dataForm.hasOwnProperty('orderStatus')">
-        <ren-select v-model="state.dataForm.orderStatus" dict-type="orderStatus" placeholder="orderStatus"></ren-select>
+        <ren-select v-model="state.dataForm.orderStatus" dict-type="orderStatus" placeholder="订单状态"></ren-select>
       </el-form-item>
       <el-form-item label="负责人" v-if="state.dataForm.hasOwnProperty('ownerId')">
         <el-select v-model="state.dataForm.ownerId">
@@ -25,14 +25,13 @@
       </el-form-item>
       <el-form-item>
         <el-button @click="state.getDataList()">查询</el-button>
-        <el-button v-if="showOperate.grab" type="primary" @click="grabOrder()">抢单</el-button>
         <el-button v-if="showOperate.seas" type="danger" @click="seas()">放回公海</el-button>
         <el-button v-if="showOperate.assign" type="danger" @click="assign()">指派</el-button>
         <el-button v-if="showOperate.approve" type="danger" @click="approve()">审批</el-button>
         <el-button v-if="showOperate.delete" type="danger" @click="state.deleteHandle()">删除</el-button>
       </el-form-item>
-      <el-form-item>
-        <!-- <CountDown :nextTime="1731124800000" /> -->
+      <el-form-item v-if="showOperate.grab">
+        <CountDown :nextTime="Date.now() + 5000" />
       </el-form-item>
     </el-form>
     <el-table
@@ -51,11 +50,9 @@
         header-align="center"
         align="center"
       ></el-table-column>
-      <el-table-column prop="type" label="类型" header-align="center" align="center"></el-table-column>
-      <el-table-column prop="priority" label="优先级" sortable="custom" header-align="center" align="center">
+      <el-table-column prop="orderStatus" label="订单状态" header-align="center" align="center">
         <template v-slot="scope">
-          <el-tag v-if="scope.row.priority === 1" size="small">1</el-tag>
-          <el-tag v-else size="small" type="danger">其他</el-tag>
+          {{ state.getDictLabel("orderStatus", scope.row.orderStatus) }}
         </template>
       </el-table-column>
       <el-table-column
@@ -66,7 +63,7 @@
         align="center"
         width="180"
       ></el-table-column>
-      <el-table-column prop="" label="客户详情" header-align="center" align="center">
+      <el-table-column prop="" label="详情" header-align="center" align="center">
         <template v-slot="scope">
           <el-button @click="showDetail(scope.row.id, scope.row.customerName)">查看</el-button>
         </template>
@@ -153,7 +150,7 @@ import Approve from "./Approve.vue";
 import OrderDetails from "./OrderDetails.vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import AddOrUpdate from "./order-update.vue";
-
+import CountDown from "@/components/CountDown.vue";
 const props = defineProps(["type", "getDataListURL", "dataForm"]);
 const emit = defineEmits(["refreshDataList"]);
 const selectTime = ref("");
@@ -190,10 +187,11 @@ const shortcuts = [
 const dataForm: any = {
   keyword: "",
   ownerId: "",
+  orderStatus: "",
   startDate: selectTime.value ? selectTime.value[0] : "",
   endDate: selectTime.value ? selectTime.value[1] : ""
 };
-if (props.type === "seas") {
+if (props.type === "grab" || props.type === "seas") {
   dataForm.deal = 0;
   delete dataForm.ownerId;
 } else if (props.type === "todo") {
@@ -230,39 +228,47 @@ const ownerUserList: any = ref([]);
 
 // 获取负责人列表
 const getOwnerUserList = () => {
-  baseService
-    .get(`/sys/user/list/byPerm`, {
-      permission: "order:list,order:info"
-    })
-    .then((res) => {
-      ownerUserList.value = res.data;
-    });
+  let permission = "";
+  if (
+    props.type === "todo" ||
+    props.type === "completed" ||
+    props.type === "awaitingApproval" ||
+    props.type === "approved"
+  ) {
+    permission = "todo:list,todo:info";
+  }
+  if (permission) {
+    baseService
+      .get(`/sys/user/list/byPerm`, {
+        permission: permission
+      })
+      .then((res) => {
+        ownerUserList.value = res.data;
+      });
+  }
 };
 onMounted(() => {
   getOwnerUserList();
 });
 const showOperate = computed(() => {
   return {
-    grab: props.type === "seas" && state.hasPermission("seas:grab"),
-    seas:
-      (props.type === "todo" && state.hasPermission("order:seas")) ||
-      (props.type === "completed" && state.hasPermission("order:seas")) ||
-      (props.type === "awaitingApproval" && state.hasPermission("approve:seas")),
+    grab:
+      (props.type === "grab" && state.hasPermission("grab:grab")) ||
+      (props.type === "seas" && state.hasPermission("seas:grab")),
+    seas: props.type === "grab" && state.hasPermission("grab:seas"),
     assign:
-      (props.type === "todo" && state.hasPermission("order:assign")) ||
-      (props.type === "completed" && state.hasPermission("order:assign")) ||
+      (props.type === "grab" && state.hasPermission("grab:assign")) ||
+      (props.type === "todo" && state.hasPermission("toto:assign")) ||
       (props.type === "seas" && state.hasPermission("seas:assign")),
     approve: props.type === "awaitingApproval" && state.hasPermission("approve:approve"),
-
     delete:
-      (props.type === "seas" && state.hasPermission("seas:delete")) ||
-      (props.type === "todo" && state.hasPermission("order:delete")) ||
-      (props.type === "completed" && state.hasPermission("order:delete")) ||
+      (props.type === "grab" && state.hasPermission("grab:delete")) ||
+      (props.type === "todo" && state.hasPermission("todo:delete")) ||
+      (props.type === "completed" && state.hasPermission("completed:delete")) ||
       (props.type === "awaitingApproval" && state.hasPermission("approve:delete")) ||
-      (props.type === "approved" && state.hasPermission("approve:delete")),
-    update:
-      (props.type === "todo" && state.hasPermission("order:update")) ||
-      (props.type === "seas" && state.hasPermission("seas:update"))
+      (props.type === "approved" && state.hasPermission("approve:delete")) ||
+      (props.type === "seas" && state.hasPermission("seas:delete")),
+    update: props.type === "todo" && state.hasPermission("todo:update")
   };
 });
 // 抢单

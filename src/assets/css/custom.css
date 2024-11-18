@@ -33,6 +33,9 @@
 .align-center {
   align-items: center;
 }
+.mr10 {
+  margin-right: 10px;
+}
 .mt10 {
   margin-top: 10px;
 }

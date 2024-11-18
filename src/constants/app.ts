@@ -20,14 +20,14 @@ export default {
   api: getValueByKeys(window, "SITE_CONFIG.apiURL") || import.meta.env.VITE_APP_API,
 
   /**
-   * 启用logo图标，logo尺寸32*32，存放路径@/assets/images/logo.png
+   * 启用logo图标，logo尺寸32*32，存放路径@/assets/images/logo.jpg
    */
   enabledLogo: false,
 
   /**
    * 开启页面缓存
    */
-  enabledKeepAlive: true,
+  enabledKeepAlive: false,
 
   /**
    * 网络请求超时时间，单位毫秒
@@ -41,5 +41,6 @@ export default {
   /**
    * 公司名称
    */
-  companyName: "江苏嘉泽知识产权代理有限公司"
+  // companyName: "江苏嘉泽知识产权代理有限公司"
+  companyName: "xx"
 };

@@ -4,7 +4,7 @@ import emits from "@/utils/emits";
 import { defineComponent, reactive } from "vue";
 import BaseSidebar from "./base-sidebar.vue";
 import Logo from "../header/logo.vue";
-import logoUrl from "@/assets/images/logo.png";
+import logoUrl from "@/assets/images/logo.jpg";
 import app from "@/constants/app";
 
 /**

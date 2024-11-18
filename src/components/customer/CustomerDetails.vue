@@ -4,7 +4,7 @@
       <div class="customer-name">
         {{ detail.customerName }}
       </div>
-      <div class="operate-btn">
+      <div class="mr10">
         <el-button type="primary" v-if="showOperate.update" @click="emit('addOrUpdateHandle', detail.id)">
           编辑
         </el-button>
@@ -19,8 +19,6 @@
         <div class="drawer-header">
           <div>
             <el-descriptions direction="vertical" :column="5">
-              <el-descriptions-item label="类型" width="100px">test-type</el-descriptions-item>
-              <el-descriptions-item label="优先级" width="100px">1</el-descriptions-item>
               <el-descriptions-item label="创建时间" width="100px">{{ detail.createDate }}</el-descriptions-item>
             </el-descriptions>
           </div>
@@ -88,7 +86,7 @@ const emit = defineEmits(["deleteHandle", "addOrUpdateHandle"]);
 
 const drawer = ref(false);
 let loading = ref(false);
-const detail = reactive({
+const detail: any = reactive({
   id: "",
   creator: 0,
   createDate: "",
@@ -133,7 +131,10 @@ const getInfo = (id: string) => {
     .then((res) => {
       loading.value = false;
       Object.assign(detail, res.data);
-      detail.ownerUserName = props.ownerUserList.find((item: any) => item.id === detail.ownerUserId);
+      const owner = props.ownerUserList.find((item: any) => item.id === detail.ownerUserId);
+      if (owner.username) {
+        detail.ownerUserName = owner.username;
+      }
     })
     .catch(() => {
       loading.value = false;

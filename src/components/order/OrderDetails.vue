@@ -4,7 +4,7 @@
       <div class="customer-name">
         {{ detail.orderName }}
       </div>
-      <div class="operate-btn">
+      <div class="mr10">
         <el-button type="primary" v-if="showOperate.update" @click="emit('addOrUpdateHandle', detail.id)">
           编辑
         </el-button>
@@ -235,9 +235,5 @@ defineExpose({
 
 :deep(.el-form-item__content) {
   line-height: 24px !important;
-}
-
-.operate-btn {
-  margin-right: 10px;
 }
 </style>

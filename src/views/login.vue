@@ -80,7 +80,7 @@ import app from "@/constants/app";
 import SvgIcon from "@/components/base/svg-icon/index";
 import { useAppStore } from "@/store";
 import { useRouter } from "vue-router";
-import logo from "@/assets/images/logo.png";
+import logo from "@/assets/images/logo.jpg";
 
 const store = useAppStore();
 const router = useRouter();

@@ -1,12 +1,13 @@
 <template>
-  <div class="container">
-    <span class="countdown" :key="state.d">{{ state.d }}</span>
+  <div class="container" v-if="totalSeconds >= 0">
+    <span>下次抢单倒计时：</span>
+    <el-tag type="primary">{{ state.d }}</el-tag>
     天
-    <span class="countdown" :key="state.h">{{ state.h }}</span>
+    <el-tag type="primary">{{ state.h }}</el-tag>
     时
-    <span class="countdown" :key="state.m">{{ state.m }}</span>
+    <el-tag type="primary">{{ state.m }}</el-tag>
     分
-    <span class="countdown" :key="state.s">{{ state.s }}</span>
+    <el-tag type="primary">{{ state.s }}</el-tag>
     秒
   </div>
 </template>
@@ -23,24 +24,23 @@ const state = reactive({
   s: ""
 });
 const totalSeconds = computed(() => {
-  return (props.nextTime - state.nowTime) / 1000; //总秒数
+  return parseInt((props.nextTime - state.nowTime) / 1000); //总秒数
 });
 
 const countdown = (totalSeconds) => {
-  state.d = parseInt(totalSeconds.value / 60 / 60 / 24);
-  state.h = parseInt((totalSeconds.value / 60 / 60) % 24);
-  state.m = parseInt((totalSeconds.value / 60) % 60);
-  state.s = parseInt(totalSeconds.value % 60);
+  state.d = parseInt(totalSeconds / 60 / 60 / 24);
+  state.h = parseInt((totalSeconds / 60 / 60) % 24);
+  state.m = parseInt((totalSeconds / 60) % 60);
+  state.s = parseInt(totalSeconds % 60);
 };
 onMounted(() => {
   state.timerId = setInterval(() => {
     countdown(totalSeconds.value);
-    // totalSeconds -= 1
     state.nowTime += 1000;
   }, 1000);
 });
 watch(totalSeconds, (value) => {
-  if (value <= 0) {
+  if (value < 0) {
     clearInterval(state.timerId);
   }
 });
@@ -54,33 +54,9 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
 }
-.countdown {
-  width: 30px;
-  height: 30px;
-  background-color: pink;
-  color: #fff;
-  text-align: center;
-  line-height: 30px;
-  border-radius: 10px;
-  position: relative;
-}
-.countdown::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background-color: #fff;
-  animation: topToBottom 0.5s forwards;
-}
-@keyframes topToBottom {
-  0% {
-    height: 2px;
-  }
-  100% {
-    height: 100%;
-    opacity: 0;
-  }
+
+.el-tag {
+  margin-left: 5px;
+  margin-right: 5px;
 }
 </style>
