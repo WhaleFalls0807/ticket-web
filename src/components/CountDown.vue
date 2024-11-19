@@ -1,6 +1,5 @@
 <template>
-  <div class="container" v-if="totalSeconds >= 0">
-    <span>下次抢单倒计时：</span>
+  <p>
     <el-tag type="primary">{{ state.d }}</el-tag>
     天
     <el-tag type="primary">{{ state.h }}</el-tag>
@@ -9,7 +8,7 @@
     分
     <el-tag type="primary">{{ state.s }}</el-tag>
     秒
-  </div>
+  </p>
 </template>
 
 <script setup>
@@ -49,7 +48,7 @@ onUnmounted(() => {
 });
 </script>
 
-<style lang="less">
+<style scoped lang="less">
 .container {
   display: flex;
   align-items: center;
@@ -58,5 +57,6 @@ onUnmounted(() => {
 .el-tag {
   margin-left: 5px;
   margin-right: 5px;
+  font-size: 24px;
 }
 </style>

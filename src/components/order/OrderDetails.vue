@@ -5,11 +5,13 @@
         {{ detail.orderName }}
       </div>
       <div class="mr10">
-        <el-button type="primary" v-if="showOperate.update" @click="emit('addOrUpdateHandle', detail.id)">
+        <el-button type="primary" v-if="showOperate.update" link @click="emit('addOrUpdateHandle', detail.id)">
           编辑
         </el-button>
-        <el-button type="danger" v-if="showOperate.delete" @click="emit('deleteHandle', detail.id)">删除</el-button>
-
+        <el-button v-if="showOperate.submit" type="primary" link @click="submitOrder">提交审核</el-button>
+        <el-button type="danger" v-if="showOperate.delete" link @click="emit('deleteHandle', detail.id)">
+          删除
+        </el-button>
         <el-button v-if="showOperate.grab" type="primary" link @click="emit('grabOrder', detail.orderName, detail.id)">
           抢单
         </el-button>
@@ -40,58 +42,114 @@
           <el-tabs type="border-card">
             <el-tab-pane label="详细资料">
               <el-form label-width="100" :label-position="isMobile ? 'top' : 'left'">
-                <el-form-item label="名称">
-                  <span>{{ detail.orderName }}</span>
-                </el-form-item>
-                <el-form-item label="商标内容">
-                  <span>{{ detail.content }}</span>
-                </el-form-item>
-                <el-form-item label="支付类型">
-                  <span>{{ detail.payType }}</span>
-                </el-form-item>
-                <el-form-item label="官费">
-                  <span>{{ detail.officialPrice }}</span>
-                </el-form-item>
-                <el-form-item label="代理费">
-                  <span>{{ detail.agencyPrice }}</span>
-                </el-form-item>
-                <el-form-item label="总费用">
-                  <span>{{ detail.totalPrice }}</span>
-                </el-form-item>
-                <el-form-item label="申请方式">
-                  <span>{{ detail.applyMethod }}</span>
-                </el-form-item>
-                <el-form-item label="提交选项">
-                  <span>{{ detail.commitOption }}</span>
-                </el-form-item>
-                <el-form-item label="附件列表">
-                  <el-button type="primary" @click="uploadHandle()">上传附件</el-button>
-                  <ul class="file-list">
-                    <li v-for="item in detail.fileList" :key="item.url" class="file-list-item">
-                      <template v-if="item.fileName.endsWith('.xslx')">
-                        <span class="file-name one-line">{{ item.fileName }}</span>
-                        <svg-icon class="download-icon" name="icon-download" @click="state.exportHandle()"></svg-icon>
-                      </template>
-                      <template v-else-if="item.fileName.endsWith('.png')">
-                        <ImgPreview :url="item.url" />
-                      </template>
-                    </li>
-                  </ul>
-                </el-form-item>
+                <div>
+                  <!-- 基本信息 -->
+                  <div>
+                    <div class="section-header">
+                      <div class="section-mark"></div>
+                      <div class="section-title">基本信息</div>
+                    </div>
+                    <el-form-item label="名称">
+                      <span>{{ detail.orderName }}</span>
+                    </el-form-item>
+                  </div>
+                  <!-- 提交 -->
+                  <div>
+                    <div class="section-header">
+                      <div class="flex align-center">
+                        <div class="section-mark"></div>
+                        <div class="section-title">资料</div>
+                      </div>
+                      <el-button
+                        class="fr"
+                        @click="addFirst"
+                        v-if="detail.orderStatus == 1 || detail.orderStatus == 2 || detail.orderStatus == 4"
+                      >
+                        填写资料
+                      </el-button>
+                    </div>
+                    <el-form-item label="支付类型">
+                      <ImgPreview url="'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg'" />
+                    </el-form-item>
+                    <el-form-item label="官费">
+                      <span>{{ detail.officialPrice }}</span>
+                    </el-form-item>
+                    <el-form-item label="代理费">
+                      <span>{{ detail.agencyPrice }}</span>
+                    </el-form-item>
+                    <el-form-item label="总费用">
+                      <span>{{ detail.totalPrice }}</span>
+                    </el-form-item>
+                    <el-form-item label="原始合同">
+                      <FilePreview :file="{ url: 'xx', fileName: 'hhahahaahahhahhahaha' }" />
+                    </el-form-item>
+                    <el-form-item label="甲方成单金额">100</el-form-item>
+                    <el-form-item label="乙方成单金额">100</el-form-item>
+                    <el-form-item label="业务名称">100</el-form-item>
+                    <el-form-item label="申请方式">
+                      <span>{{ detail.applyMethod }}</span>
+                    </el-form-item>
+                    <el-form-item label="业务类型">
+                      <span>{{ detail.applyMethod }}</span>
+                    </el-form-item>
+                    <el-form-item label="商标名称">
+                      <span>{{ detail.applyMethod }}</span>
+                    </el-form-item>
+                    <el-form-item label="类别">
+                      <span>{{ detail.applyMethod }}</span>
+                    </el-form-item>
+                  </div>
+                  <!-- 提交 -->
+                  <div>
+                    <div class="section-header">
+                      <div class="flex align-center">
+                        <div class="section-mark"></div>
+                        <div class="section-title">资料</div>
+                      </div>
+                      <el-button
+                        class="fr"
+                        @click="addSecond"
+                        v-if="detail.orderStatus == 3 || detail.orderStatus == 5 || detail.orderStatus == 6"
+                      >
+                        填写资料
+                      </el-button>
+                    </div>
+                    <el-form-item label="logo">
+                      <ImgPreview url="'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg'" />
+                    </el-form-item>
+                    <el-form-item label="身份证">
+                      <FilePreview :file="{ url: 'xx', fileName: 'hhahahaahahhahhahaha' }" />
+                    </el-form-item>
+                    <el-form-item label="申请书">
+                      <FilePreview :file="{ url: 'xx', fileName: 'hhahahaahahhahhahaha' }" />
+                    </el-form-item>
+                    <el-form-item label="委托书">
+                      <FilePreview :file="{ url: 'xx', fileName: 'hhahahaahahhahhahaha' }" />
+                    </el-form-item>
+                    <el-form-item label="营业执照">
+                      <FilePreview :file="{ url: 'xx', fileName: 'hhahahaahahhahhahaha' }" />
+                    </el-form-item>
+                    <el-form-item label="盖章合同">
+                      <FilePreview :file="{ url: 'xx', fileName: 'hhahahaahahhahhahaha' }" />
+                    </el-form-item>
+                  </div>
+                </div>
               </el-form>
             </el-tab-pane>
-            <el-tab-pane label="跟进记录">123</el-tab-pane>
+            <el-tab-pane label="跟进记录">
+              <Activity :associationId="detail.id" />
+            </el-tab-pane>
           </el-tabs>
         </div>
       </template>
     </template>
   </el-drawer>
-  <!-- 上传文件 -->
-  <Upload ref="uploadRef" :url="`/sys/oss/upload/${detail.id}`" @refreshDataList="getInfo(detail.id)"></Upload>
+  <OrderUpdateFirst ref="addFirstRef" />
+  <OrderUpdateSecond ref="addSecondRef" />
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref, nextTick, toRefs } from "vue";
+import { reactive, ref, nextTick, toRefs, computed } from "vue";
 import { ElMessage } from "element-plus";
 import baseService from "@/service/baseService";
 import SvgIcon from "@/components/base/svg-icon";
@@ -99,6 +157,10 @@ import Upload from "@/components/Upload.vue";
 import ImgPreview from "@/components/ImgPreview.vue";
 import useView from "@/hooks/useView";
 import { useMediaQuery } from "@vueuse/core";
+import FilePreview from "@/components/FilePreview.vue";
+import OrderUpdateFirst from "./order-update-first.vue";
+import OrderUpdateSecond from "./order-update-second.vue";
+import Activity from "@/components/activity/index.vue";
 const props = defineProps(["showOperate"]);
 const emit = defineEmits([
   "refreshDataList",
@@ -109,65 +171,75 @@ const emit = defineEmits([
   "deleteHandle",
   "addOrUpdateHandle"
 ]);
-
 const drawer = ref(false);
 let loading = ref(false);
 const detail: any = reactive({
   id: "",
-  orderName: "xxx",
-  content: "",
-  payType: "",
+  // first
+  zhifuleixing: "",
   officialPrice: "",
   agencyPrice: "",
   totalPrice: "",
+  yuanshihetong: {
+    url: "xxx",
+    fileName: "xxx"
+  },
+  jia_price: "",
+  yi_price: "",
+  yewu_name: "",
   applyMethod: "",
-  commitOption: "",
-  fileList: [
-    // {
-    //   fileName: "哈哈啊哈这是客户详情哈哈啊哈这是客户详情哈哈啊哈这是.xslx",
-    //   url: "https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100"
-    // }
-  ]
+  yewu_type: "",
+  shangbiao_name: "",
+  leibie: "",
+  // second
+  logo: "",
+  shenfenzheng: {
+    url: "xxx",
+    fileName: "xxx"
+  },
+  shenqingshu: {
+    url: "xxx",
+    fileName: "xxx"
+  },
+  weituoshu: {
+    url: "xxx",
+    fileName: "xxx"
+  },
+  yingyezhizhao: {
+    url: "xxx",
+    fileName: "xxx"
+  },
+  gaizhanghetong: {
+    url: "xxx",
+    fileName: "xxx"
+  }
 });
 const view = reactive({
   exportURL: "/xx"
 });
 const state = reactive({ ...useView(view), ...toRefs(view) });
 const isMobile = useMediaQuery("(max-width: 768px)");
-// 上传文件
-const uploadRef = ref();
-const uploadHandle = () => {
-  nextTick(() => {
-    uploadRef.value.init(detail.id);
-  });
-};
-const saveDesc = (callback: any) => {
-  // baseService
-  //   .post("/xx")
-  //   .then((res) => {
-  //     callback({
-  //       status: 1,
-  //       msg: "修改成功"
-  //     });
-  //   })
-  //   .catch(() => {
-  //     callback({
-  //       status: 0,
-  //       msg: "修改失败"
-  //     });
-  //   });
 
-  setTimeout(() => {
-    // callback({
-    //   status: 1,
-    //   msg: "修改成功"
-    // });
-    callback({
-      status: 0,
-      msg: "修改失败"
-    });
-  }, 1000);
+// 首次提交
+const addFirstRef = ref();
+const addFirst = (id?: number) => {
+  addFirstRef.value.init(id);
 };
+
+// 二次提交
+const addSecondRef = ref();
+const addSecond = (id?: number) => {
+  addSecondRef.value.init(id);
+};
+
+// 提交审核
+const submitOrder = () => {
+  // if (detail.orderStatus == 1 || detail.orderStatus == 2 || detail.orderStatus == 4") {
+  //   ElMessage.error("点击下方“填写资料”按钮，把需要的资料填写完整后再提交审核！");
+  // 首次提交按钮
+  // }
+};
+
 const init = (id: string) => {
   drawer.value = true;
   detail.id = id;
@@ -204,32 +276,35 @@ defineExpose({
   :deep(.el-tabs__content) {
     height: calc(100% - 40px) !important;
     overflow: auto;
-  }
-}
-.file-list {
-  width: 100%;
-  .file-list-item {
-    min-height: 40px;
-    display: flex;
-    align-items: center;
-    color: @--color-primary;
-    cursor: pointer;
-    margin-top: 5px;
-    background-color: #f8faff;
 
-    .file-name {
-      width: 90%;
-    }
-    .download-icon {
-      display: none;
-    }
-    &:hover .download-icon {
-      display: block;
+    .el-tab-pane {
+      height: 100%;
     }
   }
 }
 
 :deep(.el-form-item__content) {
   line-height: 24px !important;
+}
+
+.section-header {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 0px;
+}
+.section-mark {
+  border-left-color: @--color-primary;
+  border-left-width: 4px;
+  border-left-style: solid;
+  border-radius: 2px;
+  height: 14px;
+}
+.section-title {
+  font-size: 14px;
+  color: #333;
+  font-weight: 600;
+  margin-left: 8px;
 }
 </style>

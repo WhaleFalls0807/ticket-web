@@ -9,7 +9,7 @@ import userLogo from "@/assets/images/user.png";
 import "@/assets/css/header.less";
 import { ElMessageBox } from "element-plus";
 import AddOrder from "@/components/order-add.vue";
-import { checkPermission } from "@/utils/utils";
+import useUtils from "@/hooks/useUtils";
 
 interface IExpand {
   userName?: string;
@@ -25,6 +25,8 @@ export default defineComponent({
     userName: String
   },
   setup(props: IExpand) {
+    const { hasPermission } = useUtils();
+
     const addOrderRef = ref();
     const router = useRouter();
     const store = useAppStore();
@@ -53,9 +55,6 @@ export default defineComponent({
     const addOrder = () => {
       console.log(addOrderRef.value);
       addOrderRef.value.init();
-    };
-    const hasPermission = (key: string) => {
-      return checkPermission(store.state.permissions as string[], key);
     };
     return {
       props,

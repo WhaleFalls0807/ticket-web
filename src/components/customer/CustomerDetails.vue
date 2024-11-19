@@ -65,6 +65,9 @@
                 </el-form-item>
               </el-form>
             </el-tab-pane>
+            <el-tab-pane label="跟进记录">
+              <Activity :associationId="detail.id" />
+            </el-tab-pane>
           </el-tabs>
         </div>
       </template>
@@ -80,6 +83,7 @@ import SvgIcon from "@/components/base/svg-icon";
 import Upload from "@/components/Upload.vue";
 import useView from "@/hooks/useView";
 import { useMediaQuery } from "@vueuse/core";
+import Activity from "@/components/activity/index.vue";
 
 const props = defineProps(["showOperate", "ownerUserList"]);
 const emit = defineEmits(["deleteHandle", "addOrUpdateHandle"]);

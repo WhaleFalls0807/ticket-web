@@ -30,9 +30,6 @@
         <el-button v-if="showOperate.approve" type="danger" @click="approve()">审批</el-button>
         <el-button v-if="showOperate.delete" type="danger" @click="state.deleteHandle()">删除</el-button>
       </el-form-item>
-      <el-form-item v-if="showOperate.grab">
-        <CountDown :nextTime="Date.now() + 5000" />
-      </el-form-item>
     </el-form>
     <el-table
       v-loading="state.dataListLoading"
@@ -150,7 +147,6 @@ import Approve from "./Approve.vue";
 import OrderDetails from "./OrderDetails.vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import AddOrUpdate from "./order-update.vue";
-import CountDown from "@/components/CountDown.vue";
 const props = defineProps(["type", "getDataListURL", "dataForm"]);
 const emit = defineEmits(["refreshDataList"]);
 const selectTime = ref("");
@@ -209,15 +205,6 @@ const view = reactive({
   deleteURL: "/order/delete",
   deleteIsBatch: true,
   dataForm: { ...dataForm }
-  // dataForm: {
-  // keyword: "",
-  // ownerId: "",
-  // startDate: selectTime.value ? selectTime.value[0] : "",
-  // endDate: selectTime.value ? selectTime.value[1] : "",
-  // orderStatus: "",
-  // deal: 0,
-  // reviewType: 0
-  // }
 });
 
 const state: any = reactive({
@@ -260,23 +247,20 @@ const showDetailVisible = computed(() => {
 });
 const showOperate = computed(() => {
   return {
-    grab:
-      (props.type === "grab" && state.hasPermission("grab:grab")) ||
-      (props.type === "seas" && state.hasPermission("seas:grab")),
-    seas: props.type === "grab" && state.hasPermission("grab:seas"),
+    grab: props.type === "seas" && state.hasPermission("seas:grab"),
+    seas: props.type === "todo" && state.hasPermission("grab:seas"),
     assign:
-      (props.type === "grab" && state.hasPermission("grab:assign")) ||
       (props.type === "todo" && state.hasPermission("toto:assign")) ||
       (props.type === "seas" && state.hasPermission("seas:assign")),
     approve: props.type === "awaitingApproval" && state.hasPermission("approve:approve"),
     delete:
-      (props.type === "grab" && state.hasPermission("grab:delete")) ||
       (props.type === "todo" && state.hasPermission("todo:delete")) ||
       (props.type === "completed" && state.hasPermission("completed:delete")) ||
       (props.type === "awaitingApproval" && state.hasPermission("approve:delete")) ||
       (props.type === "approved" && state.hasPermission("approve:delete")) ||
       (props.type === "seas" && state.hasPermission("seas:delete")),
-    update: props.type === "todo" && state.hasPermission("todo:update")
+    update: props.type === "todo" && state.hasPermission("todo:update"),
+    submit: props.type === "todo"
   };
 });
 // 抢单
