@@ -16,7 +16,7 @@
                 <p class="name mb10">{{ item.creator }}</p>
                 <p class="time">{{ item.createDate }}</p>
               </div>
-              <el-tag class="ml20">{{ getDictLabel("activityType", item.activityType) }}</el-tag>
+              <el-tag class="ml20">{{ getDictLabel("operateType", item.operateType) }}</el-tag>
             </div>
             <div>
               <svg-icon class="svg-icon" name="icon-edit-fill" @click="addFollow(item)"></svg-icon>
@@ -30,7 +30,12 @@
     <p v-if="loading" class="text-center">加载中...</p>
     <p v-if="noMore" class="text-center">没有更多了……</p>
   </div>
-  <FollowAddUpdate ref="addFollowRef" @refreshDataList="getFollow" :associationId="associationId" />
+  <FollowAddUpdate
+    ref="addFollowRef"
+    @refreshDataList="getFollow"
+    :associationId="associationId"
+    :activityType="activityType"
+  />
 </template>
 
 <script lang="ts" setup>
@@ -44,7 +49,7 @@ import useUtils from "@/hooks/useUtils";
 const { getDictLabel } = useUtils();
 
 const isMobile = useMediaQuery("(max-width: 768px)");
-const props = defineProps(["associationId"]);
+const props = defineProps(["associationId", "activityType"]);
 const emit = defineEmits(["refreshDataList"]);
 const state: any = reactive({
   followList: [],
@@ -93,7 +98,7 @@ const getInfo = () => {
   baseService
     .get(`/activity/list`, { page: state.page, limit: state.limit, associationId: props.associationId })
     .then((res) => {
-      state.followList.push(res.data);
+      state.followList.push(...res.data.list);
       state.total = res.data.total;
 
       noMore.value = state.page * state.limit >= state.total;

@@ -10,7 +10,6 @@
       :action="uploadUrl"
       :file-list="fileList"
       drag
-      multiple
       :before-upload="beforeUploadHandle"
       :on-success="successHandle"
       class="text-center"
@@ -70,7 +69,7 @@ const successHandle = (res: IObject, file: IObject, list: IObject[]) => {
       duration: 500,
       onClose: () => {
         visible.value = false;
-        emit("refreshDataList");
+        emit("refreshDataList", res.data);
       }
     });
   }

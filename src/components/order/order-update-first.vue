@@ -8,43 +8,52 @@
     :before-close="close"
   >
     <el-form :model="dataForm" :rules="rules" ref="dataFormRef" label-width="120px">
-      <el-form-item prop="zhifuleixing" label="支付类型">
-        <el-button v-if="!dataForm.zhifuleixing" @click="uploadHandle">上传</el-button>
-        <ImgPreview v-else url="'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg'" />
+      <el-form-item prop="payType" label="支付类型">
+        <el-button v-if="!dataForm.payType" @click="uploadHandle('payType')">上传</el-button>
+        <ImgPreview v-else :url="dataForm.payType" :delete="true" @deleteImg="dataForm.payType = ''" />
       </el-form-item>
       <el-form-item prop="officialPrice" label="官费">
-        <el-input v-model="dataForm.officialPrice" />
+        <el-input-number v-model="dataForm.officialPrice" :min="0" :precision="2" :step="0.1" />
       </el-form-item>
       <el-form-item prop="officialPrice" label="代理费">
-        <el-input v-model="dataForm.officialPrice" />
+        <el-input-number v-model="dataForm.agencyPrice" :min="0" :precision="2" :step="0.1" />
       </el-form-item>
       <el-form-item prop="totalPrice" label="总费用">
-        <el-input v-model="dataForm.totalPrice" />
+        <el-input-number v-model="dataForm.totalPrice" disabled />
       </el-form-item>
-      <el-form-item prop="yuanshihetong" label="原始合同">
-        <el-button v-if="!dataForm.yuanshihetong" @click="uploadHandle">上传</el-button>
-        <FilePreview v-else :file="{ url: 'xx', fileName: 'hhahahaahahhahhahaha' }" />
+      <el-form-item prop="contract" label="原始合同">
+        <el-button v-if="!dataForm.contract" @click="uploadHandle('contract')">上传</el-button>
+        <FilePreview
+          v-else
+          :file="{
+            url: dataForm.contract,
+            fileName: dataForm.contract.substring(
+              dataForm.contract.lastIndexOf('/') + 1,
+              dataForm.contract.lastIndexOf('.')
+            )
+          }"
+          :download="false"
+          :delete="true"
+          @deleteFile="dataForm.contract = ''"
+        />
       </el-form-item>
-      <el-form-item prop="jia_price" label="甲方成单金额">
-        <el-input v-model="dataForm.jia_price" />
+      <el-form-item prop="aprice" label="甲方承担金额">
+        <el-input-number v-model="dataForm.aprice" :min="0" :precision="2" :step="0.1" />
       </el-form-item>
-      <el-form-item prop="yi_price" label="乙方成单金额">
-        <el-input v-model="dataForm.yi_price" />
+      <el-form-item prop="bprice" label="乙方承担金额">
+        <el-input-number v-model="dataForm.bprice" :min="0" :precision="2" :step="0.1" />
       </el-form-item>
-      <el-form-item prop="yewu_name" label="业务名称">
+      <!-- <el-form-item prop="yewu_name" label="业务名称">
         <el-input v-model="dataForm.yewu_name" />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item prop="applyMethod" label="申请方式">
         <el-input v-model="dataForm.applyMethod" />
       </el-form-item>
-      <el-form-item prop="yewu_type" label="业务类型">
-        <el-input v-model="dataForm.yewu_type" />
+      <el-form-item prop="businessType" label="业务类型">
+        <ren-select v-model="dataForm.businessType" dict-type="businessType"></ren-select>
       </el-form-item>
-      <el-form-item prop="shangbiao_name" label="商标名称">
-        <el-input v-model="dataForm.shangbiao_name" />
-      </el-form-item>
-      <el-form-item prop="leibie" label="类别">
-        <el-input v-model="dataForm.leibie" />
+      <el-form-item prop="orderName" label="商标名称">
+        <el-input v-model="dataForm.orderName" />
       </el-form-item>
     </el-form>
     <template v-slot:footer>
@@ -54,11 +63,11 @@
   </el-dialog>
 
   <!-- 上传文件 -->
-  <Upload ref="uploadRef" :url="`/sys/oss/upload`" @refreshDataList="setDataForm"></Upload>
+  <Upload ref="uploadRef" :url="`/sys/oss/upload/${dataForm.id}`" @refreshDataList="setDataForm"></Upload>
 </template>
 
 <script lang="ts" setup>
-import { nextTick, reactive, ref } from "vue";
+import { computed, nextTick, reactive, ref, watch } from "vue";
 import baseService from "@/service/baseService";
 import { ElMessage } from "element-plus";
 import { useMediaQuery } from "@vueuse/core";
@@ -66,6 +75,7 @@ import SelectRelative from "@/components/SelectRelative.vue";
 import Upload from "@/components/Upload.vue";
 import ImgPreview from "@/components/ImgPreview.vue";
 import FilePreview from "@/components/FilePreview.vue";
+import app from "@/constants/app";
 
 const isMobile = useMediaQuery("(max-width: 768px)");
 
@@ -73,58 +83,72 @@ const emit = defineEmits(["refreshDataList"]);
 
 const visible = ref(false);
 const dataFormRef = ref();
+const currentUploadType = ref("");
 
-const dataForm = reactive({
+const totalPrice = computed(() => dataForm.officialPrice + dataForm.agencyPrice);
+const dataForm: any = reactive({
   id: "",
-  zhifuleixing: "",
-  officialPrice: "",
-  agencyPrice: "",
-  totalPrice: "",
-  yuanshihetong: {
-    url: "xxx",
-    fileName: "xxx"
-  },
-  jia_price: "",
-  yi_price: "",
-  yewu_name: "",
+  payType: "",
+  officialPrice: 0,
+  agencyPrice: 0,
+  totalPrice: 0,
+  contract: "",
+  aprice: 0,
+  bprice: 0,
+  // yewu_name: "",
   applyMethod: "",
-  yewu_type: "",
-  shangbiao_name: "",
-  leibie: ""
+  businessType: "",
+  orderName: ""
 });
-
+watch(
+  () => totalPrice.value,
+  (value) => {
+    dataForm.totalPrice = value;
+  }
+);
 const rules = ref({
-  orderName: [{ required: true, message: "必填项不能为空", trigger: "blur" }],
-  content: [{ required: true, message: "必填项不能为空", trigger: "blur" }],
   payType: [{ required: true, message: "必填项不能为空", trigger: "blur" }],
   officialPrice: [{ required: true, message: "必填项不能为空", trigger: "blur" }],
   agencyPrice: [{ required: true, message: "必填项不能为空", trigger: "blur" }],
   totalPrice: [{ required: true, message: "必填项不能为空", trigger: "blur" }],
+  contract: [{ required: true, message: "必填项不能为空", trigger: "blur" }],
+  aprice: [{ required: true, message: "必填项不能为空", trigger: "blur" }],
+  bprice: [{ required: true, message: "必填项不能为空", trigger: "blur" }],
   applyMethod: [{ required: true, message: "必填项不能为空", trigger: "blur" }],
-  commitOption: [{ required: true, message: "必填项不能为空", trigger: "blur" }]
+  businessType: [{ required: true, message: "必填项不能为空", trigger: "blur" }],
+  orderName: [{ required: true, message: "必填项不能为空", trigger: "blur" }]
 });
 const close = () => {
   visible.value = false;
   dataFormRef.value.resetFields();
 };
-const init = (id?: number) => {
+const init = (detail: any) => {
   visible.value = true;
-  dataForm.id = "";
-
-  // 重置表单数据
-  if (dataFormRef.value) {
-    dataFormRef.value.resetFields();
-  }
-
-  if (id) {
-    getInfo(id);
-  }
-};
-
-// 获取信息
-const getInfo = (id: number) => {
-  baseService.get(`/`).then((res) => {
-    Object.assign(dataForm, res.data);
+  const {
+    id,
+    payType,
+    officialPrice,
+    agencyPrice,
+    totalPrice,
+    contract,
+    aprice,
+    bprice,
+    applyMethod,
+    businessType,
+    orderName
+  } = detail;
+  Object.assign(dataForm, {
+    id,
+    payType,
+    officialPrice,
+    agencyPrice,
+    totalPrice,
+    contract,
+    aprice,
+    bprice,
+    applyMethod,
+    businessType,
+    orderName
   });
 };
 
@@ -150,14 +174,15 @@ const dataFormSubmitHandle = () => {
 
 // 上传文件
 const uploadRef = ref();
-const uploadHandle = () => {
+const uploadHandle = (type: any) => {
+  currentUploadType.value = type;
   nextTick(() => {
     uploadRef.value.init();
   });
 };
 // 设置上传的内容
 const setDataForm = (value: any) => {
-  dataForm.zhifuleixing = value;
+  dataForm[currentUploadType.value] = value;
 };
 defineExpose({
   init

@@ -6,11 +6,11 @@
     <svg-icon v-else name="icon-plus-circle-fill" @click="selectRelative"></svg-icon>
   </div>
 
-  <Relative ref="relativeRef" v-if="relativeVisible" @getSelected="getSelected" />
+  <Relative ref="relativeRef" v-if="relativeVisible" @getSelected="getSelected" type="customer" />
 </template>
 
 <script lang="ts" setup>
-import { computed, nextTick, ref } from "vue";
+import { computed, nextTick, ref, reactive } from "vue";
 import Relative from "@/components/Relative.vue";
 import SvgIcon from "@/components/base/svg-icon";
 
@@ -19,11 +19,9 @@ const emit = defineEmits(["update:modelValue"]);
 
 const relativeVisible = ref(false);
 const relativeRef = ref();
-const relativeObj = computed(() => {
-  return {
-    id: props.modelValue,
-    name: ""
-  };
+const relativeObj = reactive({
+  id: props.modelValue,
+  name: ""
 });
 const selectRelative = () => {
   relativeVisible.value = true;
@@ -32,14 +30,14 @@ const selectRelative = () => {
   });
 };
 const getSelected = (s: any) => {
-  relativeObj.value.id = s.id;
-  relativeObj.value.name = s.name;
+  relativeObj.id = s.id;
+  relativeObj.name = s.name;
 
-  emit("update:modelValue", relativeObj.value.id);
+  emit("update:modelValue", relativeObj.id);
 };
 const deleteRelative = () => {
-  relativeObj.value.id = "";
-  relativeObj.value.name = "";
+  relativeObj.id = "";
+  relativeObj.name = "";
 };
 </script>
 

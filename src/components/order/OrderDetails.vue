@@ -5,10 +5,7 @@
         {{ detail.orderName }}
       </div>
       <div class="mr10">
-        <el-button type="primary" v-if="showOperate.update" link @click="emit('addOrUpdateHandle', detail.id)">
-          编辑
-        </el-button>
-        <el-button v-if="showOperate.submit" type="primary" link @click="submitOrder">提交审核</el-button>
+        <el-button v-if="showOperate.commit" type="primary" @click="submitOrder">提交审核</el-button>
         <el-button type="danger" v-if="showOperate.delete" link @click="emit('deleteHandle', detail.id)">
           删除
         </el-button>
@@ -34,7 +31,10 @@
         <div class="drawer-header">
           <div>
             <el-descriptions direction="vertical" :column="5">
-              <el-descriptions-item label="创建时间" width="100px">{{ detail.createDate }}</el-descriptions-item>
+              <el-descriptions-item label="创建时间" width="200px">{{ detail.createDate }}</el-descriptions-item>
+              <el-descriptions-item label="状态" width="100px">
+                {{ getDictLabel("orderStatus", detail.orderStatus) }}
+              </el-descriptions-item>
             </el-descriptions>
           </div>
         </div>
@@ -46,11 +46,25 @@
                   <!-- 基本信息 -->
                   <div>
                     <div class="section-header">
-                      <div class="section-mark"></div>
-                      <div class="section-title">基本信息</div>
+                      <div class="flex align-center">
+                        <div class="section-mark"></div>
+                        <div class="section-title">基本信息</div>
+                      </div>
+                      <el-button class="fr" type="primary" v-if="showOperate.update" @click="addOrUpdateHandle">
+                        编辑
+                      </el-button>
                     </div>
-                    <el-form-item label="名称">
-                      <span>{{ detail.orderName }}</span>
+                    <el-form-item label="客户名称">
+                      <span>{{ detail.customerName }}</span>
+                    </el-form-item>
+                    <el-form-item label="手机号">
+                      <span>{{ detail.phone }}</span>
+                    </el-form-item>
+                    <el-form-item label="邮箱">
+                      <span>{{ detail.email }}</span>
+                    </el-form-item>
+                    <el-form-item label="客户行业">
+                      <span>{{ getDictLabel("industry", detail.industry) }}</span>
                     </el-form-item>
                   </div>
                   <!-- 提交 -->
@@ -58,18 +72,16 @@
                     <div class="section-header">
                       <div class="flex align-center">
                         <div class="section-mark"></div>
-                        <div class="section-title">资料</div>
+                        <div class="section-title">首次提交资料</div>
                       </div>
-                      <el-button
-                        class="fr"
-                        @click="addFirst"
-                        v-if="detail.orderStatus == 1 || detail.orderStatus == 2 || detail.orderStatus == 4"
-                      >
-                        填写资料
+                      <el-button class="fr" @click="addFirst">
+                        <!--  v-if="detail.orderStatus == 1 || detail.orderStatus == 2 || detail.orderStatus == 4" -->
+                        填写
                       </el-button>
                     </div>
                     <el-form-item label="支付类型">
-                      <ImgPreview url="'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg'" />
+                      <span v-if="!detail.payType">暂无数据</span>
+                      <ImgPreview v-else :url="detail.payType" />
                     </el-form-item>
                     <el-form-item label="官费">
                       <span>{{ detail.officialPrice }}</span>
@@ -81,22 +93,35 @@
                       <span>{{ detail.totalPrice }}</span>
                     </el-form-item>
                     <el-form-item label="原始合同">
-                      <FilePreview :file="{ url: 'xx', fileName: 'hhahahaahahhahhahaha' }" />
+                      <span v-if="!detail.contract">暂无数据</span>
+                      <FilePreview
+                        v-else
+                        :file="{
+                          url: detail.contract,
+                          fileName: detail.contract.substring(
+                            detail.contract.lastIndexOf('/') + 1,
+                            detail.contract.lastIndexOf('.')
+                          )
+                        }"
+                      />
                     </el-form-item>
-                    <el-form-item label="甲方成单金额">100</el-form-item>
-                    <el-form-item label="乙方成单金额">100</el-form-item>
-                    <el-form-item label="业务名称">100</el-form-item>
+                    <el-form-item label="甲方承担金额">
+                      <span>{{ detail.aprice }}</span>
+                    </el-form-item>
+                    <el-form-item label="乙方承担金额">
+                      <span>{{ detail.bprice }}</span>
+                    </el-form-item>
+                    <!-- <el-form-item label="业务名称">
+                      <span>{{ detail.yewu_name }}</span>
+                    </el-form-item> -->
                     <el-form-item label="申请方式">
                       <span>{{ detail.applyMethod }}</span>
                     </el-form-item>
                     <el-form-item label="业务类型">
-                      <span>{{ detail.applyMethod }}</span>
+                      <span>{{ detail.businessType }}</span>
                     </el-form-item>
                     <el-form-item label="商标名称">
-                      <span>{{ detail.applyMethod }}</span>
-                    </el-form-item>
-                    <el-form-item label="类别">
-                      <span>{{ detail.applyMethod }}</span>
+                      <span>{{ detail.orderName }}</span>
                     </el-form-item>
                   </div>
                   <!-- 提交 -->
@@ -104,48 +129,101 @@
                     <div class="section-header">
                       <div class="flex align-center">
                         <div class="section-mark"></div>
-                        <div class="section-title">资料</div>
+                        <div class="section-title">再次提交资料</div>
                       </div>
-                      <el-button
-                        class="fr"
-                        @click="addSecond"
-                        v-if="detail.orderStatus == 3 || detail.orderStatus == 5 || detail.orderStatus == 6"
-                      >
-                        填写资料
+                      <el-button class="fr" @click="addSecond">
+                        <!--  v-if="detail.orderStatus == 3 || detail.orderStatus == 5 || detail.orderStatus == 6" -->
+                        填写
                       </el-button>
                     </div>
                     <el-form-item label="logo">
-                      <ImgPreview url="'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg'" />
+                      <span v-if="!detail.logo">暂无数据</span>
+                      <ImgPreview v-else :url="detail.logo" />
                     </el-form-item>
                     <el-form-item label="身份证">
-                      <FilePreview :file="{ url: 'xx', fileName: 'hhahahaahahhahhahaha' }" />
+                      <span v-if="!detail.idcard">暂无数据</span>
+                      <FilePreview
+                        v-else
+                        :file="{
+                          url: detail.idcard,
+                          fileName: detail.idcard.substring(
+                            detail.idcard.lastIndexOf('/') + 1,
+                            detail.idcard.lastIndexOf('.')
+                          )
+                        }"
+                      />
                     </el-form-item>
                     <el-form-item label="申请书">
-                      <FilePreview :file="{ url: 'xx', fileName: 'hhahahaahahhahhahaha' }" />
+                      <span v-if="!detail.applyBook">暂无数据</span>
+                      <FilePreview
+                        v-else
+                        :file="{
+                          url: detail.applyBook,
+                          fileName: detail.applyBook.substring(
+                            detail.applyBook.lastIndexOf('/') + 1,
+                            detail.applyBook.lastIndexOf('.')
+                          )
+                        }"
+                      />
                     </el-form-item>
                     <el-form-item label="委托书">
-                      <FilePreview :file="{ url: 'xx', fileName: 'hhahahaahahhahhahaha' }" />
+                      <span v-if="!detail.commission">暂无数据</span>
+                      <FilePreview
+                        v-else
+                        :file="{
+                          url: detail.commission,
+                          fileName: detail.commission.substring(
+                            detail.commission.lastIndexOf('/') + 1,
+                            detail.commission.lastIndexOf('.')
+                          )
+                        }"
+                      />
                     </el-form-item>
                     <el-form-item label="营业执照">
-                      <FilePreview :file="{ url: 'xx', fileName: 'hhahahaahahhahhahaha' }" />
+                      <span v-if="!detail.businessLicense">暂无数据</span>
+                      <FilePreview
+                        v-else
+                        :file="{
+                          url: detail.businessLicense,
+                          fileName: detail.businessLicense.substring(
+                            detail.businessLicense.lastIndexOf('/') + 1,
+                            detail.businessLicense.lastIndexOf('.')
+                          )
+                        }"
+                      />
                     </el-form-item>
                     <el-form-item label="盖章合同">
-                      <FilePreview :file="{ url: 'xx', fileName: 'hhahahaahahhahhahaha' }" />
+                      <span v-if="!detail.sealedContract">暂无数据</span>
+                      <FilePreview
+                        v-else
+                        :file="{
+                          url: detail.sealedContract,
+                          fileName: detail.sealedContract.substring(
+                            detail.sealedContract.lastIndexOf('/') + 1,
+                            detail.sealedContract.lastIndexOf('.')
+                          )
+                        }"
+                      />
                     </el-form-item>
                   </div>
                 </div>
               </el-form>
             </el-tab-pane>
             <el-tab-pane label="跟进记录">
-              <Activity :associationId="detail.id" />
+              <Activity :associationId="detail.id" :activityType="3" />
             </el-tab-pane>
           </el-tabs>
         </div>
       </template>
     </template>
   </el-drawer>
-  <OrderUpdateFirst ref="addFirstRef" />
-  <OrderUpdateSecond ref="addSecondRef" />
+  <!-- 弹窗, 新增 / 修改 -->
+  <add-or-update ref="addOrUpdateRef" @refreshDataList="getInfo(detail.id)"></add-or-update>
+  <OrderUpdateFirst ref="addFirstRef" @refreshDataList="getInfo(detail.id)" />
+  <OrderUpdateSecond ref="addSecondRef" @refreshDataList="getInfo(detail.id)" />
+
+  <!-- 提交审核 -->
+  <SubmitApprove ref="submitApproveRef" @refreshDataList="getInfo(detail.id)" />
 </template>
 
 <script lang="ts" setup>
@@ -161,69 +239,59 @@ import FilePreview from "@/components/FilePreview.vue";
 import OrderUpdateFirst from "./order-update-first.vue";
 import OrderUpdateSecond from "./order-update-second.vue";
 import Activity from "@/components/activity/index.vue";
+import app from "@/constants/app";
+import useUtils from "@/hooks/useUtils";
+import SubmitApprove from "./SubmitApprove.vue";
+import SelectRelative from "@/components/SelectRelative.vue";
+import AddOrUpdate from "./order-update.vue";
+
+const { getDictLabel } = useUtils();
+
+const isMobile = useMediaQuery("(max-width: 768px)");
+
 const props = defineProps(["showOperate"]);
-const emit = defineEmits([
-  "refreshDataList",
-  "grabOrder",
-  "seas",
-  "assign",
-  "approve",
-  "deleteHandle",
-  "addOrUpdateHandle"
-]);
+const emit = defineEmits(["refreshDataList", "grabOrder", "seas", "assign", "approve", "deleteHandle"]);
 const drawer = ref(false);
 let loading = ref(false);
 const detail: any = reactive({
   id: "",
+  customerId: "",
+  customerName: "",
+  industry: "",
+  phone: "",
   // first
-  zhifuleixing: "",
-  officialPrice: "",
-  agencyPrice: "",
-  totalPrice: "",
-  yuanshihetong: {
-    url: "xxx",
-    fileName: "xxx"
-  },
-  jia_price: "",
-  yi_price: "",
+  payType: "",
+  officialPrice: 0,
+  agencyPrice: 0,
+  totalPrice: 0,
+  contract: "",
+  aprice: 0,
+  bprice: 0,
   yewu_name: "",
   applyMethod: "",
-  yewu_type: "",
-  shangbiao_name: "",
-  leibie: "",
+  businessType: "",
+  orderName: "",
   // second
   logo: "",
-  shenfenzheng: {
-    url: "xxx",
-    fileName: "xxx"
-  },
-  shenqingshu: {
-    url: "xxx",
-    fileName: "xxx"
-  },
-  weituoshu: {
-    url: "xxx",
-    fileName: "xxx"
-  },
-  yingyezhizhao: {
-    url: "xxx",
-    fileName: "xxx"
-  },
-  gaizhanghetong: {
-    url: "xxx",
-    fileName: "xxx"
-  }
+  idcard: "",
+  // 申请书
+  applyBook: "",
+  // 委托书
+  commission: "",
+  // 营业执照
+  businessLicense: "",
+  // 盖章合同
+  sealedContract: ""
 });
-const view = reactive({
-  exportURL: "/xx"
-});
-const state = reactive({ ...useView(view), ...toRefs(view) });
-const isMobile = useMediaQuery("(max-width: 768px)");
-
+// 添加或编辑
+const addOrUpdateRef = ref();
+const addOrUpdateHandle = () => {
+  addOrUpdateRef.value.init(detail);
+};
 // 首次提交
 const addFirstRef = ref();
-const addFirst = (id?: number) => {
-  addFirstRef.value.init(id);
+const addFirst = () => {
+  addFirstRef.value.init(detail);
 };
 
 // 二次提交
@@ -233,13 +301,14 @@ const addSecond = (id?: number) => {
 };
 
 // 提交审核
+const submitApproveRef = ref();
 const submitOrder = () => {
+  submitApproveRef.value.init(detail.id);
   // if (detail.orderStatus == 1 || detail.orderStatus == 2 || detail.orderStatus == 4") {
   //   ElMessage.error("点击下方“填写资料”按钮，把需要的资料填写完整后再提交审核！");
   // 首次提交按钮
   // }
 };
-
 const init = (id: string) => {
   drawer.value = true;
   detail.id = id;
@@ -253,6 +322,24 @@ const getInfo = (id: string) => {
     .then((res) => {
       loading.value = false;
       Object.assign(detail, res.data);
+      const { applyBook, businessLicense, commission, contract, idcard, logo, payType, sealedContract } =
+        res.data.orderFileVO;
+      const { agencyPrice, aprice, bprice, officialPrice, totalPrice } = res.data.orderPriceVO;
+      Object.assign(detail, {
+        applyBook,
+        businessLicense,
+        commission,
+        contract,
+        idcard,
+        logo,
+        payType,
+        sealedContract,
+        agencyPrice,
+        aprice,
+        bprice,
+        officialPrice,
+        totalPrice
+      });
     })
     .catch(() => {
       loading.value = false;

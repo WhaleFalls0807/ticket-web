@@ -73,6 +73,7 @@ const emit = defineEmits(["refreshDataList"]);
 const visible = ref(false);
 const dataFormRef = ref();
 
+let oldCustomerName = "";
 const dataForm = reactive({
   id: "",
   customerName: "",
@@ -92,6 +93,8 @@ const dataForm = reactive({
 const validateName = (rule: any, value: any, callback: any) => {
   if (value.trim === "") {
     callback(new Error("必填项不能为空"));
+  } else if (dataForm.id && value === oldCustomerName) {
+    callback();
   } else {
     baseService
       .get(`/customer/name/check`, {
@@ -152,6 +155,7 @@ const init = (id?: number) => {
 const getInfo = (id: number) => {
   baseService.get(`/customer/queryById/${id}`).then((res) => {
     Object.assign(dataForm, res.data);
+    oldCustomerName = res.data.customerName;
   });
 };
 

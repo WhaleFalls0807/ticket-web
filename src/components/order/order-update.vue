@@ -8,32 +8,8 @@
     :before-close="close"
   >
     <el-form :model="dataForm" :rules="rules" ref="dataFormRef" label-width="120px">
-      <el-form-item prop="orderName" label="名称">
-        <el-input v-model="dataForm.orderName" />
-      </el-form-item>
       <el-form-item prop="customerId" label="关联客户">
         <SelectRelative v-model="dataForm.customerId" />
-      </el-form-item>
-      <el-form-item prop="content" label="商标内容">
-        <el-input v-model="dataForm.content" />
-      </el-form-item>
-      <el-form-item prop="payType" label="支付类型">
-        <el-input v-model="dataForm.payType" />
-      </el-form-item>
-      <el-form-item prop="officialPrice" label="官费">
-        <el-input v-model="dataForm.officialPrice" />
-      </el-form-item>
-      <el-form-item prop="agencyPrice" label="代理费">
-        <el-input v-model="dataForm.agencyPrice" />
-      </el-form-item>
-      <el-form-item prop="totalPrice" label="总费用">
-        <el-input v-model="dataForm.totalPrice" />
-      </el-form-item>
-      <el-form-item prop="applyMethod" label="申请方式">
-        <el-input v-model="dataForm.applyMethod" />
-      </el-form-item>
-      <el-form-item prop="commitOption" label="提交选项">
-        <el-input v-model="dataForm.commitOption" />
       </el-form-item>
     </el-form>
     <template v-slot:footer>
@@ -56,19 +32,14 @@ const emit = defineEmits(["refreshDataList"]);
 const visible = ref(false);
 const dataFormRef = ref();
 
-const dataForm = reactive({
+const dataForm: any = reactive({
   id: "",
-  customerId: "",
-  orderName: "",
-  content: "",
-  payType: "",
-  officialPrice: "",
-  agencyPrice: "",
-  totalPrice: "",
-  applyMethod: "",
-  commitOption: ""
+  customerId: ""
 });
-
+// const getOtherParams = (params: any) => {
+//   dataForm.industry = params.industry;
+//   dataForm.phone = params.phone;
+// };
 const rules = ref({
   orderName: [{ required: true, message: "必填项不能为空", trigger: "blur" }],
   content: [{ required: true, message: "必填项不能为空", trigger: "blur" }],
@@ -83,25 +54,10 @@ const close = () => {
   visible.value = false;
   dataFormRef.value.resetFields();
 };
-const init = (id?: number) => {
+const init = (detail: any) => {
   visible.value = true;
-  dataForm.id = "";
-
-  // 重置表单数据
-  if (dataFormRef.value) {
-    dataFormRef.value.resetFields();
-  }
-
-  if (id) {
-    getInfo(id);
-  }
-};
-
-// 获取信息
-const getInfo = (id: number) => {
-  baseService.get(`/`).then((res) => {
-    Object.assign(dataForm, res.data);
-  });
+  const { id } = detail;
+  Object.assign(dataForm, { id });
 };
 
 // 表单提交

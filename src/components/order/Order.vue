@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-form :inline="true" :model="state.dataForm">
+    <el-form :inline="true" :model="state.dataForm" v-if="showTableDetail">
       <el-form-item>
         <el-input v-model="state.dataForm.keyword" placeholder="关键字" clearable></el-input>
       </el-form-item>
@@ -39,73 +39,80 @@
       @sort-change="state.dataListSortChangeHandle"
       style="width: 100%"
     >
-      <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
-      <el-table-column
-        prop="customerName"
-        label="客户名称"
-        show-overflow-tooltip
-        header-align="center"
-        align="center"
-      ></el-table-column>
-      <el-table-column prop="orderStatus" label="订单状态" header-align="center" align="center">
-        <template v-slot="scope">
-          {{ state.getDictLabel("orderStatus", scope.row.orderStatus) }}
-        </template>
-      </el-table-column>
-      <el-table-column
-        prop="createDate"
-        label="创建时间"
-        sortable="custom"
-        header-align="center"
-        align="center"
-        width="180"
-      ></el-table-column>
-      <el-table-column label="详情" header-align="center" align="center" v-if="showDetailVisible">
-        <template v-slot="scope">
-          <el-button @click="showDetail(scope.row.id, scope.row.customerName)">查看</el-button>
-        </template>
-      </el-table-column>
+      <template v-if="showTableDetail">
+        <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
+        <el-table-column
+          prop="customerName"
+          label="客户名称"
+          show-overflow-tooltip
+          header-align="center"
+          align="center"
+        ></el-table-column>
+        <el-table-column prop="orderStatus" label="订单状态" header-align="center" align="center">
+          <template v-slot="scope">
+            {{ state.getDictLabel("orderStatus", scope.row.orderStatus) }}
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="createDate"
+          label="创建时间"
+          sortable="custom"
+          header-align="center"
+          align="center"
+          width="180"
+        ></el-table-column>
+        <el-table-column label="详情" header-align="center" align="center" v-if="showDetailVisible">
+          <template v-slot="scope">
+            <el-button @click="showDetail(scope.row.id, scope.row.customerName)">查看</el-button>
+          </template>
+        </el-table-column>
 
-      <el-table-column
-        label="操作"
-        header-align="center"
-        align="center"
-        width="248"
-        v-if="Object.values(showOperate).some((item) => item === true)"
-      >
-        <template v-slot="scope">
-          <el-button
-            v-if="showOperate.grab"
-            type="primary"
-            link
-            @click="grabOrder(scope.row.customerName, scope.row.id)"
-          >
-            抢单
-          </el-button>
-          <el-button v-if="showOperate.seas" type="primary" link @click="seas(scope.row.customerName, scope.row.id)">
-            放回公海
-          </el-button>
-          <el-button
-            v-if="showOperate.assign"
-            type="primary"
-            link
-            @click="assign(scope.row.customerName, scope.row.id)"
-          >
-            指派
-          </el-button>
-          <el-button
-            v-if="showOperate.approve"
-            type="primary"
-            link
-            @click="approve(scope.row.customerName, scope.row.id)"
-          >
-            审批
-          </el-button>
-          <el-button v-if="showOperate.delete" type="primary" link @click="state.deleteHandle(scope.row.id)">
-            删除
-          </el-button>
-        </template>
-      </el-table-column>
+        <el-table-column
+          label="操作"
+          header-align="center"
+          align="center"
+          width="248"
+          v-if="Object.values(showOperate).some((item) => item === true)"
+        >
+          <template v-slot="scope">
+            <el-button
+              v-if="showOperate.grab"
+              type="primary"
+              link
+              @click="grabOrder(scope.row.customerName, scope.row.id)"
+            >
+              抢单
+            </el-button>
+            <el-button v-if="showOperate.seas" type="primary" link @click="seas(scope.row.customerName, scope.row.id)">
+              放回公海
+            </el-button>
+            <el-button
+              v-if="showOperate.assign"
+              type="primary"
+              link
+              @click="assign(scope.row.customerName, scope.row.id)"
+            >
+              指派
+            </el-button>
+            <el-button
+              v-if="showOperate.approve"
+              type="primary"
+              link
+              @click="approve(scope.row.customerName, scope.row.id)"
+            >
+              审批
+            </el-button>
+            <el-button v-if="showOperate.delete" type="primary" link @click="state.deleteHandle(scope.row.id)">
+              删除
+            </el-button>
+          </template>
+        </el-table-column>
+      </template>
+      <template v-else>
+        <el-table-column label="客户名称" header-align="center" align="center">******</el-table-column>
+        <el-table-column label="手机号" header-align="center" align="center">******</el-table-column>
+        <el-table-column label="详情" header-align="center" align="center">******</el-table-column>
+      </template>
     </el-table>
     <el-pagination
       :current-page="state.page"
@@ -130,10 +137,7 @@
       @assign="assign"
       @approve="approve"
       @deleteHandle="state.deleteHandle"
-      @addOrUpdateHandle="addOrUpdateHandle"
     />
-    <!-- 弹窗, 新增 / 修改 -->
-    <add-or-update ref="addOrUpdateRef" @refreshDataList="state.getDataList"></add-or-update>
   </div>
 </template>
 
@@ -146,7 +150,6 @@ import Assign from "./Assign.vue";
 import Approve from "./Approve.vue";
 import OrderDetails from "./OrderDetails.vue";
 import { ElMessage, ElMessageBox } from "element-plus";
-import AddOrUpdate from "./order-update.vue";
 const props = defineProps(["type", "getDataListURL", "dataForm"]);
 const emit = defineEmits(["refreshDataList"]);
 const selectTime = ref("");
@@ -235,32 +238,44 @@ const getOwnerUserList = () => {
   }
 };
 onMounted(() => {
-  getOwnerUserList();
+  // getOwnerUserList();
 });
+// 查看详情
 const showDetailVisible = computed(() => {
   return (
-    props.type === "todo" ||
-    props.type === "completed" ||
-    props.type === "awaitingApproval" ||
-    props.type === "approved"
+    (props.type === "todo" && state.hasPermission("todo:info")) ||
+    (props.type === "completed" && state.hasPermission("completed:info")) ||
+    (props.type === "awaitingApproval" && state.hasPermission("approved:info")) ||
+    (props.type === "approved" && state.hasPermission("approved:info"))
   );
+});
+const showTableDetail = computed(() => {
+  if (props.type === "grab" && !state.hasPermission("grab:list")) {
+    return false;
+  } else {
+    return true;
+  }
 });
 const showOperate = computed(() => {
   return {
+    see: props.type === "grab" && state.hasPermission("grab:list"),
     grab: props.type === "seas" && state.hasPermission("seas:grab"),
-    seas: props.type === "todo" && state.hasPermission("grab:seas"),
+    seas:
+      (props.type === "grab" && state.hasPermission("grab:seas")) ||
+      (props.type === "todo" && state.hasPermission("todo:seas")),
     assign:
       (props.type === "todo" && state.hasPermission("toto:assign")) ||
       (props.type === "seas" && state.hasPermission("seas:assign")),
     approve: props.type === "awaitingApproval" && state.hasPermission("approve:approve"),
     delete:
+      (props.type === "grab" && state.hasPermission("grab:delete")) ||
       (props.type === "todo" && state.hasPermission("todo:delete")) ||
       (props.type === "completed" && state.hasPermission("completed:delete")) ||
       (props.type === "awaitingApproval" && state.hasPermission("approve:delete")) ||
       (props.type === "approved" && state.hasPermission("approve:delete")) ||
       (props.type === "seas" && state.hasPermission("seas:delete")),
     update: props.type === "todo" && state.hasPermission("todo:update"),
-    submit: props.type === "todo"
+    commit: props.type === "todo" && state.hasPermission("todo:commit")
   };
 });
 // 抢单
@@ -375,10 +390,5 @@ const approve = (customerName?: string, id?: string) => {
 const detailRef = ref();
 const showDetail = (id: string, customerName: string) => {
   detailRef.value.init(id, customerName);
-};
-// 添加或编辑
-const addOrUpdateRef = ref();
-const addOrUpdateHandle = (id?: number) => {
-  addOrUpdateRef.value.init(id);
 };
 </script>

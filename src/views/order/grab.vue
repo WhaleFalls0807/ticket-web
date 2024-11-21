@@ -1,63 +1,104 @@
 <template>
-  <el-card class="grab-contianer">
-    <h1>抢单倒计时</h1>
-    <CountDown :nextTime="Date.now() + 5000" />
-    <el-button type="primary" @click="grabOrder" class="grab-btn">抢单</el-button>
-  </el-card>
-
-  <el-descriptions :column="1" border>
-    <el-descriptions-item label="已抢单次数" label-align="right" align="center" width="50">
-      <el-tag>{{ form.count }}</el-tag>
-    </el-descriptions-item>
-    <el-descriptions-item label="剩余抢单次数" label-align="right" align="center" width="50">
-      <el-tag>{{ form.count }}</el-tag>
-    </el-descriptions-item>
-    <el-descriptions-item label="总抢单次数" label-align="right" align="center">
-      <el-tag>{{ form.allCount }}</el-tag>
-    </el-descriptions-item>
-    <el-descriptions-item label="抢单刷新时间" label-align="right" align="center">
-      <ren-select v-model="form.refreshTime" dict-type="refreshTime"></ren-select>
-    </el-descriptions-item>
-  </el-descriptions>
+  <div class="grab-contianer">
+    <div class="left">
+      <div class="flex align-center">
+        <span class="mr10">总单数</span>
+        <el-tag class="mr10">{{ state.totalCount }}</el-tag>
+        <span class="mr10">/</span>
+        <span class="mr10">剩余单数</span>
+        <el-tag>{{ state.remainCount }}</el-tag>
+      </div>
+      <div class="flex align-center mt30">
+        <p class="mr10" style="white-space: nowrap">设置刷新时间</p>
+        <ren-select v-model="state.refreshTime" dict-type="refreshTime" :clearable="false"></ren-select>
+      </div>
+    </div>
+    <div class="right">
+      <div class="flex align-center">
+        <span class="mr10">已抢单数量</span>
+        <el-tag>{{ state.grapedCount }}</el-tag>
+      </div>
+      <el-button type="primary" @click="grabOrder" class="grab-btn" :loading="loading">抢单</el-button>
+    </div>
+  </div>
+  <Order type="grab" getDataListURL="/order/all/page" />
 </template>
 <script lang="ts" setup>
-import CountDown from "@/components/CountDown.vue";
 import { ElMessage } from "element-plus";
 import baseService from "@/service/baseService";
-import { useAppStore } from "@/store";
-import { reactive } from "vue";
+import { reactive, ref, onMounted, onBeforeUnmount, watch } from "vue";
+import Order from "@/components/order/Order.vue";
 
-const store = useAppStore();
-
-let form = reactive({
-  count: 10,
-  allCount: 100,
-  refreshTime: "3"
+const loading = ref(false);
+let state: any = reactive({
+  remainCount: "",
+  grapedCount: 10,
+  totalCount: 100,
+  refreshTime: "3",
+  timerId: ""
 });
 // 抢单
-const grabOrder = (customerName?: string, id?: string) => {
+const grabOrder = () => {
+  loading.value = true;
   baseService
-    .post(`/order/choose`, {
-      userId: store.state.user.id
-    })
+    .get(`/order/grab`)
     .then((res) => {
+      loading.value = false;
       ElMessage.success({
         message: "抢单成功",
         duration: 500
       });
     })
     .catch(() => {
+      loading.value = false;
       ElMessage.error({
         message: "抢单失败",
         duration: 500
       });
     });
 };
+const getCount = () => {
+  baseService
+    .get(`/orderGrab/count`)
+    .then((res) => {
+      state.remainCount = res.data.remainCount;
+      state.grapedCount = res.data.grapedCount;
+      state.totalCount = res.data.totalCount;
+    })
+    .catch(() => {});
+};
+watch(
+  () => state.refreshTime,
+  () => {
+    clearInterval(state.timerId);
+    state.timerId = setInterval(() => {
+      getCount();
+    }, Number(state.refreshTime) * 1000);
+  }
+);
+onMounted(() => {
+  getCount();
+  state.timerId = setInterval(() => {
+    getCount();
+  }, Number(state.refreshTime) * 1000);
+});
+onBeforeUnmount(() => {
+  clearInterval(state.timerId);
+});
 </script>
 
 <style scoped lang="less">
 .grab-contianer {
-  text-align: center;
+  width: 50%;
+  margin: 0 auto;
+  margin-top: 40px;
+  margin-bottom: 40px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 20px;
+  .right {
+    text-align: center;
+  }
   h1 {
     font-size: 24px;
     margin-bottom: 30px;
@@ -71,5 +112,9 @@ const grabOrder = (customerName?: string, id?: string) => {
 .el-descriptions {
   width: 50%;
   margin: 30px auto;
+}
+
+.el-tag {
+  font-size: 22px;
 }
 </style>

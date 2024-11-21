@@ -31,12 +31,12 @@ const relative = computed(() => {
   if (props.type === "customer") {
     return {
       title: "客户",
-      componentName: "Customer"
+      componentName: Customer
     };
   } else if (props.type === "user") {
     return {
       title: "用户",
-      componentName: "User"
+      componentName: User
     };
   }
 });
@@ -51,6 +51,7 @@ const close = () => {
 };
 // 表单提交
 const dataFormSubmitHandle = () => {
+  console.log(componentRef.value.dataListSelections);
   const Selections = componentRef.value.dataListSelections;
   if (Selections.length === 0) {
     ElMessage.info(`请选择${relative.value?.title}`);
@@ -60,7 +61,7 @@ const dataFormSubmitHandle = () => {
       name: ""
     };
     if (props.type === "customer") {
-      params.id = Selections[0].customerId;
+      params.id = Selections[0].id;
       params.name = Selections[0].customerName;
     } else if (props.type === "user") {
       params.id = Selections[0].userId;

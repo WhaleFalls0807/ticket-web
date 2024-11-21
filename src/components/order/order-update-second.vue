@@ -9,28 +9,90 @@
   >
     <el-form :model="dataForm" :rules="rules" ref="dataFormRef" label-width="120px">
       <el-form-item prop="logo" label="logo">
-        <el-button v-if="!dataForm.logo" @click="uploadHandle">上传</el-button>
-        <ImgPreview v-else url="'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg'" />
+        <el-button v-if="!dataForm.logo" @click="uploadHandle('logo')">上传</el-button>
+        <ImgPreview
+          v-else
+          :url="dataForm.logo"
+          :delete="true"
+          @deleteImg="dataForm.logo = ''"
+        />
       </el-form-item>
-      <el-form-item prop="shenfenzheng" label="身份证">
-        <el-button v-if="!dataForm.shenfenzheng" @click="uploadHandle">上传</el-button>
-        <FilePreview v-else :file="{ url: 'xx', fileName: 'hhahahaahahhahhahaha' }" />
+      <el-form-item prop="idcard" label="身份证">
+        <el-button v-if="!dataForm.idcard" @click="uploadHandle('idcard')">上传</el-button>
+        <FilePreview
+          v-else
+          :file="{
+            url: dataForm.idcard,
+            fileName: dataForm.idcard.substring(dataForm.idcard.lastIndexOf('/') + 1, dataForm.idcard.lastIndexOf('.'))
+          }"
+          :download="false"
+          :delete="true"
+          @deleteFile="dataForm.idcard = ''"
+        />
       </el-form-item>
-      <el-form-item prop="shenqingshu" label="申请书">
-        <el-button v-if="!dataForm.shenqingshu" @click="uploadHandle">上传</el-button>
-        <FilePreview v-else :file="{ url: 'xx', fileName: 'hhahahaahahhahhahaha' }" />
+      <el-form-item prop="applyBook" label="申请书">
+        <el-button v-if="!dataForm.applyBook" @click="uploadHandle('applyBook')">上传</el-button>
+        <FilePreview
+          v-else
+          :file="{
+            url: dataForm.applyBook,
+            fileName: dataForm.applyBook.substring(
+              dataForm.applyBook.lastIndexOf('/') + 1,
+              dataForm.applyBook.lastIndexOf('.')
+            )
+          }"
+          :download="false"
+          :delete="true"
+          @deleteFile="dataForm.applyBook = ''"
+        />
       </el-form-item>
-      <el-form-item prop="weituoshu" label="委托书">
-        <el-button v-if="!dataForm.weituoshu" @click="uploadHandle">上传</el-button>
-        <FilePreview v-else :file="{ url: 'xx', fileName: 'hhahahaahahhahhahaha' }" />
+      <el-form-item prop="commission" label="委托书">
+        <el-button v-if="!dataForm.commission" @click="uploadHandle('commission')">上传</el-button>
+        <FilePreview
+          v-else
+          :file="{
+            url: dataForm.commission,
+            fileName: dataForm.commission.substring(
+              dataForm.commission.lastIndexOf('/') + 1,
+              dataForm.commission.lastIndexOf('.')
+            )
+          }"
+          :download="false"
+          :delete="true"
+          @deleteFile="dataForm.commission = ''"
+        />
       </el-form-item>
-      <el-form-item prop="yingyezhizhao" label="营业执照">
-        <el-button v-if="!dataForm.yingyezhizhao" @click="uploadHandle">上传</el-button>
-        <FilePreview v-else :file="{ url: 'xx', fileName: 'hhahahaahahhahhahaha' }" />
+      <el-form-item prop="businessLicense" label="营业执照">
+        <el-button v-if="!dataForm.businessLicense" @click="uploadHandle('businessLicense')">上传</el-button>
+        <FilePreview
+          v-else
+          :file="{
+            url: dataForm.businessLicense,
+            fileName: dataForm.businessLicense.substring(
+              dataForm.businessLicense.lastIndexOf('/') + 1,
+              dataForm.businessLicense.lastIndexOf('.')
+            )
+          }"
+          :download="false"
+          :delete="true"
+          @deleteFile="dataForm.businessLicense = ''"
+        />
       </el-form-item>
-      <el-form-item prop="gaizhanghetong" label="盖章合同">
-        <el-button v-if="!dataForm.gaizhanghetong" @click="uploadHandle">上传</el-button>
-        <FilePreview v-else :file="{ url: 'xx', fileName: 'hhahahaahahhahhahaha' }" />
+      <el-form-item prop="sealedContract" label="盖章合同">
+        <el-button v-if="!dataForm.sealedContract" @click="uploadHandle('sealedContract')">上传</el-button>
+        <FilePreview
+          v-else
+          :file="{
+            url: dataForm.sealedContract,
+            fileName: dataForm.sealedContract.substring(
+              dataForm.sealedContract.lastIndexOf('/') + 1,
+              dataForm.sealedContract.lastIndexOf('.')
+            )
+          }"
+          :download="false"
+          :delete="true"
+          @deleteFile="dataForm.sealedContract = ''"
+        />
       </el-form-item>
     </el-form>
     <template v-slot:footer>
@@ -40,7 +102,7 @@
   </el-dialog>
 
   <!-- 上传文件 -->
-  <Upload ref="uploadRef" :url="`/sys/oss/upload`" @refreshDataList="setDataForm"></Upload>
+  <Upload ref="uploadRef" :url="`/sys/oss/upload/${dataForm.id}`" @refreshDataList="setDataForm"></Upload>
 </template>
 
 <script lang="ts" setup>
@@ -52,6 +114,7 @@ import SelectRelative from "@/components/SelectRelative.vue";
 import Upload from "@/components/Upload.vue";
 import ImgPreview from "@/components/ImgPreview.vue";
 import FilePreview from "@/components/FilePreview.vue";
+import app from "@/constants/app";
 
 const isMobile = useMediaQuery("(max-width: 768px)");
 
@@ -59,30 +122,16 @@ const emit = defineEmits(["refreshDataList"]);
 
 const visible = ref(false);
 const dataFormRef = ref();
+const currentUploadType = ref("");
 
-const dataForm = reactive({
+const dataForm: any = reactive({
   id: "",
   logo: "",
-  shenfenzheng: {
-    url: "xxx",
-    fileName: "xxx"
-  },
-  shenqingshu: {
-    url: "xxx",
-    fileName: "xxx"
-  },
-  weituoshu: {
-    url: "xxx",
-    fileName: "xxx"
-  },
-  yingyezhizhao: {
-    url: "xxx",
-    fileName: "xxx"
-  },
-  gaizhanghetong: {
-    url: "xxx",
-    fileName: "xxx"
-  }
+  idcard: "",
+  applyBook: "",
+  commission: "",
+  businessLicense: "",
+  sealedContract: ""
 });
 
 const rules = ref({
@@ -99,25 +148,10 @@ const close = () => {
   visible.value = false;
   dataFormRef.value.resetFields();
 };
-const init = (id?: number) => {
+const init = (detail: any) => {
   visible.value = true;
-  dataForm.id = "";
-
-  // 重置表单数据
-  if (dataFormRef.value) {
-    dataFormRef.value.resetFields();
-  }
-
-  if (id) {
-    getInfo(id);
-  }
-};
-
-// 获取信息
-const getInfo = (id: number) => {
-  baseService.get(`/`).then((res) => {
-    Object.assign(dataForm, res.data);
-  });
+  const { id, logo, idcard, applyBook, commission, businessLicense, sealedContract } = detail;
+  Object.assign(dataForm, { id, logo, idcard, applyBook, commission, businessLicense, sealedContract });
 };
 
 // 表单提交
@@ -142,14 +176,15 @@ const dataFormSubmitHandle = () => {
 
 // 上传文件
 const uploadRef = ref();
-const uploadHandle = () => {
+const uploadHandle = (type: any) => {
+  currentUploadType.value = type;
   nextTick(() => {
     uploadRef.value.init();
   });
 };
 // 设置上传的内容
 const setDataForm = (value: any) => {
-  dataForm.logo = value;
+  dataForm[currentUploadType.value] = value;
 };
 defineExpose({
   init

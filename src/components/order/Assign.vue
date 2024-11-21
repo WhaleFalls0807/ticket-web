@@ -48,14 +48,14 @@ const init = (ids: string[]) => {
   visible.value = true;
   dataForm.orderIds = ids;
 
-  getAssign();
+  // getAssign();
 };
 
 // 获取信息
 const getAssign = () => {
   baseService
     .get(`/sys/user/list/byPerm`, {
-      permission: "approve:list,approve:info"
+      permission: "todo:list"
     })
     .then((res) => {
       options.value = res.data;

@@ -8,8 +8,8 @@
     :before-close="close"
   >
     <el-form :model="dataForm" :rules="rules" ref="dataFormRef" label-width="120px">
-      <el-form-item prop="activityType" label="跟进类型">
-        <ren-select v-model="dataForm.activityType" dict-type="activityType"></ren-select>
+      <el-form-item prop="operateType" label="跟进类型">
+        <ren-select v-model="dataForm.operateType" dict-type="operateType"></ren-select>
       </el-form-item>
       <el-form-item prop="content" label="内容">
         <el-input v-model="dataForm.content" type="textarea" :autosize="{ minRows: 3, maxRows: 6 }" />
@@ -29,7 +29,7 @@ import { ElMessage } from "element-plus";
 import { useMediaQuery } from "@vueuse/core";
 import { useAppStore } from "@/store";
 const isMobile = useMediaQuery("(max-width: 768px)");
-const props = defineProps(["associationId"]);
+const props = defineProps(["associationId", "activityType"]);
 const emit = defineEmits(["refreshDataList"]);
 const store = useAppStore();
 
@@ -38,7 +38,8 @@ const dataFormRef = ref();
 
 const dataForm = reactive({
   id: "",
-  activityType: "",
+  activityType: props.activityType,
+  operateType: "",
   content: ""
 });
 

@@ -18,6 +18,7 @@ export default {
    * api请求地址，这里读取env环境变量中的VITE_APP_API，优先使用全局变量window.SITE_CONFIG.apiURL钩子，支持在index.html中配置
    */
   api: getValueByKeys(window, "SITE_CONFIG.apiURL") || import.meta.env.VITE_APP_API,
+  api_img_file: import.meta.env.VITE_APP_API_IMG_FILE,
 
   /**
    * 启用logo图标，logo尺寸32*32，存放路径@/assets/images/logo.jpg

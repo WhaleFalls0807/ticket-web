@@ -4,7 +4,7 @@
     @change="$emit('update:modelValue', $event)"
     @clear="$emit('update:modelValue', '')"
     :placeholder="placeholder"
-    clearable
+    :clearable="clearable"
   >
     <el-option :label="data.dictLabel" v-for="data in dataList" :key="data.dictValue" :value="data.dictValue">
       {{ data.dictLabel }}
@@ -20,7 +20,11 @@ export default defineComponent({
   props: {
     modelValue: [Number, String],
     dictType: String,
-    placeholder: String
+    placeholder: String,
+    clearable: {
+      type: Boolean,
+      default: true
+    }
   },
   setup(props) {
     const store = useAppStore();

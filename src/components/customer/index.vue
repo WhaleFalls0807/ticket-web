@@ -126,17 +126,25 @@ const view = reactive({
 });
 
 const state = reactive({ ...useView(view), ...toRefs(view) });
-
+console.log("state", state);
 const tableRef = ref<TableInstance>();
+const selected = ref()
 const selectionChange = (val: any) => {
+  console.log("val", val);
   if (props.selectionRadio && val.length > 1) {
     tableRef.value!.clearSelection();
     const lastObj = val[val.length - 1];
     tableRef.value!.toggleRowSelection(lastObj, true);
     state.dataListSelectionChangeHandle([lastObj]);
+    selected.value = [lastObj]
   } else {
+    selected.value = val
     state.dataListSelectionChangeHandle(val);
   }
+
+  setTimeout(() => {
+    console.log("state.dataListSelections", state.dataListSelections);
+  });
 };
 const ownerUserList: any = ref([]);
 
@@ -151,7 +159,7 @@ const getOwnerUserList = () => {
     });
 };
 onMounted(() => {
-  getOwnerUserList();
+  // getOwnerUserList();
 });
 const showOperate = computed(() => {
   return {
@@ -173,6 +181,6 @@ const addOrUpdateHandle = (id?: number) => {
 };
 
 defineExpose({
-  dataListSelections: state.dataListSelections
+  dataListSelections: selected
 });
 </script>
