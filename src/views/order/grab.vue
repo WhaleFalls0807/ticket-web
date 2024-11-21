@@ -24,9 +24,9 @@
   <Order type="grab" getDataListURL="/order/all/page" />
 </template>
 <script lang="ts" setup>
-import { ElMessage } from "element-plus";
+import { ElMessage, ElNotification } from "element-plus";
 import baseService from "@/service/baseService";
-import { reactive, ref, onMounted, onBeforeUnmount, watch } from "vue";
+import { reactive, ref, onMounted, onBeforeUnmount, watch, h } from "vue";
 import Order from "@/components/order/Order.vue";
 
 const loading = ref(false);
@@ -47,6 +47,11 @@ const grabOrder = () => {
       ElMessage.success({
         message: "抢单成功",
         duration: 500
+      });
+      //
+      ElNotification({
+        title: "工单信息",
+        message: `<strong>客户名：${res.data.customerName}<br/>手机号：${res.data.phone}<br/>备注：${res.data.remark}</strong>`
       });
     })
     .catch(() => {

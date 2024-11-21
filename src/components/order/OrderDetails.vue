@@ -6,9 +6,6 @@
       </div>
       <div class="mr10">
         <el-button v-if="showOperate.commit" type="primary" @click="submitOrder">提交审核</el-button>
-        <el-button type="danger" v-if="showOperate.delete" link @click="emit('deleteHandle', detail.id)">
-          删除
-        </el-button>
         <el-button v-if="showOperate.grab" type="primary" link @click="emit('grabOrder', detail.orderName, detail.id)">
           抢单
         </el-button>
@@ -18,8 +15,11 @@
         <el-button v-if="showOperate.assign" type="primary" link @click="emit('assign', detail.orderName, detail.id)">
           指派
         </el-button>
-        <el-button v-if="showOperate.approve" type="primary" link @click="emit('approve', detail.orderName, detail.id)">
+        <el-button v-if="showOperate.approve" type="primary" @click="emit('approve', detail.orderName, detail.id)">
           审批
+        </el-button>
+        <el-button type="danger" v-if="showOperate.delete" link @click="emit('deleteHandle', detail.id)">
+          删除
         </el-button>
       </div>
     </template>
@@ -74,7 +74,7 @@
                         <div class="section-mark"></div>
                         <div class="section-title">首次提交资料</div>
                       </div>
-                      <el-button class="fr" @click="addFirst">
+                      <el-button class="fr" type="primary" @click="addFirst" v-if="showOperate.update">
                         <!--  v-if="detail.orderStatus == 1 || detail.orderStatus == 2 || detail.orderStatus == 4" -->
                         填写
                       </el-button>
@@ -131,7 +131,7 @@
                         <div class="section-mark"></div>
                         <div class="section-title">再次提交资料</div>
                       </div>
-                      <el-button class="fr" @click="addSecond">
+                      <el-button class="fr" type="primary" @click="addSecond" v-if="showOperate.update">
                         <!--  v-if="detail.orderStatus == 3 || detail.orderStatus == 5 || detail.orderStatus == 6" -->
                         填写
                       </el-button>

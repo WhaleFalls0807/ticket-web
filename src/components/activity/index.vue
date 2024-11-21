@@ -13,7 +13,7 @@
           <div class="header mb15">
             <div class="header-left">
               <div>
-                <p class="name mb10">{{ item.creator }}</p>
+                <p class="name mb10">{{ item.createName }}</p>
                 <p class="time">{{ item.createDate }}</p>
               </div>
               <el-tag class="ml20">{{ getDictLabel("operateType", item.operateType) }}</el-tag>

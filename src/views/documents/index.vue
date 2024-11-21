@@ -3,7 +3,7 @@
   <div class="mod-oss__oss">
     <el-form :inline="true" :model="state.dataForm">
       <el-form-item v-if="state.hasPermission('documents:upload')">
-        <el-button type="primary" @click="uploadHandle()">上传文件</el-button>
+        <el-button type="primary" @click="addOrUpdate()">上传文件</el-button>
       </el-form-item>
       <el-form-item v-if="state.hasPermission('documents:delete')">
         <el-button type="danger" @click="state.deleteHandle()">删除</el-button>
@@ -18,7 +18,7 @@
       style="width: 100%"
     >
       <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
-      <el-table-column prop="url" label="URL地址" header-align="center" align="center"></el-table-column>
+      <el-table-column prop="fileName" label="文件" header-align="center" align="center"></el-table-column>
       <el-table-column prop="count" label="下载次数" header-align="center" align="center"></el-table-column>
       <el-table-column
         prop="createDate"
@@ -28,9 +28,19 @@
         align="center"
         width="180"
       ></el-table-column>
+      <el-table-column prop="type" label="文书类型" header-align="center" align="center">
+        <template v-slot="scope">
+          {{ state.getDictLabel("documentType", scope.row.documentType) }}
+        </template>
+      </el-table-column>
+      <el-table-column prop="createDate" label="创建时间" header-align="center" align="center"></el-table-column>
+      <el-table-column prop="creator" label="创建者" header-align="center" align="center"></el-table-column>
+      <el-table-column prop="updater" label="更新者" header-align="center" align="center"></el-table-column>
+      <el-table-column prop="remark" label="备注" header-align="center" align="center"></el-table-column>
       <el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
         <template v-slot="scope">
           <el-button type="primary" link @click="state.exportHandle()">导出</el-button>
+          <el-button type="primary" link @click="addOrUpdate(scope.row)">删除</el-button>
           <el-button type="primary" link @click="state.deleteHandle(scope.row.id)">删除</el-button>
           <el-button type="primary" link @click="downloadDetail(scope.row.id)">查看下载详情</el-button>
         </template>
@@ -46,7 +56,7 @@
       @current-change="state.pageCurrentChangeHandle"
     ></el-pagination>
     <!-- 弹窗, 上传文件 -->
-    <upload v-if="state.uploadVisible" ref="uploadRef" @refreshDataList="state.getDataList" url="/xxx"></upload>
+    <DocumentAdd ref="addOrUpdateRef" @refreshDataList="state.getDataList"></DocumentAdd>
     <DownloadDetail v-if="state.downloadVisible" ref="downloadRef"></DownloadDetail>
   </div>
 </template>
@@ -55,17 +65,15 @@
 import useView from "@/hooks/useView";
 import { nextTick, reactive, ref, toRefs } from "vue";
 import DownloadDetail from "./DownloadDetail.vue";
-import Upload from "@/components/Upload.vue";
-
-const uploadRef = ref();
+import DocumentAdd from "./document-add.vue";
 const downloadRef = ref();
 
 const view = reactive({
-  getDataListURL: "/sys/oss/page",
+  getDataListURL: "/corDocument/page",
   getDataListIsPage: true,
-  deleteURL: "/sys/oss",
+  deleteURL: "/",
   deleteIsBatch: true,
-  exportURL: "/sys/log/error/export",
+  exportURL: "/corDocument/download",
   dataForm: {},
   uploadVisible: false,
   downloadVisible: false
@@ -74,10 +82,10 @@ const view = reactive({
 const state = reactive({ ...useView(view), ...toRefs(view) });
 
 // 上传文件
-const uploadHandle = () => {
-  state.uploadVisible = true;
+const addOrUpdateRef = ref();
+const addOrUpdate = (detail?: any) => {
   nextTick(() => {
-    uploadRef.value.init();
+    addOrUpdateRef.value.init(detail);
   });
 };
 // 查看下载详情

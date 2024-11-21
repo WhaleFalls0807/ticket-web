@@ -87,7 +87,6 @@ const validateEmail = (rule: any, value: string, callback: (e?: Error) => any): 
 const rules = ref({
   orderName: [
     { required: true, message: "必填项不能为空", trigger: "blur" },
-    { validator: validateName, trigger: "blur" }
   ],
   customerName: [
     { required: true, message: "必填项不能为空", trigger: "blur" },

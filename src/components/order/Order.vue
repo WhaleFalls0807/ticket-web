@@ -5,7 +5,7 @@
         <el-input v-model="state.dataForm.keyword" placeholder="关键字" clearable></el-input>
       </el-form-item>
       <el-form-item v-if="state.dataForm.hasOwnProperty('orderStatus')">
-        <ren-select v-model="state.dataForm.orderStatus" dict-type="orderStatus" placeholder="订单状态"></ren-select>
+        <ren-select v-model="state.dataForm.orderStatus" dict-type="orderStatus" placeholder="工单状态"></ren-select>
       </el-form-item>
       <el-form-item label="负责人" v-if="state.dataForm.hasOwnProperty('ownerId')">
         <el-select v-model="state.dataForm.ownerId">
@@ -48,7 +48,7 @@
           header-align="center"
           align="center"
         ></el-table-column>
-        <el-table-column prop="orderStatus" label="订单状态" header-align="center" align="center">
+        <el-table-column prop="orderStatus" label="工单状态" header-align="center" align="center">
           <template v-slot="scope">
             {{ state.getDictLabel("orderStatus", scope.row.orderStatus) }}
           </template>
@@ -245,8 +245,8 @@ const showDetailVisible = computed(() => {
   return (
     (props.type === "todo" && state.hasPermission("todo:info")) ||
     (props.type === "completed" && state.hasPermission("completed:info")) ||
-    (props.type === "awaitingApproval" && state.hasPermission("approved:info")) ||
-    (props.type === "approved" && state.hasPermission("approved:info"))
+    (props.type === "awaitingApproval" && state.hasPermission("approve:info")) ||
+    (props.type === "approved" && state.hasPermission("approve:info"))
   );
 });
 const showTableDetail = computed(() => {

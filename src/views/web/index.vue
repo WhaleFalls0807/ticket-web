@@ -1,3 +1,181 @@
 <template>
-  <!-- <iframe src="./shangbiao/index.html"></iframe> -->
+  <div class="container">
+    <div class="header">
+      <div class="left">您好！欢迎访问商标服务官方网站！</div>
+    </div>
+    <div class="banner1">
+      <h1>保护品牌 从注册开始</h1>
+      <el-form :model="dataForm" :rules="rules" ref="dataFormRef" label-position="top" label-width="120px" size="large">
+        <el-form-item prop="orderName" label="商标名称">
+          <el-input v-model="dataForm.orderName" />
+        </el-form-item>
+        <el-form-item prop="customerName" label="客户名称">
+          <el-input v-model="dataForm.customerName" />
+        </el-form-item>
+        <el-form-item prop="phone" label="手机号">
+          <el-input v-model="dataForm.phone" />
+        </el-form-item>
+        <el-form-item prop="email" label="邮箱">
+          <el-input v-model="dataForm.email" />
+        </el-form-item>
+        <el-form-item prop="industry" label="行业">
+          <ren-select v-model="dataForm.industry" dict-type="industry"></ren-select>
+        </el-form-item>
+        <el-form-item prop="remark" label="备注">
+          <el-input v-model="dataForm.remark" type="textarea" :autosize="{ minRows: 3, maxRows: 6 }" />
+        </el-form-item>
+        <el-form-item>
+          <div class="btn-wrap">
+            <el-button type="primary" @click="dataFormSubmitHandle()">立即查询</el-button>
+          </div>
+        </el-form-item>
+      </el-form>
+    </div>
+    <div class="banner2"></div>
+    <div class="footer">
+      <div class="item">
+        <div class="title">团队专，服务专</div>
+        <div class="sub_title">一对一，专家服务</div>
+      </div>
+      <div class="item">
+        <div class="title">响应快，定稿快</div>
+        <div class="sub_title">撰写高效，递交快捷</div>
+      </div>
+      <div class="item">
+        <div class="title">质量好，保密好</div>
+        <div class="sub_title">授权率高，安全性强</div>
+      </div>
+      <div class="item">
+        <div class="title">省费用，省心力</div>
+        <div class="sub_title">全程托管，进度可查</div>
+      </div>
+    </div>
+  </div>
 </template>
+<script setup lang="ts">
+import { reactive, ref } from "vue";
+import { isMobile as isPhone, isEmail } from "@/utils/utils";
+import baseService from "@/service/baseService";
+import { ElMessage } from "element-plus";
+
+const dataFormRef = ref();
+
+const dataForm = reactive({
+  orderName: "",
+  customerName: "",
+  phone: "",
+  email: "",
+  industry: "",
+  remark: ""
+});
+const validatePhone = (rule: any, value: string, callback: (e?: Error) => any): any => {
+  if (value && !isPhone(value)) {
+    return callback(new Error("手机号格式错误"));
+  }
+  callback();
+};
+const validateEmail = (rule: any, value: string, callback: (e?: Error) => any): any => {
+  if (value && !isEmail(value)) {
+    return callback(new Error("邮箱格式错误"));
+  }
+  callback();
+};
+const rules = ref({
+  orderName: [{ required: true, message: "必填项不能为空", trigger: "blur" }],
+  customerName: [{ required: true, message: "必填项不能为空", trigger: "blur" }],
+  phone: [
+    { required: true, message: "必填项不能为空", trigger: "blur" },
+    { validator: validatePhone, trigger: "blur" }
+  ],
+  email: [{ validator: validateEmail, trigger: "blur" }],
+  industry: [{ required: true, message: "必填项不能为空", trigger: "blur" }]
+});
+// 表单提交
+const dataFormSubmitHandle = () => {
+  dataFormRef.value.validate((valid: boolean) => {
+    if (!valid) {
+      return false;
+    }
+    const fn = baseService.post("/order/save/byUser", dataForm);
+    fn.then((res) => {
+      ElMessage.success({
+        message: "提交成功",
+        duration: 500
+      });
+      close();
+    });
+  });
+};
+</script>
+<style lang="less" scoped>
+.container {
+  .header {
+    background-color: #fff;
+    height: 60px;
+    line-height: 60px;
+    padding: 0 10%;
+  }
+  .banner1 {
+    min-height: 120vh;
+    background: url(../../assets/images/bg.png) no-repeat;
+    background-size: 100% 100%;
+    color: #fff;
+    padding: 60px 0;
+    h1 {
+      text-align: center;
+      transform: scale(2);
+    }
+    .el-form {
+      width: 50%;
+      background: #fff;
+      padding: 20px;
+      margin: 0 auto;
+      margin-top: 60px;
+
+      border-radius: 20px;
+
+      .btn-wrap {
+        margin: 0 auto;
+      }
+    }
+  }
+  .banner2 {
+    min-height: 100vh;
+  }
+  .footer {
+    padding: 0 10%;
+    min-height: 100px;
+    background-color: #333;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    color: #fff;
+    .item {
+      .title {
+        font-size: 20px;
+      }
+      .sub_title {
+        font-size: 16px;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .banner1 {
+    h1 {
+      transform: scale(1) !important;
+    }
+    .el-form {
+      width: 90% !important;
+    }
+  }
+  .footer {
+    padding: 20px;
+    flex-direction: column;
+    .item {
+      margin-bottom: 20px;
+    }
+  }
+}
+</style>
