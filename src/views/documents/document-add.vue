@@ -35,7 +35,7 @@
   </el-dialog>
 
   <!-- 上传文件 -->
-  <Upload ref="uploadRef" :url="`/sys/oss/upload`" @refreshDataList="setDataForm"></Upload>
+  <Upload ref="uploadRef" :url="`/sys/oss/upload/${dataForm.id || uniqueId}`" @refreshDataList="setDataForm"></Upload>
 </template>
 
 <script lang="ts" setup>
@@ -45,6 +45,9 @@ import { ElMessage } from "element-plus";
 import { useMediaQuery } from "@vueuse/core";
 import Upload from "@/components/Upload.vue";
 import FilePreview from "@/components/FilePreview.vue";
+import { nanoid } from "nanoid"; // 引入 nanoid
+// 定义一个唯一 ID
+const uniqueId = ref(nanoid());
 
 const isMobile = useMediaQuery("(max-width: 768px)");
 

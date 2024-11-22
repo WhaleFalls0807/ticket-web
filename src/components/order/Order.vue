@@ -7,7 +7,7 @@
       <el-form-item v-if="state.dataForm.hasOwnProperty('orderStatus')">
         <ren-select v-model="state.dataForm.orderStatus" dict-type="orderStatus" placeholder="工单状态"></ren-select>
       </el-form-item>
-      <el-form-item label="负责人" v-if="state.dataForm.hasOwnProperty('ownerId')">
+      <el-form-item label="负责人" v-if="state.hasPermission('approve:info')">
         <el-select v-model="state.dataForm.ownerId">
           <el-option v-for="item in ownerUserList" :key="item.id" :label="item.username" :value="item.id" />
         </el-select>
@@ -41,6 +41,18 @@
     >
       <template v-if="showTableDetail">
         <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
+        <el-table-column prop="orderName" label="商标名称" show-overflow-tooltip header-align="center" align="center">
+          <template v-slot="scope">
+            <template v-if="showDetailVisible">
+              <el-link type="primary" @click="showDetail(scope.row.id, scope.row.customerName)">
+                {{ scope.row.orderName }}
+              </el-link>
+            </template>
+            <template v-else>
+              <span>{{ scope.row.orderName }}</span>
+            </template>
+          </template>
+        </el-table-column>
         <el-table-column
           prop="customerName"
           label="客户名称"
@@ -61,11 +73,11 @@
           align="center"
           width="180"
         ></el-table-column>
-        <el-table-column label="详情" header-align="center" align="center" v-if="showDetailVisible">
+        <!-- <el-table-column label="详情" header-align="center" align="center" v-if="showDetailVisible">
           <template v-slot="scope">
             <el-button @click="showDetail(scope.row.id, scope.row.customerName)">查看</el-button>
           </template>
-        </el-table-column>
+        </el-table-column> -->
 
         <el-table-column
           label="操作"
@@ -219,13 +231,14 @@ const ownerUserList: any = ref([]);
 // 获取负责人列表
 const getOwnerUserList = () => {
   let permission = "";
+
   if (
     props.type === "todo" ||
     props.type === "completed" ||
     props.type === "awaitingApproval" ||
     props.type === "approved"
   ) {
-    permission = "todo:list,todo:info";
+    permission = "todo:list";
   }
   if (permission) {
     baseService
@@ -238,7 +251,7 @@ const getOwnerUserList = () => {
   }
 };
 onMounted(() => {
-  // getOwnerUserList();
+  getOwnerUserList();
 });
 // 查看详情
 const showDetailVisible = computed(() => {

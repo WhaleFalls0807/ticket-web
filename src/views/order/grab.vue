@@ -51,8 +51,10 @@ const grabOrder = () => {
       //
       ElNotification({
         title: "工单信息",
-        message: `<strong>客户名：${res.data.customerName}<br/>手机号：${res.data.phone}<br/>备注：${res.data.remark}</strong>`
+        dangerouslyUseHTMLString: true,
+        message: `<strong>商标名称：${res.data.orderName}<br/>客户名称：${res.data.customerName}<br/>手机号：${res.data.phone}<br/>备注：${res.data.content}</strong>`
       });
+      getCount();
     })
     .catch(() => {
       loading.value = false;

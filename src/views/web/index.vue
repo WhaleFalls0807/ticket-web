@@ -19,7 +19,10 @@
           <el-input v-model="dataForm.email" />
         </el-form-item>
         <el-form-item prop="industry" label="行业">
-          <ren-select v-model="dataForm.industry" dict-type="industry"></ren-select>
+          <el-select v-model="dataForm.industry">
+            <el-option v-for="item in industryList" :key="item.value" :value="item.value" :label="item.label"></el-option>
+          </el-select>
+          <!-- <ren-select v-model="dataForm.industry" dict-type="industry"></ren-select> -->
         </el-form-item>
         <el-form-item prop="remark" label="备注">
           <el-input v-model="dataForm.remark" type="textarea" :autosize="{ minRows: 3, maxRows: 6 }" />
@@ -68,6 +71,36 @@ const dataForm = reactive({
   industry: "",
   remark: ""
 });
+
+const industryList = ref([
+  { label: "餐饮行业", value: "餐饮行业" },
+  { label: "珠宝行业", value: "珠宝行业" },
+  { label: "化妆品行业", value: "化妆品行业" },
+  { label: "电子行业", value: "电子行业" },
+  { label: "健身行业", value: "健身行业" },
+  { label: "能源行业", value: "能源行业" },
+  { label: "食品行业", value: "食品行业" },
+  { label: "家居行业", value: "家居行业" },
+  { abel: "互联网行业", value: "互联网行业" },
+  { label: "机械行业", value: "机械行业" },
+  { label: "乐器行业", value: "乐器行业" },
+  { label: "化工行业", value: "化工行业" },
+  { label: "服装行业", value: "服装行业" },
+  { label: "电器行业", value: "电器行业" },
+  { label: "安防行业", value: "安防行业" },
+  { label: "装修行业", value: "装修行业" },
+  { label: "汽车行业", value: "汽车行业" },
+  { label: "建材行业", value: "建材行业" },
+  { label: "纺织行业", value: "纺织行业" },
+  { label: "医疗行业", value: "医疗行业" },
+  { label: "文化行业", value: "文化行业" },
+  { label: "旅游行业", value: "旅游行业" },
+  { label: "钢铁行业", value: "钢铁行业" },
+  { label: "地产行业", value: "地产行业" },
+  { label: "通讯行业", value: "通讯行业" },
+  { label: "摄影行业", value: "摄影行业" },
+  { label: "其他行业", value: "其他行业" }
+]);
 const validatePhone = (rule: any, value: string, callback: (e?: Error) => any): any => {
   if (value && !isPhone(value)) {
     return callback(new Error("手机号格式错误"));

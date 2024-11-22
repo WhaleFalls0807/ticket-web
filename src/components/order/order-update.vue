@@ -1,8 +1,8 @@
 <template>
   <el-dialog
     v-model="visible"
-    :width="isMobile ? '90%' : '50%'"
-    :title="!dataForm.id ? '新增' : '修改'"
+    :width="isMobile ? '90%' : '30%'"
+    title="关联客户"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
     :before-close="close"

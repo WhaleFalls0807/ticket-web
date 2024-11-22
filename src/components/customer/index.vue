@@ -7,7 +7,7 @@
       <!-- <el-form-item label="成交状态">
         <ren-select v-model="state.dataForm.dealStatus" dict-type="dealStatus"></ren-select>
       </el-form-item> -->
-      <el-form-item label="负责人">
+      <el-form-item label="负责人" v-if="state.hasPermission('approve:info')">
         <el-select v-model="state.dataForm.ownerId">
           <el-option v-for="item in ownerUserList" :key="item.id" :label="item.username" :value="item.id" />
         </el-select>
@@ -33,7 +33,11 @@
       ref="tableRef"
     >
       <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
-      <el-table-column prop="customerName" label="客户名称" header-align="center" align="center"></el-table-column>
+      <el-table-column prop="customerName" label="客户名称" header-align="center" align="center">
+        <template v-slot="scope">
+          <el-link type="primary" @click="showDetail(scope.row.id)">{{ scope.row.customerName }}</el-link>
+        </template>
+      </el-table-column>
       <el-table-column prop="enterprise" label="类型" header-align="center" align="center">
         <template v-slot="scope">
           {{ state.getDictLabel("enterprise", scope.row.enterprise) }}
@@ -57,11 +61,11 @@
         align="center"
         width="180"
       ></el-table-column>
-      <el-table-column prop="" label="客户详情" header-align="center" align="center">
+      <!-- <el-table-column prop="" label="客户详情" header-align="center" align="center">
         <template v-slot="scope">
           <el-button @click="showDetail(scope.row.id)">查看</el-button>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
         <template v-slot="scope">
           <el-button v-if="showOperate.update" type="primary" link @click="addOrUpdateHandle(scope.row.id)">
@@ -128,7 +132,7 @@ const view = reactive({
 const state = reactive({ ...useView(view), ...toRefs(view) });
 console.log("state", state);
 const tableRef = ref<TableInstance>();
-const selected = ref()
+const selected = ref();
 const selectionChange = (val: any) => {
   console.log("val", val);
   if (props.selectionRadio && val.length > 1) {
@@ -136,9 +140,9 @@ const selectionChange = (val: any) => {
     const lastObj = val[val.length - 1];
     tableRef.value!.toggleRowSelection(lastObj, true);
     state.dataListSelectionChangeHandle([lastObj]);
-    selected.value = [lastObj]
+    selected.value = [lastObj];
   } else {
-    selected.value = val
+    selected.value = val;
     state.dataListSelectionChangeHandle(val);
   }
 
@@ -152,14 +156,14 @@ const ownerUserList: any = ref([]);
 const getOwnerUserList = () => {
   baseService
     .get(`/sys/user/list/byPerm`, {
-      permission: "customer:page,customer:info"
+      permission: "approve:info"
     })
     .then((res) => {
       ownerUserList.value = res.data;
     });
 };
 onMounted(() => {
-  // getOwnerUserList();
+  getOwnerUserList();
 });
 const showOperate = computed(() => {
   return {

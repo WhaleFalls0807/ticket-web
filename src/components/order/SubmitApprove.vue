@@ -8,10 +8,6 @@
     :before-close="close"
   >
     <el-form :model="dataForm" :rules="rules" ref="dataFormRef" label-width="120px">
-      <el-form-item prop="commitType" label="提交类型">
-        <ren-select v-model="dataForm.commitType" dict-type="commitType"></ren-select>
-      </el-form-item>
-
       <el-form-item prop="reviewUserId" label="审核人">
         <el-select v-model="dataForm.reviewUserId">
           <el-option v-for="item in options" :key="item.id" :label="item.username" :value="item.id" />
@@ -42,14 +38,12 @@ const dataFormRef = ref();
 const loading = ref();
 const dataForm: any = reactive({
   orderId: [],
-  commitType: "",
   reviewUserId: "",
   remark: ""
 });
 
 const options: any = ref([]);
 const rules = ref({
-  commitType: [{ required: true, message: "必填项不能为空", trigger: "blur" }]
   // reviewUserId: [{ required: true, message: "必填项不能为空", trigger: "blur" }]
 });
 

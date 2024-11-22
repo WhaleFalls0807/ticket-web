@@ -16,9 +16,11 @@
                 <p class="name mb10">{{ item.createName }}</p>
                 <p class="time">{{ item.createDate }}</p>
               </div>
-              <el-tag class="ml20">{{ getDictLabel("operateType", item.operateType) }}</el-tag>
+              <el-tag v-if="activityType !== 1" class="ml20">
+                {{ getDictLabel("operateType", item.operateType) }}
+              </el-tag>
             </div>
-            <div>
+            <div v-if="activityType !== 1">
               <svg-icon class="svg-icon" name="icon-edit-fill" @click="addFollow(item)"></svg-icon>
               <svg-icon class="svg-icon ml10" name="icon-delete-fill" @click="deleteFollow(item, index)"></svg-icon>
             </div>
@@ -96,7 +98,12 @@ const deleteFollow = (item: any, index: number) => {
 const getInfo = () => {
   loading.value = true;
   baseService
-    .get(`/activity/list`, { page: state.page, limit: state.limit, associationId: props.associationId })
+    .get(`/activity/list`, {
+      page: state.page,
+      limit: state.limit,
+      associationId: props.associationId,
+      activityType: props.activityType
+    })
     .then((res) => {
       state.followList.push(...res.data.list);
       state.total = res.data.total;

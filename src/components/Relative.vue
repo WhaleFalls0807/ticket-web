@@ -51,7 +51,6 @@ const close = () => {
 };
 // 表单提交
 const dataFormSubmitHandle = () => {
-  console.log(componentRef.value.dataListSelections);
   const Selections = componentRef.value.dataListSelections;
   if (Selections.length === 0) {
     ElMessage.info(`请选择${relative.value?.title}`);

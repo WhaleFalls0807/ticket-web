@@ -6,6 +6,9 @@
       </div>
       <div class="mr10">
         <el-button v-if="showOperate.commit" type="primary" @click="submitOrder">提交审核</el-button>
+        <el-button v-if="showOperate.commit && detail.orderStatus === 7" type="primary" @click="submitOrder">
+          成单
+        </el-button>
         <el-button v-if="showOperate.grab" type="primary" link @click="emit('grabOrder', detail.orderName, detail.id)">
           抢单
         </el-button>
@@ -50,8 +53,11 @@
                         <div class="section-mark"></div>
                         <div class="section-title">基本信息</div>
                       </div>
-                      <el-button class="fr" type="primary" v-if="showOperate.update" @click="addOrUpdateHandle">
+                      <!-- <el-button class="fr" type="primary" v-if="showOperate.update" @click="addOrUpdateHandle">
                         编辑
+                      </el-button> -->
+                      <el-button class="fr" type="primary" v-if="showOperate.update" @click="relativeCustomer">
+                        关联客户
                       </el-button>
                     </div>
                     <el-form-item label="客户名称">
@@ -129,7 +135,7 @@
                     <div class="section-header">
                       <div class="flex align-center">
                         <div class="section-mark"></div>
-                        <div class="section-title">再次提交资料</div>
+                        <div class="section-title">二次提交资料</div>
                       </div>
                       <el-button class="fr" type="primary" @click="addSecond" v-if="showOperate.update">
                         <!--  v-if="detail.orderStatus == 3 || detail.orderStatus == 5 || detail.orderStatus == 6" -->
@@ -212,6 +218,9 @@
             <el-tab-pane label="跟进记录">
               <Activity :associationId="detail.id" :activityType="3" />
             </el-tab-pane>
+            <el-tab-pane label="操作记录">
+              <Activity :associationId="detail.id" :activityType="1" />
+            </el-tab-pane>
           </el-tabs>
         </div>
       </template>
@@ -224,6 +233,9 @@
 
   <!-- 提交审核 -->
   <SubmitApprove ref="submitApproveRef" @refreshDataList="getInfo(detail.id)" />
+
+  <!-- 关联客户 -->
+  <Relative v-if="relativeVisible" ref="relativeRef" type="customer" @getSelected="getSelected" />
 </template>
 
 <script lang="ts" setup>
@@ -244,7 +256,7 @@ import useUtils from "@/hooks/useUtils";
 import SubmitApprove from "./SubmitApprove.vue";
 import SelectRelative from "@/components/SelectRelative.vue";
 import AddOrUpdate from "./order-update.vue";
-
+import Relative from "@/components/Relative.vue";
 const { getDictLabel } = useUtils();
 
 const isMobile = useMediaQuery("(max-width: 768px)");
@@ -287,6 +299,28 @@ const detail: any = reactive({
 const addOrUpdateRef = ref();
 const addOrUpdateHandle = () => {
   addOrUpdateRef.value.init(detail);
+};
+// 关联客户
+const relativeVisible = ref(false);
+const relativeRef = ref();
+const relativeCustomer = () => {
+  relativeVisible.value = true;
+  nextTick(() => {
+    relativeRef.value.init();
+  });
+};
+// 获取关联的客户信息
+const getSelected = (s: any) => {
+  const fn = baseService.post("/order/info/add", { id: detail.id, customerId: s.id });
+  fn.then((res) => {
+    ElMessage.success({
+      message: "关联成功",
+      duration: 500,
+      onClose: () => {
+        getInfo(detail.id);
+      }
+    });
+  });
 };
 // 首次提交
 const addFirstRef = ref();
