@@ -2,6 +2,9 @@
 <template>
   <div class="mod-oss__oss">
     <el-form :inline="true" :model="state.dataForm">
+      <el-form-item>
+        <el-button @click="state.getDataList()">查询</el-button>
+      </el-form-item>
       <el-form-item v-if="state.hasPermission('documents:upload')">
         <el-button type="primary" @click="addOrUpdate()">上传文件</el-button>
       </el-form-item>
@@ -19,7 +22,17 @@
     >
       <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
       <el-table-column prop="fileName" label="文件" header-align="center" align="center"></el-table-column>
-      <el-table-column prop="count" label="下载次数" header-align="center" align="center"></el-table-column>
+      <el-table-column
+        prop="count"
+        label="下载次数"
+        header-align="center"
+        align="center"
+        v-if="state.hasPermission('documents:details')"
+      >
+        <template v-slot="scope">
+          <el-link type="primary" @click="downloadDetail(scope.row.id)">{{ scope.row.count }}</el-link>
+        </template>
+      </el-table-column>
       <el-table-column
         prop="createDate"
         label="创建时间"
@@ -30,7 +43,7 @@
       ></el-table-column>
       <el-table-column prop="type" label="文书类型" header-align="center" align="center">
         <template v-slot="scope">
-          {{ state.getDictLabel("documentType", scope.row.documentType) }}
+          {{ state.getDictLabel("documentType", scope.row.type) }}
         </template>
       </el-table-column>
       <el-table-column prop="createDate" label="创建时间" header-align="center" align="center"></el-table-column>
@@ -39,10 +52,20 @@
       <el-table-column prop="remark" label="备注" header-align="center" align="center"></el-table-column>
       <el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
         <template v-slot="scope">
-          <el-button type="primary" link @click="state.exportHandle()">导出</el-button>
-          <el-button type="primary" link @click="addOrUpdate(scope.row)">删除</el-button>
-          <el-button type="primary" link @click="state.deleteHandle(scope.row.id)">删除</el-button>
-          <el-button type="primary" link @click="downloadDetail(scope.row.id)">查看下载详情</el-button>
+          <el-button
+            type="primary"
+            link
+            v-if="state.hasPermission('documents:download')"
+            @click="handleDownload(scope.row)"
+          >
+            导出
+          </el-button>
+          <el-button type="primary" link v-if="state.hasPermission('documents:update')" @click="addOrUpdate(scope.row)">
+            修改
+          </el-button>
+          <el-button type="primary" link v-if="state.hasPermission('documents:delete')" @click="state.deleteHandle()">
+            删除
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -66,6 +89,10 @@ import useView from "@/hooks/useView";
 import { nextTick, reactive, ref, toRefs } from "vue";
 import DownloadDetail from "./DownloadDetail.vue";
 import DocumentAdd from "./document-add.vue";
+import useUtils from "@/hooks/useUtils";
+import baseService from "@/service/baseService";
+
+const { downloadFile } = useUtils();
 const downloadRef = ref();
 
 const view = reactive({
@@ -93,6 +120,13 @@ const downloadDetail = (id: any) => {
   state.downloadVisible = true;
   nextTick(() => {
     downloadRef.value.init(id);
+  });
+};
+// 下载
+const handleDownload = (item: any) => {
+  baseService.get(`/corDocument/download/${item.id}`).then(() => {
+    state.getDataList();
+    downloadFile(item.filePath);
   });
 };
 </script>

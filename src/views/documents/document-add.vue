@@ -45,9 +45,12 @@ import { ElMessage } from "element-plus";
 import { useMediaQuery } from "@vueuse/core";
 import Upload from "@/components/Upload.vue";
 import FilePreview from "@/components/FilePreview.vue";
-import { nanoid } from "nanoid"; // 引入 nanoid
+import { customAlphabet } from "nanoid";
+// 自定义生成器，只包含数字
+const generateNumberId = customAlphabet("0123456789", 16);
+
 // 定义一个唯一 ID
-const uniqueId = ref(nanoid());
+const uniqueId = ref(generateNumberId());
 
 const isMobile = useMediaQuery("(max-width: 768px)");
 
@@ -98,7 +101,7 @@ const dataFormSubmitHandle = () => {
         message: "成功",
         duration: 500,
         onClose: () => {
-          visible.value = false;
+          close()
           emit("refreshDataList");
         }
       });
@@ -116,7 +119,7 @@ const uploadHandle = () => {
 // 设置上传的内容
 const setDataForm = (value: any) => {
   dataForm.filePath = value;
-  dataForm.fileName = value.substring(value.lastIndexOf("/") + 1, value.lastIndexOf("."));
+  dataForm.fileName = value.substring(value.lastIndexOf("/") + 1);
 };
 defineExpose({
   init

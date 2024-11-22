@@ -105,8 +105,7 @@
                         :file="{
                           url: detail.contract,
                           fileName: detail.contract.substring(
-                            detail.contract.lastIndexOf('/') + 1,
-                            detail.contract.lastIndexOf('.')
+                            detail.contract.lastIndexOf('/') + 1
                           )
                         }"
                       />
@@ -153,8 +152,7 @@
                         :file="{
                           url: detail.idcard,
                           fileName: detail.idcard.substring(
-                            detail.idcard.lastIndexOf('/') + 1,
-                            detail.idcard.lastIndexOf('.')
+                            detail.idcard.lastIndexOf('/') + 1
                           )
                         }"
                       />
@@ -166,8 +164,7 @@
                         :file="{
                           url: detail.applyBook,
                           fileName: detail.applyBook.substring(
-                            detail.applyBook.lastIndexOf('/') + 1,
-                            detail.applyBook.lastIndexOf('.')
+                            detail.applyBook.lastIndexOf('/') + 1
                           )
                         }"
                       />
@@ -179,8 +176,7 @@
                         :file="{
                           url: detail.commission,
                           fileName: detail.commission.substring(
-                            detail.commission.lastIndexOf('/') + 1,
-                            detail.commission.lastIndexOf('.')
+                            detail.commission.lastIndexOf('/') + 1
                           )
                         }"
                       />
@@ -192,8 +188,7 @@
                         :file="{
                           url: detail.businessLicense,
                           fileName: detail.businessLicense.substring(
-                            detail.businessLicense.lastIndexOf('/') + 1,
-                            detail.businessLicense.lastIndexOf('.')
+                            detail.businessLicense.lastIndexOf('/') + 1
                           )
                         }"
                       />
@@ -205,8 +200,7 @@
                         :file="{
                           url: detail.sealedContract,
                           fileName: detail.sealedContract.substring(
-                            detail.sealedContract.lastIndexOf('/') + 1,
-                            detail.sealedContract.lastIndexOf('.')
+                            detail.sealedContract.lastIndexOf('/') + 1
                           )
                         }"
                       />

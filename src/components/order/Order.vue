@@ -4,10 +4,10 @@
       <el-form-item>
         <el-input v-model="state.dataForm.keyword" placeholder="关键字" clearable></el-input>
       </el-form-item>
-      <el-form-item v-if="state.dataForm.hasOwnProperty('orderStatus')">
+      <el-form-item v-if="type !== 'seas'">
         <ren-select v-model="state.dataForm.orderStatus" dict-type="orderStatus" placeholder="工单状态"></ren-select>
       </el-form-item>
-      <el-form-item label="负责人" v-if="state.hasPermission('approve:info')">
+      <el-form-item label="负责人" v-if="type !== 'seas' && state.hasPermission('sys:user:page')">
         <el-select v-model="state.dataForm.ownerId">
           <el-option v-for="item in ownerUserList" :key="item.id" :label="item.username" :value="item.id" />
         </el-select>
@@ -232,13 +232,10 @@ const ownerUserList: any = ref([]);
 const getOwnerUserList = () => {
   let permission = "";
 
-  if (
-    props.type === "todo" ||
-    props.type === "completed" ||
-    props.type === "awaitingApproval" ||
-    props.type === "approved"
-  ) {
+  if (props.type === "todo" || props.type === "completed") {
     permission = "todo:list";
+  } else if (props.type === "awaitingApproval" || props.type === "approved") {
+    permission = "approve:list";
   }
   if (permission) {
     baseService

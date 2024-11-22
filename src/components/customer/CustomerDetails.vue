@@ -68,7 +68,9 @@
             <el-tab-pane label="跟进记录">
               <Activity :associationId="detail.id" :activityType="2" />
             </el-tab-pane>
-          
+            <el-tab-pane label="操作记录">
+              <Activity :associationId="detail.id" :activityType="1" />
+            </el-tab-pane>
           </el-tabs>
         </div>
       </template>

@@ -10,12 +10,7 @@
     <el-form :model="dataForm" :rules="rules" ref="dataFormRef" label-width="120px">
       <el-form-item prop="logo" label="logo">
         <el-button v-if="!dataForm.logo" @click="uploadHandle('logo')">上传</el-button>
-        <ImgPreview
-          v-else
-          :url="dataForm.logo"
-          :delete="true"
-          @deleteImg="dataForm.logo = ''"
-        />
+        <ImgPreview v-else :url="dataForm.logo" :delete="true" @deleteImg="dataForm.logo = ''" />
       </el-form-item>
       <el-form-item prop="idcard" label="身份证">
         <el-button v-if="!dataForm.idcard" @click="uploadHandle('idcard')">上传</el-button>
@@ -23,7 +18,7 @@
           v-else
           :file="{
             url: dataForm.idcard,
-            fileName: dataForm.idcard.substring(dataForm.idcard.lastIndexOf('/') + 1, dataForm.idcard.lastIndexOf('.'))
+            fileName: dataForm.idcard.substring(dataForm.idcard.lastIndexOf('/') + 1)
           }"
           :download="false"
           :delete="true"
@@ -36,10 +31,7 @@
           v-else
           :file="{
             url: dataForm.applyBook,
-            fileName: dataForm.applyBook.substring(
-              dataForm.applyBook.lastIndexOf('/') + 1,
-              dataForm.applyBook.lastIndexOf('.')
-            )
+            fileName: dataForm.applyBook.substring(dataForm.applyBook.lastIndexOf('/') + 1)
           }"
           :download="false"
           :delete="true"
@@ -52,10 +44,7 @@
           v-else
           :file="{
             url: dataForm.commission,
-            fileName: dataForm.commission.substring(
-              dataForm.commission.lastIndexOf('/') + 1,
-              dataForm.commission.lastIndexOf('.')
-            )
+            fileName: dataForm.commission.substring(dataForm.commission.lastIndexOf('/') + 1)
           }"
           :download="false"
           :delete="true"
@@ -68,10 +57,7 @@
           v-else
           :file="{
             url: dataForm.businessLicense,
-            fileName: dataForm.businessLicense.substring(
-              dataForm.businessLicense.lastIndexOf('/') + 1,
-              dataForm.businessLicense.lastIndexOf('.')
-            )
+            fileName: dataForm.businessLicense.substring(dataForm.businessLicense.lastIndexOf('/') + 1)
           }"
           :download="false"
           :delete="true"
@@ -84,10 +70,7 @@
           v-else
           :file="{
             url: dataForm.sealedContract,
-            fileName: dataForm.sealedContract.substring(
-              dataForm.sealedContract.lastIndexOf('/') + 1,
-              dataForm.sealedContract.lastIndexOf('.')
-            )
+            fileName: dataForm.sealedContract.substring(dataForm.sealedContract.lastIndexOf('/') + 1)
           }"
           :download="false"
           :delete="true"
@@ -166,7 +149,7 @@ const dataFormSubmitHandle = () => {
         message: "成功",
         duration: 500,
         onClose: () => {
-          visible.value = false;
+          close();
           emit("refreshDataList");
         }
       });

@@ -68,7 +68,7 @@ const successHandle = (res: IObject, file: IObject, list: IObject[]) => {
       message: "成功",
       duration: 500,
       onClose: () => {
-        visible.value = false;
+        close();
         emit("refreshDataList", res.data);
       }
     });

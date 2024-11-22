@@ -48,7 +48,7 @@ const init = (ids: string[]) => {
   visible.value = true;
   dataForm.orderIds = ids;
 
-  // getAssign();
+  getAssign();
 };
 
 // 获取信息
@@ -73,7 +73,7 @@ const dataFormSubmitHandle = () => {
         message: "成功",
         duration: 500,
         onClose: () => {
-          visible.value = false;
+          close();
           emit("refreshDataList");
         }
       });

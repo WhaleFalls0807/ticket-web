@@ -27,10 +27,7 @@
           v-else
           :file="{
             url: dataForm.contract,
-            fileName: dataForm.contract.substring(
-              dataForm.contract.lastIndexOf('/') + 1,
-              dataForm.contract.lastIndexOf('.')
-            )
+            fileName: dataForm.contract.substring(dataForm.contract.lastIndexOf('/') + 1)
           }"
           :download="false"
           :delete="true"
@@ -164,7 +161,7 @@ const dataFormSubmitHandle = () => {
         message: "成功",
         duration: 500,
         onClose: () => {
-          visible.value = false;
+          close();
           emit("refreshDataList");
         }
       });

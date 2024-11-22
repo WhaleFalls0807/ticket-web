@@ -85,9 +85,7 @@ const validateEmail = (rule: any, value: string, callback: (e?: Error) => any): 
   callback();
 };
 const rules = ref({
-  orderName: [
-    { required: true, message: "必填项不能为空", trigger: "blur" },
-  ],
+  orderName: [{ required: true, message: "必填项不能为空", trigger: "blur" }],
   customerName: [
     { required: true, message: "必填项不能为空", trigger: "blur" },
     { validator: validateName, trigger: "blur" }
@@ -124,7 +122,7 @@ const dataFormSubmitHandle = () => {
         message: "成功",
         duration: 500,
         onClose: () => {
-          visible.value = false;
+          close();
         }
       });
       close();

@@ -41,7 +41,7 @@
       <el-form-item prop="remark" label="备注">
         <el-input v-model="dataForm.remark" type="textarea" :autosize="{ minRows: 3, maxRows: 6 }" />
       </el-form-item>
-      <el-form-item prop="ownerUserId" label="负责人">
+      <el-form-item prop="ownerUserId" label="负责人" v-if="hasPermission('sys:user:page')">
         <el-select v-model="dataForm.ownerUserId">
           <el-option v-for="item in ownerUserList" :key="item.id" :label="item.username" :value="item.id" />
         </el-select>
@@ -64,7 +64,8 @@ import { ElMessage } from "element-plus";
 import { useMediaQuery } from "@vueuse/core";
 import SelectRelative from "@/components/SelectRelative.vue";
 import { isMobile as isPhone, isEmail } from "@/utils/utils";
-
+import useUtils from "@/hooks/useUtils";
+const { hasPermission } = useUtils();
 const isMobile = useMediaQuery("(max-width: 768px)");
 
 const props = defineProps(["ownerUserList"]);
@@ -171,7 +172,7 @@ const dataFormSubmitHandle = () => {
         message: "成功",
         duration: 500,
         onClose: () => {
-          visible.value = false;
+          close();
           emit("refreshDataList");
         }
       });

@@ -7,7 +7,7 @@
       <!-- <el-form-item label="成交状态">
         <ren-select v-model="state.dataForm.dealStatus" dict-type="dealStatus"></ren-select>
       </el-form-item> -->
-      <el-form-item label="负责人" v-if="state.hasPermission('approve:info')">
+      <el-form-item label="负责人" v-if="state.hasPermission('sys:user:page')">
         <el-select v-model="state.dataForm.ownerId">
           <el-option v-for="item in ownerUserList" :key="item.id" :label="item.username" :value="item.id" />
         </el-select>
@@ -156,7 +156,7 @@ const ownerUserList: any = ref([]);
 const getOwnerUserList = () => {
   baseService
     .get(`/sys/user/list/byPerm`, {
-      permission: "approve:info"
+      permission: "todo:list"
     })
     .then((res) => {
       ownerUserList.value = res.data;
