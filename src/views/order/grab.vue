@@ -18,25 +18,64 @@
         <span class="mr10">已抢单数量</span>
         <el-tag>{{ state.grapedCount }}</el-tag>
       </div>
-      <el-button type="primary" @click="grabOrder" class="grab-btn" :loading="loading">抢单</el-button>
+      <el-button
+        type="primary"
+        @click="grabOrder"
+        class="grab-btn"
+        :loading="loading"
+        :disabled="state.remainCount == 0"
+      >
+        抢单
+      </el-button>
     </div>
   </div>
-  <Order type="grab" getDataListURL="/order/all/page" />
+  <div>
+    <template v-if="hasPermission('sys:user:page')">
+      <Order type="grab" getDataListURL="/order/all/page" />
+    </template>
+    <template v-else>
+      <el-table :data="state.virtualTableData" border style="width: 100%">
+        <el-table-column label="工单名称" prop="orderName" header-align="center" align="center"></el-table-column>
+        <el-table-column label="客户名称" prop="customerName" header-align="center" align="center"></el-table-column>
+        <el-table-column label="手机号" prop="phone" header-align="center" align="center"></el-table-column>
+        <el-table-column label="备注" prop="remark" header-align="center" align="center"></el-table-column>
+      </el-table>
+    </template>
+  </div>
 </template>
 <script lang="ts" setup>
 import { ElMessage, ElNotification } from "element-plus";
 import baseService from "@/service/baseService";
 import { reactive, ref, onMounted, onBeforeUnmount, watch, h } from "vue";
 import Order from "@/components/order/Order.vue";
-
+import useUtils from "@/hooks/useUtils";
+const { hasPermission } = useUtils();
 const loading = ref(false);
 let state: any = reactive({
-  remainCount: "",
-  grapedCount: 10,
-  totalCount: 100,
+  remainCount: 0,
+  grapedCount: 0,
+  totalCount: 0,
   refreshTime: "3",
-  timerId: ""
+  timerId: "",
+  virtualTableData: []
 });
+watch(
+  () => state.remainCount,
+  (value) => {
+    state.virtualTableData = [];
+
+    let length = Math.min(10, value);
+
+    for (let i = 0; i < length; i++) {
+      state.virtualTableData.push({
+        orderName: "******",
+        customerName: "******",
+        phone: "******",
+        remark: "******"
+      });
+    }
+  }
+);
 // 抢单
 const grabOrder = () => {
   loading.value = true;
@@ -48,12 +87,17 @@ const grabOrder = () => {
         message: "抢单成功",
         duration: 500
       });
-      //
-      ElNotification({
-        title: "工单信息",
-        dangerouslyUseHTMLString: true,
-        message: `<strong>商标名称：${res.data.orderName}<br/>客户名称：${res.data.customerName}<br/>手机号：${res.data.phone}<br/>备注：${res.data.content}</strong>`
-      });
+      state.virtualTableData[0] = {
+        orderName: res.data.orderName,
+        customerName: res.data.customerName,
+        phone: res.data.phone,
+        remark: res.data.content
+      };
+      // ElNotification({
+      //   title: "工单信息",
+      //   dangerouslyUseHTMLString: true,
+      //   message: `<strong>商标名称：${res.data.orderName}<br/>客户名称：${res.data.customerName}<br/>手机号：${res.data.phone}<br/>备注：${res.data.content}</strong>`
+      // });
       getCount();
     })
     .catch(() => {

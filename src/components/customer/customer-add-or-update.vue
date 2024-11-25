@@ -75,7 +75,7 @@ const visible = ref(false);
 const dataFormRef = ref();
 
 let oldCustomerName = "";
-const dataForm = reactive({
+const dataForm: any = reactive({
   id: "",
   customerName: "",
   company: "",
@@ -149,6 +149,12 @@ const init = (id?: number) => {
 
   if (id) {
     getInfo(id);
+  } else {
+    let str = localStorage.getItem("addCustomerParams");
+    if (str) {
+      const params: any = JSON.parse(str);
+      Object.assign(dataForm, params);
+    }
   }
 };
 

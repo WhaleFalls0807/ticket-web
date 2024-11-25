@@ -1,7 +1,13 @@
 <template>
   <el-dialog v-model="visible" title="查看下载详情" :close-on-click-modal="false" :close-on-press-escape="false">
     <el-table v-loading="state.dataListLoading" :data="state.dataList" border style="width: 100%">
-      <el-table-column prop="name" label="名称" header-align="center" align="center"></el-table-column>
+      <el-table-column prop="username" label="姓名" header-align="center" align="center"></el-table-column>
+      <el-table-column label="状态">
+        <template v-slot="scope">
+          <el-tag v-if="scope.row.success === 1" type="success">下载成功</el-tag>
+          <span v-if="scope.row.success !== 1" type="success">{{ scope.row.failedReason }}</span>
+        </template>
+      </el-table-column>
       <el-table-column
         prop="createDate"
         label="下载时间"
@@ -27,7 +33,7 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref, toRefs } from "vue";
+import { reactive, ref, toRefs, watch } from "vue";
 
 import useView from "@/hooks/useView";
 
@@ -36,18 +42,25 @@ const emit = defineEmits(["refreshDataList"]);
 const visible = ref(false);
 
 const view = reactive({
-  getDataListURL: "/sys/oss/page",
+  getDataListURL: "/corDocument/download/page",
   getDataListIsPage: true,
-  dataForm: {}
+  dataForm: {
+    associationId: ""
+  }
 });
 
 const state: any = reactive({ ...useView(view), ...toRefs(view) });
 
 const init = (id: any) => {
   visible.value = true;
-  state.dataForm.id = id;
+  state.dataForm.associationId = id;
 };
-
+watch(
+  () => state.dataForm.associationId,
+  () => {
+    state.getDataList();
+  }
+);
 defineExpose({
   init
 });

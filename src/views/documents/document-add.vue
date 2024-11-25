@@ -9,7 +9,7 @@
   >
     <el-form :model="dataForm" :rules="rules" ref="dataFormRef" label-width="120px">
       <el-form-item prop="filePath" label="文件">
-        <el-button v-if="!dataForm.filePath" @click="uploadHandle()">上传</el-button>
+        <el-button v-if="!dataForm.filePath" @click="uploadHandle()">上传文件</el-button>
         <FilePreview
           v-else
           :file="{

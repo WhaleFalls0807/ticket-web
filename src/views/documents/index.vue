@@ -30,24 +30,29 @@
         v-if="state.hasPermission('documents:details')"
       >
         <template v-slot="scope">
-          <el-link type="primary" @click="downloadDetail(scope.row.id)">{{ scope.row.count }}</el-link>
+          <template v-if="scope.row.count == 0">
+            <span>
+              {{ scope.row.count }}
+            </span>
+          </template>
+          <template v-else>
+            <el-link type="primary" @click="downloadDetail(scope.row.id)">{{ scope.row.count }}</el-link>
+          </template>
         </template>
       </el-table-column>
-      <el-table-column
-        prop="createDate"
-        label="创建时间"
-        sortable="custom"
-        header-align="center"
-        align="center"
-        width="180"
-      ></el-table-column>
       <el-table-column prop="type" label="文书类型" header-align="center" align="center">
         <template v-slot="scope">
           {{ state.getDictLabel("documentType", scope.row.type) }}
         </template>
       </el-table-column>
-      <el-table-column prop="createDate" label="创建时间" header-align="center" align="center"></el-table-column>
-      <el-table-column prop="creator" label="创建者" header-align="center" align="center"></el-table-column>
+      <el-table-column
+        prop="createDate"
+        label="创建时间"
+        header-align="center"
+        align="center"
+        width="180"
+      ></el-table-column>
+      <el-table-column prop="createName" label="创建者" header-align="center" align="center"></el-table-column>
       <el-table-column prop="updater" label="更新者" header-align="center" align="center"></el-table-column>
       <el-table-column prop="remark" label="备注" header-align="center" align="center"></el-table-column>
       <el-table-column label="操作" fixed="right" header-align="center" align="center" width="150">
@@ -63,7 +68,12 @@
           <el-button type="primary" link v-if="state.hasPermission('documents:update')" @click="addOrUpdate(scope.row)">
             修改
           </el-button>
-          <el-button type="primary" link v-if="state.hasPermission('documents:delete')" @click="state.deleteHandle()">
+          <el-button
+            type="primary"
+            link
+            v-if="state.hasPermission('documents:delete')"
+            @click="state.deleteHandle(scope.row.id)"
+          >
             删除
           </el-button>
         </template>
@@ -98,7 +108,7 @@ const downloadRef = ref();
 const view = reactive({
   getDataListURL: "/corDocument/page",
   getDataListIsPage: true,
-  deleteURL: "/",
+  deleteURL: "/corDocument/del",
   deleteIsBatch: true,
   exportURL: "/corDocument/download",
   dataForm: {},

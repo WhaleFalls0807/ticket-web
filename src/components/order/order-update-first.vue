@@ -9,7 +9,7 @@
   >
     <el-form :model="dataForm" :rules="rules" ref="dataFormRef" label-width="120px">
       <el-form-item prop="payType" label="支付类型">
-        <el-button v-if="!dataForm.payType" @click="uploadHandle('payType')">上传</el-button>
+        <el-button v-if="!dataForm.payType" @click="uploadHandle('payType')">上传图片</el-button>
         <ImgPreview v-else :url="dataForm.payType" :delete="true" @deleteImg="dataForm.payType = ''" />
       </el-form-item>
       <el-form-item prop="officialPrice" label="官费">
@@ -22,7 +22,7 @@
         <el-input-number v-model="dataForm.totalPrice" disabled />
       </el-form-item>
       <el-form-item prop="contract" label="原始合同">
-        <el-button v-if="!dataForm.contract" @click="uploadHandle('contract')">上传</el-button>
+        <el-button v-if="!dataForm.contract" @click="uploadHandle('contract')">上传文件</el-button>
         <FilePreview
           v-else
           :file="{

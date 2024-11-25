@@ -9,11 +9,11 @@
   >
     <el-form :model="dataForm" :rules="rules" ref="dataFormRef" label-width="120px">
       <el-form-item prop="logo" label="logo">
-        <el-button v-if="!dataForm.logo" @click="uploadHandle('logo')">上传</el-button>
+        <el-button v-if="!dataForm.logo" @click="uploadHandle('logo')">上传图片</el-button>
         <ImgPreview v-else :url="dataForm.logo" :delete="true" @deleteImg="dataForm.logo = ''" />
       </el-form-item>
       <el-form-item prop="idcard" label="身份证">
-        <el-button v-if="!dataForm.idcard" @click="uploadHandle('idcard')">上传</el-button>
+        <el-button v-if="!dataForm.idcard" @click="uploadHandle('idcard')">上传文件</el-button>
         <FilePreview
           v-else
           :file="{
@@ -26,7 +26,7 @@
         />
       </el-form-item>
       <el-form-item prop="applyBook" label="申请书">
-        <el-button v-if="!dataForm.applyBook" @click="uploadHandle('applyBook')">上传</el-button>
+        <el-button v-if="!dataForm.applyBook" @click="uploadHandle('applyBook')">上传文件</el-button>
         <FilePreview
           v-else
           :file="{
@@ -39,7 +39,7 @@
         />
       </el-form-item>
       <el-form-item prop="commission" label="委托书">
-        <el-button v-if="!dataForm.commission" @click="uploadHandle('commission')">上传</el-button>
+        <el-button v-if="!dataForm.commission" @click="uploadHandle('commission')">上传文件</el-button>
         <FilePreview
           v-else
           :file="{
@@ -52,7 +52,7 @@
         />
       </el-form-item>
       <el-form-item prop="businessLicense" label="营业执照">
-        <el-button v-if="!dataForm.businessLicense" @click="uploadHandle('businessLicense')">上传</el-button>
+        <el-button v-if="!dataForm.businessLicense" @click="uploadHandle('businessLicense')">上传文件</el-button>
         <FilePreview
           v-else
           :file="{
@@ -65,7 +65,7 @@
         />
       </el-form-item>
       <el-form-item prop="sealedContract" label="盖章合同">
-        <el-button v-if="!dataForm.sealedContract" @click="uploadHandle('sealedContract')">上传</el-button>
+        <el-button v-if="!dataForm.sealedContract" @click="uploadHandle('sealedContract')">上传文件</el-button>
         <FilePreview
           v-else
           :file="{
@@ -118,14 +118,12 @@ const dataForm: any = reactive({
 });
 
 const rules = ref({
-  orderName: [{ required: true, message: "必填项不能为空", trigger: "blur" }],
-  content: [{ required: true, message: "必填项不能为空", trigger: "blur" }],
-  payType: [{ required: true, message: "必填项不能为空", trigger: "blur" }],
-  officialPrice: [{ required: true, message: "必填项不能为空", trigger: "blur" }],
-  agencyPrice: [{ required: true, message: "必填项不能为空", trigger: "blur" }],
-  totalPrice: [{ required: true, message: "必填项不能为空", trigger: "blur" }],
-  applyMethod: [{ required: true, message: "必填项不能为空", trigger: "blur" }],
-  commitOption: [{ required: true, message: "必填项不能为空", trigger: "blur" }]
+  logo: [{ required: true, message: "必填项不能为空", trigger: "blur" }],
+  idcard: [{ required: true, message: "必填项不能为空", trigger: "blur" }],
+  applyBook: [{ required: true, message: "必填项不能为空", trigger: "blur" }],
+  commission: [{ required: true, message: "必填项不能为空", trigger: "blur" }],
+  businessLicense: [{ required: true, message: "必填项不能为空", trigger: "blur" }],
+  sealedContract: [{ required: true, message: "必填项不能为空", trigger: "blur" }]
 });
 const close = () => {
   visible.value = false;

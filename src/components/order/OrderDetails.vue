@@ -5,8 +5,10 @@
         {{ detail.orderName }}
       </div>
       <div class="mr10">
-        <el-button v-if="showOperate.commit" type="primary" @click="submitOrder">提交审核</el-button>
-        <el-button v-if="showOperate.commit && detail.orderStatus === 7" type="primary" @click="submitOrder">
+        <el-button v-if="showOperate.commit && detail.orderStatus !== 7" type="primary" @click="submitOrder">
+          提交审核
+        </el-button>
+        <el-button v-if="showOperate.commit && detail.orderStatus === 7" type="primary" @click="completedOrder">
           成单
         </el-button>
         <el-button v-if="showOperate.grab" type="primary" link @click="emit('grabOrder', detail.orderName, detail.id)">
@@ -104,9 +106,7 @@
                         v-else
                         :file="{
                           url: detail.contract,
-                          fileName: detail.contract.substring(
-                            detail.contract.lastIndexOf('/') + 1
-                          )
+                          fileName: detail.contract.substring(detail.contract.lastIndexOf('/') + 1)
                         }"
                       />
                     </el-form-item>
@@ -151,9 +151,7 @@
                         v-else
                         :file="{
                           url: detail.idcard,
-                          fileName: detail.idcard.substring(
-                            detail.idcard.lastIndexOf('/') + 1
-                          )
+                          fileName: detail.idcard.substring(detail.idcard.lastIndexOf('/') + 1)
                         }"
                       />
                     </el-form-item>
@@ -163,9 +161,7 @@
                         v-else
                         :file="{
                           url: detail.applyBook,
-                          fileName: detail.applyBook.substring(
-                            detail.applyBook.lastIndexOf('/') + 1
-                          )
+                          fileName: detail.applyBook.substring(detail.applyBook.lastIndexOf('/') + 1)
                         }"
                       />
                     </el-form-item>
@@ -175,9 +171,7 @@
                         v-else
                         :file="{
                           url: detail.commission,
-                          fileName: detail.commission.substring(
-                            detail.commission.lastIndexOf('/') + 1
-                          )
+                          fileName: detail.commission.substring(detail.commission.lastIndexOf('/') + 1)
                         }"
                       />
                     </el-form-item>
@@ -187,9 +181,7 @@
                         v-else
                         :file="{
                           url: detail.businessLicense,
-                          fileName: detail.businessLicense.substring(
-                            detail.businessLicense.lastIndexOf('/') + 1
-                          )
+                          fileName: detail.businessLicense.substring(detail.businessLicense.lastIndexOf('/') + 1)
                         }"
                       />
                     </el-form-item>
@@ -199,9 +191,7 @@
                         v-else
                         :file="{
                           url: detail.sealedContract,
-                          fileName: detail.sealedContract.substring(
-                            detail.sealedContract.lastIndexOf('/') + 1
-                          )
+                          fileName: detail.sealedContract.substring(detail.sealedContract.lastIndexOf('/') + 1)
                         }"
                       />
                     </el-form-item>
@@ -234,7 +224,7 @@
 
 <script lang="ts" setup>
 import { reactive, ref, nextTick, toRefs, computed } from "vue";
-import { ElMessage } from "element-plus";
+import { ElMessage, ElMessageBox } from "element-plus";
 import baseService from "@/service/baseService";
 import SvgIcon from "@/components/base/svg-icon";
 import Upload from "@/components/Upload.vue";
@@ -300,7 +290,19 @@ const relativeRef = ref();
 const relativeCustomer = () => {
   relativeVisible.value = true;
   nextTick(() => {
-    relativeRef.value.init();
+    if (!detail.customerId) {
+      const { customerName, phone, email, industry } = detail;
+      const params = {
+        customerName,
+        phone,
+        email,
+        industry
+      };
+      localStorage.setItem("addCustomerParams", JSON.stringify(params));
+      relativeRef.value.init();
+    } else {
+      relativeRef.value.init();
+    }
   });
 };
 // 获取关联的客户信息
@@ -324,8 +326,8 @@ const addFirst = () => {
 
 // 二次提交
 const addSecondRef = ref();
-const addSecond = (id?: number) => {
-  addSecondRef.value.init(id);
+const addSecond = () => {
+  addSecondRef.value.init(detail);
 };
 
 // 提交审核
@@ -336,6 +338,40 @@ const submitOrder = () => {
   //   ElMessage.error("点击下方“填写资料”按钮，把需要的资料填写完整后再提交审核！");
   // 首次提交按钮
   // }
+};
+// 成单
+const completedOrder = () => {
+  ElMessageBox.confirm("确定进行[成单]操作?", "提示", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    type: "warning"
+  })
+    .then(() => {
+      baseService
+        .post("/order/status/change", {
+          orderId: detail.id,
+          operateType: 3
+        })
+        .then((res) => {
+          ElMessage.success({
+            message: "已成单",
+            duration: 500,
+            onClose: () => {
+              getInfo(detail.id);
+              emit("refreshDataList");
+            }
+          });
+        })
+        .catch(() => {
+          ElMessage.error({
+            message: "操作失败",
+            duration: 500
+          });
+        });
+    })
+    .catch(() => {
+      //
+    });
 };
 const init = (id: string) => {
   drawer.value = true;

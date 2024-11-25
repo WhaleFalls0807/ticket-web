@@ -5,6 +5,7 @@
     :title="relative?.title"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
+    :before-close="close"
   >
     <component :is="relative?.componentName" :selectionRadio="true" ref="componentRef"></component>
     <template v-slot:footer>
@@ -48,6 +49,7 @@ const init = () => {
 
 const close = () => {
   visible.value = false;
+  localStorage.removeItem("addCustomerParams");
 };
 // 表单提交
 const dataFormSubmitHandle = () => {
