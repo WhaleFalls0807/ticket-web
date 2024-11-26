@@ -74,6 +74,9 @@
                     <el-form-item label="客户行业">
                       <span>{{ getDictLabel("industry", detail.industry) }}</span>
                     </el-form-item>
+                    <el-form-item label="备注">
+                      <span>{{ detail.content }}</span>
+                    </el-form-item>
                   </div>
                   <!-- 提交 -->
                   <div>
@@ -192,7 +195,6 @@ import { ElMessage, ElMessageBox } from "element-plus";
 import baseService from "@/service/baseService";
 import FileImgPreview from "@/components/FileImgPreview.vue";
 import { useMediaQuery } from "@vueuse/core";
-import FilePreview from "@/components/FilePreview.vue";
 import OrderUpdateFirst from "./order-update-first.vue";
 import OrderUpdateSecond from "./order-update-second.vue";
 import Activity from "@/components/activity/index.vue";
@@ -214,6 +216,7 @@ const detail: any = reactive({
   customerName: "",
   industry: "",
   phone: "",
+
   // first
   payType: "",
   officialPrice: 0,
@@ -226,8 +229,10 @@ const detail: any = reactive({
   applyMethod: "",
   businessType: "",
   orderName: "",
+
   // second
   logo: "",
+  // 身份证
   idcard: "",
   // 申请书
   applyBook: "",
@@ -348,6 +353,7 @@ const getInfo = (id: string) => {
     .then((res) => {
       loading.value = false;
       Object.assign(detail, res.data);
+      detail.businessType = detail.businessType || "";
       const { applyBook, businessLicense, commission, contract, idcard, logo, payType, sealedContract } =
         res.data.orderFileVO;
       const { agencyPrice, aprice, bprice, officialPrice, totalPrice } = res.data.orderPriceVO;

@@ -8,6 +8,15 @@
     :before-close="close"
   >
     <el-form :model="dataForm" :rules="rules" ref="dataFormRef" label-width="120px">
+      <el-form-item prop="orderName" label="商标名称">
+        <el-input v-model="dataForm.orderName" />
+      </el-form-item>
+      <el-form-item prop="businessType" label="业务类型">
+        <ren-select v-model="dataForm.businessType" dict-type="businessType"></ren-select>
+      </el-form-item>
+      <el-form-item prop="applyMethod" label="申请方式">
+        <el-input v-model="dataForm.applyMethod" />
+      </el-form-item>
       <el-form-item prop="payType" label="支付类型">
         <el-button v-if="!dataForm.payType" @click="uploadHandle('payType', 'img')">上传图片</el-button>
         <FileImgPreview v-else fileType="img" :url="dataForm.payType" delete @deleteFileImg="dataForm.payType = ''" />
@@ -40,15 +49,6 @@
       <!-- <el-form-item prop="yewu_name" label="业务名称">
         <el-input v-model="dataForm.yewu_name" />
       </el-form-item> -->
-      <el-form-item prop="applyMethod" label="申请方式">
-        <el-input v-model="dataForm.applyMethod" />
-      </el-form-item>
-      <el-form-item prop="businessType" label="业务类型">
-        <ren-select v-model="dataForm.businessType" dict-type="businessType"></ren-select>
-      </el-form-item>
-      <el-form-item prop="orderName" label="商标名称">
-        <el-input v-model="dataForm.orderName" />
-      </el-form-item>
     </el-form>
     <template v-slot:footer>
       <el-button @click="close">取消</el-button>

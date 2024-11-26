@@ -38,6 +38,14 @@
           <el-link type="primary" @click="showDetail(scope.row.id)">{{ scope.row.customerName }}</el-link>
         </template>
       </el-table-column>
+      <el-table-column
+        v-if="state.hasPermission('sys:user:page')"
+        prop="ownerUserName"
+        label="负责人"
+        header-align="center"
+        align="center"
+        width="180"
+      ></el-table-column>
       <el-table-column prop="enterprise" label="类型" header-align="center" align="center">
         <template v-slot="scope">
           {{ state.getDictLabel("enterprise", scope.row.enterprise) }}
