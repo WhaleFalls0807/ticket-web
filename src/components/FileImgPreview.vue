@@ -1,21 +1,21 @@
 <template>
-  <div v-if="url" class="img-preview" @click="handlePicturePreview(url)">
+  <div v-if="fileType === 'img'" class="img-preview" @click="handlePicturePreview(url)">
     <img :src="app.api_img_file + url" alt="" />
     <div class="icon">
       <svg-icon class="zoomin-icon" name="icon-zoomin" @click="handlePicturePreview(url)"></svg-icon>
       <svg-icon v-if="delete" class="ml10" name="icon-delete-fill" @click="emit('deleteFileImg')"></svg-icon>
     </div>
   </div>
-  <ul v-if="file" class="file-list">
+  <ul v-if="fileType === 'file'" class="file-list">
     <li class="file-list-item">
-      <span class="file-name one-line">{{ file.fileName }}</span>
-      <svg-icon v-if="download" class="download-icon" name="icon-download" @click="downloadFile(file.url)"></svg-icon>
+      <span class="file-name one-line">{{ url.substring(url.lastIndexOf("/") + 1) }}</span>
+      <svg-icon v-if="download" class="download-icon" name="icon-download" @click="downloadFile(url)"></svg-icon>
       <svg-icon v-if="delete" class="svg-icon ml10" name="icon-delete-fill" @click="emit('deleteFileImg')"></svg-icon>
     </li>
   </ul>
 
   <!-- 展示图片 -->
-  <el-dialog v-model="dialogVisible" :width="isMobile ? '90%' : '50%'">
+  <el-dialog v-if="fileType === 'img'" v-model="dialogVisible" :width="isMobile ? '90%' : '50%'">
     <img style="width: 100%" :src="dialogImageUrl" alt="Preview Image" />
   </el-dialog>
 </template>
@@ -34,20 +34,16 @@ const props = defineProps({
     type: String,
     default: ""
   },
+  fileType: {
+    type: String
+  },
   delete: {
     type: Boolean,
     default: false
   },
-  file: {
-    type: Object,
-    default: {
-      url: "",
-      fileName: ""
-    }
-  },
   download: {
     type: Boolean,
-    default: true
+    default: false
   }
 });
 

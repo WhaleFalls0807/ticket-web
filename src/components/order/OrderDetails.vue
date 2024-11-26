@@ -89,7 +89,7 @@
                     </div>
                     <el-form-item label="支付类型">
                       <span v-if="!detail.payType">暂无数据</span>
-                      <ImgPreview v-else :url="detail.payType" />
+                      <FileImgPreview v-else fileType="img" :url="detail.payType" />
                     </el-form-item>
                     <el-form-item label="官费">
                       <span>{{ detail.officialPrice }}</span>
@@ -102,13 +102,7 @@
                     </el-form-item>
                     <el-form-item label="原始合同">
                       <span v-if="!detail.contract">暂无数据</span>
-                      <FilePreview
-                        v-else
-                        :file="{
-                          url: detail.contract,
-                          fileName: detail.contract.substring(detail.contract.lastIndexOf('/') + 1)
-                        }"
-                      />
+                      <FileImgPreview v-else fileType="file" :url="detail.contract" download />
                     </el-form-item>
                     <el-form-item label="甲方承担金额">
                       <span>{{ detail.aprice }}</span>
@@ -143,57 +137,27 @@
                     </div>
                     <el-form-item label="logo">
                       <span v-if="!detail.logo">暂无数据</span>
-                      <ImgPreview v-else :url="detail.logo" />
+                      <FileImgPreview v-else fileType="img" :url="detail.logo" />
                     </el-form-item>
                     <el-form-item label="身份证">
                       <span v-if="!detail.idcard">暂无数据</span>
-                      <FilePreview
-                        v-else
-                        :file="{
-                          url: detail.idcard,
-                          fileName: detail.idcard.substring(detail.idcard.lastIndexOf('/') + 1)
-                        }"
-                      />
+                      <FileImgPreview v-else fileType="file" :url="detail.idcard" download />
                     </el-form-item>
                     <el-form-item label="申请书">
                       <span v-if="!detail.applyBook">暂无数据</span>
-                      <FilePreview
-                        v-else
-                        :file="{
-                          url: detail.applyBook,
-                          fileName: detail.applyBook.substring(detail.applyBook.lastIndexOf('/') + 1)
-                        }"
-                      />
+                      <FileImgPreview v-else fileType="file" :url="detail.applyBook" download />
                     </el-form-item>
                     <el-form-item label="委托书">
                       <span v-if="!detail.commission">暂无数据</span>
-                      <FilePreview
-                        v-else
-                        :file="{
-                          url: detail.commission,
-                          fileName: detail.commission.substring(detail.commission.lastIndexOf('/') + 1)
-                        }"
-                      />
+                      <FileImgPreview v-else fileType="file" :url="detail.commission" download />
                     </el-form-item>
                     <el-form-item label="营业执照">
                       <span v-if="!detail.businessLicense">暂无数据</span>
-                      <FilePreview
-                        v-else
-                        :file="{
-                          url: detail.businessLicense,
-                          fileName: detail.businessLicense.substring(detail.businessLicense.lastIndexOf('/') + 1)
-                        }"
-                      />
+                      <FileImgPreview v-else fileType="file" :url="detail.businessLicense" download />
                     </el-form-item>
                     <el-form-item label="盖章合同">
                       <span v-if="!detail.sealedContract">暂无数据</span>
-                      <FilePreview
-                        v-else
-                        :file="{
-                          url: detail.sealedContract,
-                          fileName: detail.sealedContract.substring(detail.sealedContract.lastIndexOf('/') + 1)
-                        }"
-                      />
+                      <FileImgPreview v-else fileType="file" :url="detail.sealedContract" download />
                     </el-form-item>
                   </div>
                 </div>
@@ -226,19 +190,14 @@
 import { reactive, ref, nextTick, toRefs, computed } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import baseService from "@/service/baseService";
-import SvgIcon from "@/components/base/svg-icon";
-import Upload from "@/components/Upload.vue";
-import ImgPreview from "@/components/ImgPreview.vue";
-import useView from "@/hooks/useView";
+import FileImgPreview from "@/components/FileImgPreview.vue";
 import { useMediaQuery } from "@vueuse/core";
 import FilePreview from "@/components/FilePreview.vue";
 import OrderUpdateFirst from "./order-update-first.vue";
 import OrderUpdateSecond from "./order-update-second.vue";
 import Activity from "@/components/activity/index.vue";
-import app from "@/constants/app";
 import useUtils from "@/hooks/useUtils";
 import SubmitApprove from "./SubmitApprove.vue";
-import SelectRelative from "@/components/SelectRelative.vue";
 import AddOrUpdate from "./order-update.vue";
 import Relative from "@/components/Relative.vue";
 const { getDictLabel } = useUtils();

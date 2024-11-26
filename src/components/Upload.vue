@@ -16,6 +16,9 @@
     >
       <el-icon class="el-icon--upload"><upload-filled /></el-icon>
       <div class="el-upload__text">将文件拖到此处，或点击上传</div>
+      <template v-slot:tip>
+        <div class="el-upload__tip">{{ tips }}</div>
+      </template>
     </el-upload>
   </el-dialog>
 </template>
@@ -26,7 +29,7 @@ import { getToken } from "@/utils/cache";
 import { IObject } from "@/types/interface";
 import app from "@/constants/app";
 import { ElMessage } from "element-plus";
-const props = defineProps(["url"]);
+const props = defineProps(["url", "fileType"]);
 const emit = defineEmits(["refreshDataList"]);
 
 const visible = ref(false);
@@ -35,6 +38,24 @@ const fileList = ref<IObject[]>();
 
 const uploadUrl = computed(() => {
   return `${app.api}${props.url}?token=${getToken()}`;
+});
+const imgTypes = ["image/jpg", "image/jpeg", "image/png"];
+const imgTypesTips = "只支持 jpg、png 格式文件！";
+const fileTypes = [
+  "application/pdf",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "text/plain",
+  "application/zip"
+];
+const fileTypesTips = "只支持 pdf、docx、txt、zip 格式文件！";
+const tips = computed(() => {
+  if (props.fileType === "img") {
+    return imgTypesTips;
+  } else if (props.fileType === "file") {
+    return fileTypesTips;
+  } else {
+    return "";
+  }
 });
 const init = () => {
   visible.value = true;
@@ -48,8 +69,20 @@ const close = () => {
 };
 // 上传之前
 const beforeUploadHandle = (file: IObject) => {
-  if (file.size / 1024 / 1024 > 2) {
-    ElMessage.error("文件大小不能超过 2MB!");
+  if (props.fileType === "img") {
+    if (!imgTypes.includes(file.type)) {
+      ElMessage.error(imgTypesTips);
+      return false;
+    }
+  } else if (props.fileType === "file") {
+    if (!fileTypes.includes(file.type)) {
+      ElMessage.error(fileTypesTips);
+      return false;
+    }
+  }
+
+  if (file.size / 1024 / 1024 > 20) {
+    ElMessage.error("文件大小不能超过 20MB!");
     return false;
   }
   num.value++;

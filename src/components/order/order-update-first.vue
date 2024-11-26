@@ -9,8 +9,8 @@
   >
     <el-form :model="dataForm" :rules="rules" ref="dataFormRef" label-width="120px">
       <el-form-item prop="payType" label="支付类型">
-        <el-button v-if="!dataForm.payType" @click="uploadHandle('payType')">上传图片</el-button>
-        <ImgPreview v-else :url="dataForm.payType" :delete="true" @deleteImg="dataForm.payType = ''" />
+        <el-button v-if="!dataForm.payType" @click="uploadHandle('payType', 'img')">上传图片</el-button>
+        <FileImgPreview v-else fileType="img" :url="dataForm.payType" delete @deleteFileImg="dataForm.payType = ''" />
       </el-form-item>
       <el-form-item prop="officialPrice" label="官费">
         <el-input-number v-model="dataForm.officialPrice" :min="0" :precision="2" :step="0.1" />
@@ -22,16 +22,13 @@
         <el-input-number v-model="dataForm.totalPrice" disabled />
       </el-form-item>
       <el-form-item prop="contract" label="原始合同">
-        <el-button v-if="!dataForm.contract" @click="uploadHandle('contract')">上传文件</el-button>
-        <FilePreview
+        <el-button v-if="!dataForm.contract" @click="uploadHandle('contract', 'file')">上传文件</el-button>
+        <FileImgPreview
           v-else
-          :file="{
-            url: dataForm.contract,
-            fileName: dataForm.contract.substring(dataForm.contract.lastIndexOf('/') + 1)
-          }"
-          :download="false"
-          :delete="true"
-          @deleteFile="dataForm.contract = ''"
+          fileType="file"
+          :url="dataForm.contract"
+          delete
+          @deleteFileImg="dataForm.contract = ''"
         />
       </el-form-item>
       <el-form-item prop="aprice" label="甲方承担金额">
@@ -60,7 +57,12 @@
   </el-dialog>
 
   <!-- 上传文件 -->
-  <Upload ref="uploadRef" :url="`/sys/oss/upload/${dataForm.id}`" @refreshDataList="setDataForm"></Upload>
+  <Upload
+    ref="uploadRef"
+    :url="`/sys/oss/upload/${dataForm.id}`"
+    :fileType="currentFileType"
+    @refreshDataList="setDataForm"
+  ></Upload>
 </template>
 
 <script lang="ts" setup>
@@ -68,19 +70,16 @@ import { computed, nextTick, reactive, ref, watch } from "vue";
 import baseService from "@/service/baseService";
 import { ElMessage } from "element-plus";
 import { useMediaQuery } from "@vueuse/core";
-import SelectRelative from "@/components/SelectRelative.vue";
 import Upload from "@/components/Upload.vue";
-import ImgPreview from "@/components/ImgPreview.vue";
-import FilePreview from "@/components/FilePreview.vue";
-import app from "@/constants/app";
-
+import FileImgPreview from "@/components/FileImgPreview.vue";
 const isMobile = useMediaQuery("(max-width: 768px)");
 
 const emit = defineEmits(["refreshDataList"]);
 
 const visible = ref(false);
 const dataFormRef = ref();
-const currentUploadType = ref("");
+const currentUploadKey = ref("");
+const currentFileType = ref("img"); //img file
 
 const totalPrice = computed(() => dataForm.officialPrice + dataForm.agencyPrice);
 const dataForm: any = reactive({
@@ -171,15 +170,16 @@ const dataFormSubmitHandle = () => {
 
 // 上传文件
 const uploadRef = ref();
-const uploadHandle = (type: any) => {
-  currentUploadType.value = type;
+const uploadHandle = (key: any, fileType: any) => {
+  currentUploadKey.value = key;
+  currentFileType.value = fileType;
   nextTick(() => {
     uploadRef.value.init();
   });
 };
 // 设置上传的内容
 const setDataForm = (value: any) => {
-  dataForm[currentUploadType.value] = value;
+  dataForm[currentUploadKey.value] = value;
 };
 defineExpose({
   init

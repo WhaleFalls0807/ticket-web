@@ -10,15 +10,12 @@
     <el-form :model="dataForm" :rules="rules" ref="dataFormRef" label-width="120px">
       <el-form-item prop="filePath" label="文件">
         <el-button v-if="!dataForm.filePath" @click="uploadHandle()">上传文件</el-button>
-        <FilePreview
+        <FileImgPreview
           v-else
-          :file="{
-            url: dataForm.filePath,
-            fileName: dataForm.fileName
-          }"
-          :download="false"
-          :delete="true"
-          @deleteFile="dataForm.filePath = ''"
+          :fileType="computeFileType(dataForm.filePath)"
+          :url="dataForm.filePath"
+          delete
+          @deleteFileImg="dataForm.filePath = ''"
         />
       </el-form-item>
       <el-form-item prop="type" label="文书类型">
@@ -44,7 +41,8 @@ import baseService from "@/service/baseService";
 import { ElMessage } from "element-plus";
 import { useMediaQuery } from "@vueuse/core";
 import Upload from "@/components/Upload.vue";
-import FilePreview from "@/components/FilePreview.vue";
+import FileImgPreview from "@/components/FileImgPreview.vue";
+import useUtils from "@/hooks/useUtils";
 import { customAlphabet } from "nanoid";
 // 自定义生成器，只包含数字
 const generateNumberId = customAlphabet("0123456789", 16);
@@ -53,7 +51,7 @@ const generateNumberId = customAlphabet("0123456789", 16);
 const uniqueId = ref(generateNumberId());
 
 const isMobile = useMediaQuery("(max-width: 768px)");
-
+const { computeFileType } = useUtils();
 const emit = defineEmits(["refreshDataList"]);
 
 const visible = ref(false);
@@ -101,7 +99,7 @@ const dataFormSubmitHandle = () => {
         message: "成功",
         duration: 500,
         onClose: () => {
-          close()
+          close();
           emit("refreshDataList");
         }
       });
@@ -121,6 +119,7 @@ const setDataForm = (value: any) => {
   dataForm.filePath = value;
   dataForm.fileName = value.substring(value.lastIndexOf("/") + 1);
 };
+
 defineExpose({
   init
 });

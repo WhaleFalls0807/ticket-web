@@ -23,6 +23,14 @@ const useUtils = () => {
       window.location.href = `${app.api_img_file}${url}?${qs.stringify({
         token: getToken()
       })}`;
+    },
+    computeFileType(url: any) {
+      const imgSuffix = ["jpg", "jpeg", "png"];
+      if (imgSuffix.includes(url.substring(url.lastIndexOf(".") + 1))) {
+        return "img";
+      } else {
+        return "file";
+      }
     }
   };
   return {
