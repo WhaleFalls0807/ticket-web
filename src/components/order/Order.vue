@@ -131,7 +131,13 @@
     <!-- 指派 -->
     <Assign ref="assignRef" @refreshDataList="state.getDataList" />
     <!-- 审批 -->
-    <Approve ref="approveRef" @refreshDataList="state.getDataList" />
+    <Approve
+      ref="approveRef"
+      @refreshDataList="
+        state.getDataList;
+        detailRef.value.close;
+      "
+    />
     <!-- 详情 -->
     <OrderDetails
       ref="detailRef"
@@ -340,6 +346,7 @@ const seas = (customerName?: string, id?: string) => {
             duration: 500,
             onClose: () => {
               state.getDataList();
+              detailRef.value.close();
             }
           });
         })

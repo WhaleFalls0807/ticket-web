@@ -2,6 +2,9 @@
   <div class="container">
     <div class="header">
       <div class="left">您好！欢迎访问商标服务官方网站！</div>
+      <div class="right">
+        <span>全国统一免费服务热线 xxx</span>
+      </div>
     </div>
     <div class="banner1">
       <h1>保护品牌 从注册开始</h1>
@@ -20,7 +23,12 @@
         </el-form-item>
         <el-form-item prop="industry" label="行业">
           <el-select v-model="dataForm.industry">
-            <el-option v-for="item in industryList" :key="item.value" :value="item.value" :label="item.label"></el-option>
+            <el-option
+              v-for="item in industryList"
+              :key="item.value"
+              :value="item.value"
+              :label="item.label"
+            ></el-option>
           </el-select>
           <!-- <ren-select v-model="dataForm.industry" dict-type="industry"></ren-select> -->
         </el-form-item>
@@ -29,7 +37,7 @@
         </el-form-item>
         <el-form-item>
           <div class="btn-wrap">
-            <el-button type="primary" @click="dataFormSubmitHandle()">立即查询</el-button>
+            <el-button type="danger" size="large" @click="dataFormSubmitHandle()">免费查询</el-button>
           </div>
         </el-form-item>
       </el-form>
@@ -147,6 +155,8 @@ const dataFormSubmitHandle = () => {
     height: 60px;
     line-height: 60px;
     padding: 0 10%;
+    display: flex;
+    justify-content: space-between;
   }
   .banner1 {
     min-height: 120vh;
@@ -169,6 +179,13 @@ const dataFormSubmitHandle = () => {
 
       .btn-wrap {
         margin: 0 auto;
+        width: 30%;
+        .el-button {
+          background-color: red;
+          border-color: red;
+          width: 100%;
+          font-size: 25px;
+        }
       }
     }
   }

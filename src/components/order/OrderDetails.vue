@@ -357,8 +357,8 @@ const completedOrder = () => {
             message: "已成单",
             duration: 500,
             onClose: () => {
-              getInfo(detail.id);
               emit("refreshDataList");
+              close();
             }
           });
         })
@@ -372,6 +372,9 @@ const completedOrder = () => {
     .catch(() => {
       //
     });
+};
+const close = () => {
+  drawer.value = false;
 };
 const init = (id: string) => {
   drawer.value = true;
@@ -409,8 +412,10 @@ const getInfo = (id: string) => {
       loading.value = false;
     });
 };
+
 defineExpose({
-  init
+  init,
+  close
 });
 </script>
 

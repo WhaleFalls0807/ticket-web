@@ -59,23 +59,6 @@ let state: any = reactive({
   timerId: "",
   virtualTableData: []
 });
-watch(
-  () => state.remainCount,
-  (value) => {
-    state.virtualTableData = [];
-
-    let length = Math.min(10, value);
-
-    for (let i = 0; i < length; i++) {
-      state.virtualTableData.push({
-        orderName: "******",
-        customerName: "******",
-        phone: "******",
-        remark: "******"
-      });
-    }
-  }
-);
 // 抢单
 const grabOrder = () => {
   loading.value = true;

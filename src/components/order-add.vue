@@ -61,7 +61,7 @@ const validateName = (rule: any, value: any, callback: any) => {
   } else {
     baseService
       .get(`/customer/name/check`, {
-        orderName: value
+        customerName: value
       })
       .then((res) => {
         if (res.data) {
