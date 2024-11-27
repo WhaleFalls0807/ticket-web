@@ -24,6 +24,17 @@ const useUtils = () => {
         token: getToken()
       })}`;
     },
+    downloadFileWithBuffer(data: any, name: any) {
+      const blob = new Blob([data]);
+      var a = document.createElement("a"); // 创建a标签
+      var href = window.URL.createObjectURL(blob); // 创建下载的链接
+      a.href = href;
+      a.download = name; // 下载后文件名
+      document.body.appendChild(a);
+      a.click(); // 点击下载
+      document.body.removeChild(a); // 下载完成移除元素
+      window.URL.revokeObjectURL(href); // 释放掉blob对象
+    },
     computeFileType(url: any) {
       const imgSuffix = ["jpg", "jpeg", "png"];
       if (imgSuffix.includes(url.substring(url.lastIndexOf(".") + 1))) {

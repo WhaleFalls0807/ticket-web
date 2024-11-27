@@ -20,10 +20,10 @@ export default (config: UserConfig): UserConfigExport => {
           },
           tags: [
             {
-              injectTo: 'body-prepend',
-              tag: 'div',
+              injectTo: "body-prepend",
+              tag: "div",
               attrs: {
-                id: 'tag'
+                id: "tag"
               }
             }
           ]
@@ -48,6 +48,14 @@ export default (config: UserConfig): UserConfigExport => {
             vlib: ["vue", "vue-router", "element-plus"]
           }
         }
+      },
+      // 生产环境取消 console
+      minify: "terser",
+      terserOptions: {
+        compress: {
+          drop_console: true,
+          drop_debugger: true
+        }
       }
     },
     resolve: {
@@ -60,7 +68,19 @@ export default (config: UserConfig): UserConfigExport => {
       open: false, // 自动启动浏览器
       host: "0.0.0.0", // localhost
       port: 8011, // 端口号
-      hmr: { overlay: false }
+      hmr: { overlay: false },
+      proxy: {
+        "/api/file": {
+          target: loadEnv(mode, process.cwd()).VITE_APP_API_IMG_FILE, // 目标地址
+          changeOrigin: false, // 是否改变来源
+          rewrite: (path) => path.replace(/^\/api\/file/, "") // 去掉 /api/file 前缀
+        },
+        "/api": {
+          target: loadEnv(mode, process.cwd()).VITE_APP_API, // 目标地址
+          changeOrigin: false, // 是否改变来源
+          rewrite: (path) => path.replace(/^\/api/, "") // 去掉 /api 前缀
+        }
+      }
     }
   });
 };

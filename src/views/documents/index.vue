@@ -102,7 +102,7 @@ import DocumentAdd from "./document-add.vue";
 import useUtils from "@/hooks/useUtils";
 import baseService from "@/service/baseService";
 
-const { downloadFile } = useUtils();
+const { downloadFileWithBuffer } = useUtils();
 const downloadRef = ref();
 
 const view = reactive({
@@ -134,9 +134,13 @@ const downloadDetail = (id: any) => {
 };
 // 下载
 const handleDownload = (item: any) => {
-  baseService.get(`/corDocument/download/${item.id}`).then(() => {
+  baseService.get(`/corDocument/download/${item.id}`).then((res) => {
     state.getDataList();
-    downloadFile(item.filePath);
+    // 文件要已/file开头，代理拦截到9090
+    baseService.getBlob("/file" + item.filePath).then((response) => {
+      console.log("http", response);
+      downloadFileWithBuffer(response, res.data);
+    });
   });
 };
 </script>

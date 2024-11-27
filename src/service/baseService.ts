@@ -34,6 +34,23 @@ export default {
         });
     });
   },
+  getBlob(path: string, params?: IObject, headers?: IObject): Promise<IHttpResponse> {
+    return new Promise((resolve, reject) => {
+      http({
+        url: path,
+        params,
+        headers,
+        method: "GET",
+        responseType: "blob"
+      })
+        .then(resolve)
+        .catch((error) => {
+          if (error !== "-999") {
+            reject(error);
+          }
+        });
+    });
+  },
   put(path: string, params?: IObject, headers?: IObject): Promise<IHttpResponse> {
     return http({
       url: path,

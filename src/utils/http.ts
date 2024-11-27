@@ -8,7 +8,7 @@ import { getValueByKeys } from "./utils";
 import { ElMessage } from "element-plus";
 
 const http = axios.create({
-  baseURL: app.api,
+  baseURL: "/api",
   timeout: app.requestTimeout
 });
 
@@ -34,6 +34,10 @@ http.interceptors.request.use(
 );
 http.interceptors.response.use(
   (response) => {
+    console.log("http.interceptors.response", response);
+    if (response.request.responseType === "blob") {
+      return response;
+    }
     // 响应成功
     if (response.data.code === 0) {
       return response;
