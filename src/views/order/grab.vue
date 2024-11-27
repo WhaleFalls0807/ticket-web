@@ -1,32 +1,67 @@
 <template>
   <div class="grab-contianer">
-    <div class="left">
-      <div class="flex align-center">
-        <span class="mr10">总单数</span>
-        <el-tag class="mr10">{{ state.totalCount }}</el-tag>
-        <span class="mr10">/</span>
-        <span class="mr10">剩余单数</span>
-        <el-tag>{{ state.remainCount }}</el-tag>
+    <el-card shadow="hover">
+      <template #header>
+        <div class="card-header">
+          <span>池组</span>
+        </div>
+      </template>
+      <div class="item">
+        <div class="left">
+          <span class="mr10">总单数</span>
+          <el-tag class="mr10">{{ state.totalCount }}</el-tag>
+          <span class="mr10">/</span>
+          <span class="mr10">剩余单数</span>
+          <el-tag>{{ state.remainCount }}</el-tag>
+        </div>
+        <div class="right">
+          <span class="mr10">已抢单数量</span>
+          <el-tag>{{ state.userGrapedCount }}</el-tag>
+        </div>
       </div>
-      <div class="flex align-center mt30">
+    </el-card>
+
+    <el-card shadow="hover" class="mt20">
+      <template #header>
+        <div class="card-header">
+          <span>{{ store.state.user.username }}</span>
+        </div>
+      </template>
+      <div class="item">
+        <div class="left">
+          <span class="mr10">总单数</span>
+          <el-tag class="mr10">{{ state.userTotalCount }}</el-tag>
+          <span class="mr10">/</span>
+          <span class="mr10">剩余单数</span>
+          <el-tag>{{ state.userRemainCount }}</el-tag>
+        </div>
+        <div class="right">
+          <span class="mr10">已抢单数量</span>
+          <el-tag>{{ state.userGrapedCount }}</el-tag>
+        </div>
+      </div>
+    </el-card>
+    <div class="mt20 item">
+      <div class="item-left">
         <p class="mr10" style="white-space: nowrap">设置刷新时间</p>
-        <ren-select v-model="state.refreshTime" dict-type="refreshTime" :clearable="false"></ren-select>
+        <ren-select
+          v-model="state.refreshTime"
+          dict-type="refreshTime"
+          :clearable="false"
+          style="width: 160px"
+        ></ren-select>
       </div>
-    </div>
-    <div class="right">
-      <div class="flex align-center">
-        <span class="mr10">已抢单数量</span>
-        <el-tag>{{ state.grapedCount }}</el-tag>
+      <div class="item-right">
+        <el-button
+          type="primary"
+          @click="grabOrder"
+          class="grab-btn"
+          :loading="loading"
+          :disabled="state.remainCount == 0"
+        >
+          抢单
+        </el-button>
       </div>
-      <el-button
-        type="primary"
-        @click="grabOrder"
-        class="grab-btn"
-        :loading="loading"
-        :disabled="state.remainCount == 0"
-      >
-        抢单
-      </el-button>
     </div>
   </div>
   <div>
@@ -49,12 +84,17 @@ import baseService from "@/service/baseService";
 import { reactive, ref, onMounted, onBeforeUnmount, watch, h } from "vue";
 import Order from "@/components/order/Order.vue";
 import useUtils from "@/hooks/useUtils";
-const { hasPermission } = useUtils();
+const { hasPermission, store } = useUtils();
 const loading = ref(false);
 let state: any = reactive({
   remainCount: 0,
   grapedCount: 0,
   totalCount: 0,
+
+  userGrapedCount: 0,
+  userRemainCount: 0,
+  userTotalCount: 0,
+
   refreshTime: "3",
   timerId: "",
   virtualTableData: []
@@ -98,6 +138,10 @@ const getCount = () => {
       state.remainCount = res.data.remainCount;
       state.grapedCount = res.data.grapedCount;
       state.totalCount = res.data.totalCount;
+
+      state.userGrapedCount = res.data.userGrapedCount;
+      state.userRemainCount = res.data.userRemainCount;
+      state.userTotalCount = res.data.userTotalCount;
     })
     .catch(() => {});
 };
@@ -127,19 +171,26 @@ onBeforeUnmount(() => {
   margin: 0 auto;
   margin-top: 40px;
   margin-bottom: 40px;
-  display: flex;
-  justify-content: space-between;
+  // display: flex;
+  // justify-content: space-between;
   font-size: 20px;
-  .right {
-    text-align: center;
-  }
+
   h1 {
     font-size: 24px;
     margin-bottom: 30px;
   }
   .grab-btn {
     font-size: 20px;
-    margin-top: 30px;
+    width: 140px;
+  }
+
+  .item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .item-left {
+    display: flex;
   }
 }
 

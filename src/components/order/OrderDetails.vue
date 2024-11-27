@@ -34,14 +34,24 @@
       </template>
       <template v-else>
         <div class="drawer-header">
-          <div>
-            <el-descriptions direction="vertical" :column="5">
-              <el-descriptions-item label="创建时间" width="200px">{{ detail.createDate }}</el-descriptions-item>
-              <el-descriptions-item label="状态" width="100px">
-                {{ getDictLabel("orderStatus", detail.orderStatus) }}
-              </el-descriptions-item>
-            </el-descriptions>
-          </div>
+          <el-descriptions direction="vertical" :column="3" border>
+            <el-descriptions-item label="创建时间" width="160px">{{ detail.createDate }}</el-descriptions-item>
+            <el-descriptions-item label="状态" width="100px">
+              {{ getDictLabel("orderStatus", detail.orderStatus) }}
+            </el-descriptions-item>
+            <el-descriptions-item v-if="detail.ownerUsername" label="负责人" width="100px">
+              {{ detail.ownerUsername }}
+            </el-descriptions-item>
+            <el-descriptions-item v-if="detail.reviewUsername" label="审批人" width="100px">
+              {{ detail.reviewUsername }}
+            </el-descriptions-item>
+            <el-descriptions-item v-if="detail.reviewDate" label="审批时间" width="160px">
+              {{ detail.reviewDate }}
+            </el-descriptions-item>
+            <el-descriptions-item v-if="detail.dealDate" label="成单时间" width="160px">
+              {{ detail.dealDate }}
+            </el-descriptions-item>
+          </el-descriptions>
         </div>
         <div class="drawer-main">
           <el-tabs type="border-card">

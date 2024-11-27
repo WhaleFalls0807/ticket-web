@@ -59,14 +59,14 @@
         header-align="center"
         align="center"
       ></el-table-column>
-      <!-- <el-table-column
+      <el-table-column
         v-if="state.hasPermission('sys:user:page') && (type === 'grab' || type === 'seas')"
-        prop=""
+        prop="ownerUsername"
         label="负责人"
         header-align="center"
         align="center"
         width="180"
-      ></el-table-column> -->
+      ></el-table-column>
       <el-table-column prop="orderStatus" label="工单状态" header-align="center" align="center">
         <template v-slot="scope">
           {{ state.getDictLabel("orderStatus", scope.row.orderStatus) }}
@@ -80,9 +80,9 @@
         align="center"
         width="180"
       ></el-table-column>
-      <!-- <el-table-column
+      <el-table-column
         v-if="type === 'completed'"
-        prop=""
+        prop="dealDate"
         label="成单时间"
         sortable="custom"
         header-align="center"
@@ -92,7 +92,7 @@
       <template v-if="type === 'awaitingApproval'">
         <el-table-column
           v-if="state.hasPermission('sys:user:page')"
-          prop="createDate"
+          prop="reviewUsername"
           label="审批人"
           sortable="custom"
           header-align="center"
@@ -104,7 +104,7 @@
       <template v-if="type === 'approved'">
         <el-table-column
           v-if="state.hasPermission('sys:user:page')"
-          prop=""
+          prop="reviewUsername"
           label="审批人"
           sortable="custom"
           header-align="center"
@@ -112,14 +112,14 @@
           width="180"
         ></el-table-column>
         <el-table-column
-          prop=""
+          prop="reviewDate"
           label="审批时间"
           sortable="custom"
           header-align="center"
           align="center"
           width="180"
         ></el-table-column>
-      </template> -->
+      </template>
 
       <el-table-column
         label="操作"

@@ -11,8 +11,11 @@
       <el-form-item prop="orderName" label="商标名称">
         <el-input v-model="dataForm.orderName" />
       </el-form-item>
-      <el-form-item prop="customerName" label="客户名称">
+      <!-- <el-form-item prop="customerName" label="客户名称">
         <el-input v-model="dataForm.customerName" />
+      </el-form-item> -->
+      <el-form-item prop="customerId" label="客户名称">
+        <SelectRelative v-model="dataForm.customerId" />
       </el-form-item>
       <el-form-item prop="phone" label="手机号">
         <el-input v-model="dataForm.phone" />
@@ -40,6 +43,7 @@ import baseService from "@/service/baseService";
 import { ElMessage } from "element-plus";
 import { useMediaQuery } from "@vueuse/core";
 import { isMobile as isPhone, isEmail } from "@/utils/utils";
+import SelectRelative from "@/components/SelectRelative.vue";
 
 const isMobile = useMediaQuery("(max-width: 768px)");
 
@@ -48,7 +52,8 @@ const dataFormRef = ref();
 
 const dataForm = reactive({
   orderName: "",
-  customerName: "",
+  // customerName: "",
+  customerId: "",
   phone: "",
   email: "",
   industry: "",
@@ -65,9 +70,9 @@ const validateName = (rule: any, value: any, callback: any) => {
       })
       .then((res) => {
         if (res.data) {
-          callback();
-        } else {
           callback(new Error("名称已存在！"));
+        } else {
+          callback();
         }
       });
   }
@@ -86,10 +91,10 @@ const validateEmail = (rule: any, value: string, callback: (e?: Error) => any): 
 };
 const rules = ref({
   orderName: [{ required: true, message: "必填项不能为空", trigger: "blur" }],
-  customerName: [
-    { required: true, message: "必填项不能为空", trigger: "blur" },
-    { validator: validateName, trigger: "blur" }
-  ],
+  // customerName: [
+  //   { required: true, message: "必填项不能为空", trigger: "blur" },
+  //   { validator: validateName, trigger: "blur" }
+  // ],
   phone: [
     { required: true, message: "必填项不能为空", trigger: "blur" },
     { validator: validatePhone, trigger: "blur" }

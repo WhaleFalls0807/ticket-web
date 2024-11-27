@@ -14,7 +14,7 @@
   flex-direction: column;
 }
 .drawer-custom .el-drawer__body .drawer-header {
-  padding: 20px 20px 10px 20px;
+  padding: 20px;
   background-color: #fff !important;
   border-color: 1px solid #e6e6e6;
 }
@@ -47,6 +47,9 @@
 }
 .mt10 {
   margin-top: 10px;
+}
+.mt20 {
+  margin-top: 20px;
 }
 .mt30 {
   margin-top: 30px;
