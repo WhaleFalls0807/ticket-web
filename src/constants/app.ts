@@ -42,6 +42,6 @@ export default {
   /**
    * 公司名称
    */
-  // companyName: "江苏嘉泽知识产权代理有限公司"
-  companyName: "xx"
+  companyName: "江苏嘉泽知识产权代理有限公司"
+  // companyName: "xx"
 };
