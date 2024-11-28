@@ -29,10 +29,10 @@
       </template>
       <div class="item">
         <div class="left">
-          <span class="mr10">总单数</span>
+          <span class="mr10">总可抢次数</span>
           <el-tag class="mr10">{{ state.userTotalCount }}</el-tag>
           <span class="mr10">/</span>
-          <span class="mr10">剩余可抢单数</span>
+          <span class="mr10">剩余可抢次数</span>
           <el-tag>{{ state.userRemainCount }}</el-tag>
         </div>
         <div class="right">
