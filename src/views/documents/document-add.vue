@@ -32,7 +32,12 @@
   </el-dialog>
 
   <!-- 上传文件 -->
-  <Upload ref="uploadRef" :url="`/sys/oss/upload/${dataForm.id || uniqueId}`" @refreshDataList="setDataForm"></Upload>
+  <Upload
+    ref="uploadRef"
+    :url="`/sys/oss/upload/${dataForm.id || uniqueId}`"
+    fileType="file"
+    @refreshDataList="setDataForm"
+  ></Upload>
 </template>
 
 <script lang="ts" setup>

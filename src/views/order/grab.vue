@@ -57,7 +57,7 @@
           @click="grabOrder"
           class="grab-btn"
           :loading="loading"
-          :disabled="state.remainCount == 0"
+          :disabled="state.userRemainCount == 0"
         >
           抢单
         </el-button>
