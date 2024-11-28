@@ -312,7 +312,7 @@ const showOperate = computed(() => {
       (props.type === "grab" && state.hasPermission("grab:seas")) ||
       (props.type === "todo" && state.hasPermission("todo:seas")),
     assign:
-      (props.type === "todo" && state.hasPermission("toto:assign")) ||
+      (props.type === "todo" && state.hasPermission("todo:assign")) ||
       (props.type === "seas" && state.hasPermission("seas:assign")),
     approve: props.type === "awaitingApproval" && state.hasPermission("approve:approve"),
     delete:

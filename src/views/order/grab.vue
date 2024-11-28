@@ -11,12 +11,12 @@
           <span class="mr10">总单数</span>
           <el-tag class="mr10">{{ state.totalCount }}</el-tag>
           <span class="mr10">/</span>
-          <span class="mr10">剩余单数</span>
+          <span class="mr10">剩余可抢单数</span>
           <el-tag>{{ state.remainCount }}</el-tag>
         </div>
         <div class="right">
           <span class="mr10">已抢单数量</span>
-          <el-tag>{{ state.userGrapedCount }}</el-tag>
+          <el-tag>{{ state.grapedCount }}</el-tag>
         </div>
       </div>
     </el-card>
@@ -32,7 +32,7 @@
           <span class="mr10">总单数</span>
           <el-tag class="mr10">{{ state.userTotalCount }}</el-tag>
           <span class="mr10">/</span>
-          <span class="mr10">剩余单数</span>
+          <span class="mr10">剩余可抢单数</span>
           <el-tag>{{ state.userRemainCount }}</el-tag>
         </div>
         <div class="right">
