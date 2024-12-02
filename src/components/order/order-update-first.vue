@@ -249,7 +249,6 @@ const dataFormSubmitHandle = () => {
     if (!valid) {
       return false;
     }
-    return;
     const fn = baseService.post("/order/info/add", dataForm);
     fn.then((res) => {
       ElMessage.success({
@@ -282,4 +281,8 @@ defineExpose({
 });
 </script>
 
-<style lang="less"></style>
+<style lang="less">
+.el-table .el-form-item {
+  margin-bottom: 0 !important;
+}
+</style>

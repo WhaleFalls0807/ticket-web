@@ -283,6 +283,12 @@ defineExpose({
   border-radius: 3px;
   background-color: #f94e4e;
 }
+.tips {
+  margin: 20px auto;
+  text-align: center;
+  font-size: 12px;
+  color: #666;
+}
 .drawer-footer {
   display: flex;
   justify-content: space-between;
