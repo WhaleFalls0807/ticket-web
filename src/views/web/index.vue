@@ -468,7 +468,8 @@ const add = () => {
   .banner1 {
     min-height: 100vh;
     // background: url(../../assets/images/bg.png) no-repeat;
-    background: url(../../assets/images/bg.webp) no-repeat;
+    // background: url(../../assets/images/bg.webp) no-repeat;
+    background: url(../../assets/images/bg3.webp) no-repeat;
     background-size: 100% 100%;
     color: #fff;
     padding: 60px 0;
