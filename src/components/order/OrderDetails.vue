@@ -104,36 +104,54 @@
                       <span v-if="!detail.payType">暂无数据</span>
                       <FileImgPreview v-else fileType="img" :url="detail.payType" />
                     </el-form-item>
-                    <el-form-item label="官费">
-                      <span>{{ detail.officialPrice }}</span>
-                    </el-form-item>
-                    <el-form-item label="代理费">
-                      <span>{{ detail.agencyPrice }}</span>
-                    </el-form-item>
-                    <el-form-item label="总费用">
-                      <span>{{ detail.totalPrice }}</span>
-                    </el-form-item>
                     <el-form-item label="原始合同">
                       <span v-if="!detail.contract">暂无数据</span>
                       <FileImgPreview v-else fileType="file" :url="detail.contract" download />
                     </el-form-item>
                     <el-form-item label="甲方承担金额">
-                      <span>{{ detail.aprice }}</span>
+                      <span>{{ convertCurrency(detail.aprice) }}</span>
                     </el-form-item>
                     <el-form-item label="乙方承担金额">
-                      <span>{{ detail.bprice }}</span>
+                      <span>{{ convertCurrency(detail.bprice) }}</span>
                     </el-form-item>
-                    <!-- <el-form-item label="业务名称">
-                      <span>{{ detail.yewu_name }}</span>
-                    </el-form-item> -->
+                    <el-form-item label="业务名称">
+                      <span>{{ detail.businessName }}</span>
+                    </el-form-item>
                     <el-form-item label="申请方式">
                       <span>{{ detail.applyMethod }}</span>
                     </el-form-item>
-                    <el-form-item label="业务类型">
-                      <span>{{ detail.businessType }}</span>
+                    <el-table :data="detail.businessTypeList" border show-overflow-tooltip class="mt20 mb20">
+                      <el-table-column prop="businessType" label="业务类型" width="180">
+                        <template v-slot="scope">
+                          {{ getDictLabel("businessType", scope.row.businessType) }}
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="brandName" label="商标名称" width="180">
+                        <template v-slot="scope">
+                          {{ scope.row.brandName }}
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="officialPrice" label="官费" width="180">
+                        <template v-slot="scope">
+                          {{ convertCurrency(scope.row.officialPrice) }}
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="agencyPrice" label="代理费" width="180">
+                        <template v-slot="scope">
+                          {{ convertCurrency(scope.row.agencyPrice) }}
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="totalPrice" label="总费用" width="180">
+                        <template v-slot="scope">
+                          {{ convertCurrency(scope.row.totalPrice) }}
+                        </template>
+                      </el-table-column>
+                    </el-table>
+                    <el-form-item label="总费用">
+                      <span>{{ convertCurrency(detail.totalPrice) }}</span>
                     </el-form-item>
-                    <el-form-item label="商标名称">
-                      <span>{{ detail.orderName }}</span>
+                    <el-form-item prop="remark" label="备注">
+                      <span>{{ detail.remark }}</span>
                     </el-form-item>
                   </div>
                   <!-- 提交 -->
@@ -148,30 +166,40 @@
                         填写
                       </el-button>
                     </div>
-                    <el-form-item label="logo">
-                      <span v-if="!detail.logo">暂无数据</span>
-                      <FileImgPreview v-else fileType="img" :url="detail.logo" />
-                    </el-form-item>
-                    <el-form-item label="身份证">
-                      <span v-if="!detail.idcard">暂无数据</span>
-                      <FileImgPreview v-else fileType="file" :url="detail.idcard" download />
-                    </el-form-item>
-                    <el-form-item label="申请书">
-                      <span v-if="!detail.applyBook">暂无数据</span>
-                      <FileImgPreview v-else fileType="file" :url="detail.applyBook" download />
-                    </el-form-item>
-                    <el-form-item label="委托书">
-                      <span v-if="!detail.commission">暂无数据</span>
-                      <FileImgPreview v-else fileType="file" :url="detail.commission" download />
-                    </el-form-item>
-                    <el-form-item label="营业执照">
-                      <span v-if="!detail.businessLicense">暂无数据</span>
-                      <FileImgPreview v-else fileType="file" :url="detail.businessLicense" download />
-                    </el-form-item>
-                    <el-form-item label="盖章合同">
-                      <span v-if="!detail.sealedContract">暂无数据</span>
-                      <FileImgPreview v-else fileType="file" :url="detail.sealedContract" download />
-                    </el-form-item>
+
+                    <el-collapse class="mt20 mb20">
+                      <div v-for="(item, index) in detail.businessTypeList" :key="index">
+                        <el-collapse-item>
+                          <template #title>
+                            {{ getDictLabel("businessType", item.businessType) }}
+                          </template>
+                          <el-form-item label="logo">
+                            <span v-if="!item.logo">暂无数据</span>
+                            <FileImgPreview v-else fileType="img" :url="item.logo" />
+                          </el-form-item>
+                          <el-form-item label="身份证">
+                            <span v-if="!item.idcard">暂无数据</span>
+                            <FileImgPreview v-else fileType="file" :url="item.idcard" download />
+                          </el-form-item>
+                          <el-form-item label="申请书">
+                            <span v-if="!item.applyBook">暂无数据</span>
+                            <FileImgPreview v-else fileType="file" :url="item.applyBook" download />
+                          </el-form-item>
+                          <el-form-item label="委托书">
+                            <span v-if="!item.commission">暂无数据</span>
+                            <FileImgPreview v-else fileType="file" :url="item.commission" download />
+                          </el-form-item>
+                          <el-form-item label="营业执照">
+                            <span v-if="!item.businessLicense">暂无数据</span>
+                            <FileImgPreview v-else fileType="file" :url="item.businessLicense" download />
+                          </el-form-item>
+                          <el-form-item label="盖章合同">
+                            <span v-if="!item.sealedContract">暂无数据</span>
+                            <FileImgPreview v-else fileType="file" :url="item.sealedContract" download />
+                          </el-form-item>
+                        </el-collapse-item>
+                      </div>
+                    </el-collapse>
                   </div>
                 </div>
               </el-form>
@@ -212,7 +240,7 @@ import useUtils from "@/hooks/useUtils";
 import SubmitApprove from "./SubmitApprove.vue";
 import AddOrUpdate from "./order-update.vue";
 import Relative from "@/components/Relative.vue";
-const { getDictLabel } = useUtils();
+const { getDictLabel, convertCurrency } = useUtils();
 
 const isMobile = useMediaQuery("(max-width: 768px)");
 
@@ -229,29 +257,35 @@ const detail: any = reactive({
 
   // first
   payType: "",
-  officialPrice: 0,
-  agencyPrice: 0,
-  totalPrice: 0,
   contract: "",
   aprice: 0,
   bprice: 0,
-  yewu_name: "",
+  businessName: "",
   applyMethod: "",
-  businessType: "",
-  orderName: "",
+  businessTypeList: [
+    {
+      businessType: "",
+      brandName: "",
+      officialPrice: 0,
+      agencyPrice: 0,
+      totalPrice: 0,
 
-  // second
-  logo: "",
-  // 身份证
-  idcard: "",
-  // 申请书
-  applyBook: "",
-  // 委托书
-  commission: "",
-  // 营业执照
-  businessLicense: "",
-  // 盖章合同
-  sealedContract: ""
+      // second
+      logo: "",
+      // 身份证
+      idcard: "",
+      // 申请书
+      applyBook: "",
+      // 委托书
+      commission: "",
+      // 营业执照
+      businessLicense: "",
+      // 盖章合同
+      sealedContract: ""
+    }
+  ],
+  totalPrice: 0,
+  remark: ""
 });
 // 添加或编辑
 const addOrUpdateRef = ref();
@@ -362,26 +396,8 @@ const getInfo = (id: string) => {
     .get(`/order/queryById/${id}`)
     .then((res) => {
       loading.value = false;
+
       Object.assign(detail, res.data);
-      detail.businessType = detail.businessType || "";
-      const { applyBook, businessLicense, commission, contract, idcard, logo, payType, sealedContract } =
-        res.data.orderFileVO;
-      const { agencyPrice, aprice, bprice, officialPrice, totalPrice } = res.data.orderPriceVO;
-      Object.assign(detail, {
-        applyBook,
-        businessLicense,
-        commission,
-        contract,
-        idcard,
-        logo,
-        payType,
-        sealedContract,
-        agencyPrice,
-        aprice,
-        bprice,
-        officialPrice,
-        totalPrice
-      });
     })
     .catch(() => {
       loading.value = false;

@@ -10,7 +10,7 @@ import "@/assets/css/header.less";
 import { ElMessageBox } from "element-plus";
 import AddOrder from "@/components/order-add.vue";
 import useUtils from "@/hooks/useUtils";
-
+import Message from "@/components/Message.vue";
 interface IExpand {
   userName?: string;
 }
@@ -20,7 +20,7 @@ interface IExpand {
  */
 export default defineComponent({
   name: "Expand",
-  components: { SvgIcon, AddOrder },
+  components: { SvgIcon, AddOrder, Message },
   props: {
     userName: String
   },
@@ -56,6 +56,12 @@ export default defineComponent({
       console.log(addOrderRef.value);
       addOrderRef.value.init();
     };
+
+    // 点击展示消息通知
+    const messageRef = ref();
+    const showMessage = () => {
+      messageRef.value.init();
+    };
     return {
       props,
       store,
@@ -65,7 +71,9 @@ export default defineComponent({
       toggle,
       addOrderRef,
       addOrder,
-      hasPermission
+      hasPermission,
+      showMessage,
+      messageRef
     };
   }
 });
@@ -75,6 +83,13 @@ export default defineComponent({
     <div v-if="hasPermission('sys:inner_order:save')">
       <el-button type="success" size="large" @click="addOrder">创建工单</el-button>
     </div>
+    <!-- <div>
+      <el-badge :value="12" :max="99">
+        <span @click="showMessage()">
+          <el-icon><BellFilled /></el-icon>
+        </span>
+      </el-badge>
+    </div> -->
     <!-- <div>
       <a href="https://www.renren.io/community" target="_blank">
         <svg-icon name="icon-earth"></svg-icon>
@@ -111,4 +126,5 @@ export default defineComponent({
     </div>
   </div>
   <AddOrder ref="addOrderRef" />
+  <Message ref="messageRef" />
 </template>

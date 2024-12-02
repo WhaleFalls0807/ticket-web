@@ -43,11 +43,12 @@ const imgTypes = ["image/jpg", "image/jpeg", "image/png"];
 const imgTypesTips = "只支持 jpg、png 格式文件！";
 const fileTypes = [
   "application/pdf",
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-  "text/plain",
-  "application/zip"
+  // "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  // "text/plain",
+  // "application/zip"
 ];
-const fileTypesTips = "只支持 pdf、docx、txt、zip 格式文件！";
+// const fileTypesTips = "只支持 pdf、docx、txt、zip 格式文件！";
+const fileTypesTips = "只支持 pdf 格式文件！";
 const tips = computed(() => {
   if (props.fileType === "img") {
     return imgTypesTips;
@@ -81,10 +82,10 @@ const beforeUploadHandle = (file: IObject) => {
     }
   }
 
-  if (file.size / 1024 / 1024 > 20) {
-    ElMessage.error("文件大小不能超过 20MB!");
-    return false;
-  }
+  // if (file.size / 1024 / 1024 > 20) {
+  //   ElMessage.error("文件大小不能超过 20MB!");
+  //   return false;
+  // }
   num.value++;
 };
 
