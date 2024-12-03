@@ -13,9 +13,6 @@
       <el-form-item prop="orderName" label="商标名称">
         <el-input v-model="dataForm.orderName" />
       </el-form-item>
-      <el-form-item prop="customerName" label="客户名称">
-        <el-input v-model="dataForm.customerName" />
-      </el-form-item>
       <el-form-item prop="phone" label="手机号">
         <el-input v-model="dataForm.phone" />
       </el-form-item>
@@ -49,7 +46,6 @@ const visible = ref(false);
 const dataFormRef = ref();
 const dataForm = reactive({
   orderName: "",
-  customerName: "",
   phone: "",
   industry: ""
 });
@@ -252,7 +248,6 @@ const validatePhone = (rule: any, value: string, callback: (e?: Error) => any): 
 
 const rules = ref({
   orderName: [{ required: true, message: "请输入商标名称", trigger: "blur" }],
-  customerName: [{ required: true, message: "请输入客户名称", trigger: "blur" }],
   phone: [
     { required: true, message: "请输入手机号", trigger: "blur" },
     { validator: validatePhone, trigger: "blur" }
@@ -304,6 +299,12 @@ defineExpose({
     border-color: red;
     width: 100%;
     font-size: 25px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .btn-wrap {
+    width: 100% !important;
   }
 }
 </style>

@@ -12,9 +12,6 @@
         <el-form-item prop="orderName" label="商标名称">
           <el-input v-model="dataForm.orderName" />
         </el-form-item>
-        <el-form-item prop="customerName" label="客户名称">
-          <el-input v-model="dataForm.customerName" />
-        </el-form-item>
         <el-form-item prop="phone" label="手机号">
           <el-input v-model="dataForm.phone" />
         </el-form-item>
@@ -94,7 +91,12 @@
         <h4 class="mb70">让商标注册简单易懂</h4>
       </div>
       <div class="steps">
-        <div v-for="(item, index) in steps" :key="index" class="step-item">
+        <div
+          v-for="(item, index) in steps"
+          :key="index"
+          class="step-item"
+          :class="{ 'arrow-icon': index !== steps.length - 1 }"
+        >
           <svg-icon :name="item.icon" class="icon"></svg-icon>
           <div class="title">{{ item.title }}</div>
           <div>{{ item.desc }}</div>
@@ -128,7 +130,7 @@
       </div>
       <div class="item">
         <div class="title">节省成本，省心省力</div>
-        <div class="sub_title">全程托管，进度可查，轻松省钱更省心</div>
+        <div class="sub_title">全程托管，进度可查，轻松省钱更省心。</div>
       </div>
     </div>
 
@@ -146,7 +148,6 @@ import Add from "./add.vue";
 const dataFormRef = ref();
 const dataForm = reactive({
   orderName: "",
-  customerName: "",
   phone: "",
   industry: ""
 });
@@ -415,7 +416,6 @@ const validatePhone = (rule: any, value: string, callback: (e?: Error) => any): 
 };
 const rules = ref({
   orderName: [{ required: true, message: "请输入商标名称", trigger: "blur" }],
-  customerName: [{ required: true, message: "请输入客户名称", trigger: "blur" }],
   phone: [
     { required: true, message: "请输入手机号", trigger: "blur" },
     { validator: validatePhone, trigger: "blur" }
@@ -459,10 +459,10 @@ const add = () => {
   .header {
     background-color: #fff;
     height: 60px;
-    line-height: 60px;
     padding: 0 10%;
     display: flex;
     justify-content: space-between;
+    align-items: center;
   }
 
   .banner1 {
@@ -475,7 +475,7 @@ const add = () => {
     padding: 60px 0;
     h1 {
       text-align: center;
-      font-size: 60px;
+      font-size: 72px;
     }
     .el-form {
       width: 50%;
@@ -622,15 +622,15 @@ const add = () => {
           color: @--color-primary;
           border: 1px solid @--color-primary;
         }
-        &::before {
-          content: "";
-          display: block;
-          border: 6px solid #fff;
-          position: absolute;
-          left: 91%;
-          top: 50%;
-          transform: rotate(45deg) translateY(-50%);
-        }
+      }
+      .arrow-icon::before {
+        content: "";
+        display: block;
+        border: 6px solid #fff;
+        position: absolute;
+        left: 91%;
+        top: 50%;
+        transform: rotate(45deg) translateY(-50%);
       }
     }
   }
@@ -704,19 +704,81 @@ const add = () => {
 }
 
 @media screen and (max-width: 768px) {
-  .banner1 {
-    h1 {
-      transform: scale(1) !important;
+  .container {
+    .header {
+      padding: 0 10px;
     }
-    .el-form {
-      width: 90% !important;
+    .banner1 {
+      .el-form {
+        width: 90%;
+        .btn-wrap {
+          width: 100%;
+        }
+      }
     }
-  }
-  .footer {
-    padding: 20px;
-    flex-direction: column;
-    .item {
-      margin-bottom: 20px;
+    .banner2 {
+      .wrapper {
+        flex-direction: column;
+        .left {
+          width: 100%;
+          grid-template-columns: repeat(3, 1fr);
+        }
+        .right {
+          border: 1px solid var(--el-border-color-light);
+        }
+      }
+    }
+    .banner3 {
+      .steps {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        align-items: center;
+        margin-top: 90px;
+        .step-item {
+          margin-bottom: 25px;
+        }
+        .arrow-icon::before {
+          left: 50%;
+          top: 98%;
+          transform: rotate(45deg) translateX(-50%);
+        }
+      }
+    }
+    .banner4 {
+      .questions {
+        width: 100%;
+
+        flex-direction: column;
+        .question-item {
+          width: 100%;
+        }
+      }
+    }
+
+    .divider {
+      &::before,
+      &::after {
+        width: 80px;
+        left: 32%;
+        top: 50%;
+      }
+      &::before {
+        left: -12%;
+      }
+      &::after {
+        left: 80%;
+      }
+    }
+    .footer {
+      padding: 20px;
+      flex-direction: column;
+      .item {
+        text-align: center;
+      }
+      .item + .item {
+        margin-top: 20px;
+      }
     }
   }
 }
