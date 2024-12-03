@@ -1,16 +1,16 @@
 <template>
-  <div v-if="fileType === 'img'" class="img-preview" @click="handlePicturePreview(url)">
+  <div v-if="fileType === 'img'" class="img-preview">
     <img :src="app.api_img_file + url" alt="" />
     <div class="icon">
       <svg-icon class="zoomin-icon" name="icon-zoomin" @click="handlePicturePreview(url)"></svg-icon>
-      <svg-icon v-if="delete" class="ml10" name="icon-delete-fill" @click="emit('deleteFileImg')"></svg-icon>
+      <svg-icon v-if="delete" class="ml10" name="icon-delete-fill" @click="deleteFile(url)"></svg-icon>
     </div>
   </div>
   <ul v-if="fileType === 'file'" class="file-list">
     <li class="file-list-item">
       <span class="file-name one-line">{{ url.substring(url.lastIndexOf("/") + 1) }}</span>
       <svg-icon v-if="download" class="download-icon" name="icon-download" @click="downloadFile(url)"></svg-icon>
-      <svg-icon v-if="delete" class="svg-icon ml10" name="icon-delete-fill" @click="emit('deleteFileImg')"></svg-icon>
+      <svg-icon v-if="delete" class="delete-icon ml10" name="icon-delete-fill" @click="deleteFile(url)"></svg-icon>
     </li>
   </ul>
 
@@ -26,6 +26,8 @@ import SvgIcon from "@/components/base/svg-icon";
 import { useMediaQuery } from "@vueuse/core";
 import app from "@/constants/app";
 import useUtils from "@/hooks/useUtils";
+import baseService from "@/service/baseService";
+import { ElMessage, ElMessageBox } from "element-plus";
 
 const { downloadFile } = useUtils();
 
@@ -41,7 +43,15 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
+  deleteParams: {
+    type: Object,
+    default: () => {}
+  },
   download: {
+    type: Boolean,
+    default: false
+  },
+  document: {
     type: Boolean,
     default: false
   }
@@ -56,6 +66,25 @@ const dialogVisible = ref(false);
 const handlePicturePreview = (url: string) => {
   dialogImageUrl.value = app.api_img_file + url;
   dialogVisible.value = true;
+};
+
+// 删除文件
+const deleteFile = (filePath: any) => {
+  if (props.document) return emit("deleteFileImg");
+  ElMessageBox.confirm("确定删除此文件吗？", "提示", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    type: "warning"
+  }).then(() => {
+    baseService.post("/order/delete/file", { ...props.deleteParams }).then((res) => {
+      if (res.code === 0) {
+        ElMessage.success({
+          message: "删除成功"
+        });
+        emit("deleteFileImg");
+      }
+    });
+  });
 };
 </script>
 
@@ -78,7 +107,7 @@ const handlePicturePreview = (url: string) => {
     width: 50px;
     height: 20px;
     text-align: center;
-    color: #fff;
+    color: @--color-primary;
   }
   &:hover .icon {
     display: block;
@@ -109,11 +138,15 @@ const handlePicturePreview = (url: string) => {
     .file-name {
       width: 90%;
     }
-    .download-icon {
+    .download-icon,
+    .delete-icon {
       display: none;
     }
-    &:hover .download-icon {
-      display: block;
+    &:hover {
+      .download-icon,
+      .delete-icon {
+        display: block;
+      }
     }
   }
 }

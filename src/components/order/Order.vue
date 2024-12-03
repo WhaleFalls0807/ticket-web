@@ -323,7 +323,8 @@ const showOperate = computed(() => {
       (props.type === "approved" && state.hasPermission("approve:delete")) ||
       (props.type === "seas" && state.hasPermission("seas:delete")),
     update: props.type === "todo" && state.hasPermission("todo:update"),
-    commit: props.type === "todo" && state.hasPermission("todo:commit")
+    commit: props.type === "todo" && state.hasPermission("todo:commit"),
+    "upload-admin": props.type === "completed" && state.hasPermission("completed:upload-admin")
   };
 });
 // 抢单

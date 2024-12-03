@@ -83,13 +83,13 @@ export default defineComponent({
     <div v-if="hasPermission('sys:inner_order:save')">
       <el-button type="success" size="large" @click="addOrder">创建工单</el-button>
     </div>
-    <!-- <div>
+    <div>
       <el-badge :value="12" :max="99">
         <span @click="showMessage()">
           <el-icon><BellFilled /></el-icon>
         </span>
       </el-badge>
-    </div> -->
+    </div>
     <!-- <div>
       <a href="https://www.renren.io/community" target="_blank">
         <svg-icon name="icon-earth"></svg-icon>

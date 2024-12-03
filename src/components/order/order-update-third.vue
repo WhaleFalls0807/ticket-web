@@ -2,7 +2,7 @@
   <el-dialog
     v-model="visible"
     :width="isMobile ? '90%' : '50%'"
-    title="提交资料"
+    title="回传资料"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
     :before-close="close"
@@ -11,121 +11,79 @@
       <el-collapse>
         <el-collapse-item v-for="(item, index) in dataForm.businessTypeList" :key="index" :title="item.businessType">
           <el-form-item
-            label="logo"
-            :prop="'businessTypeList.' + index + '.logo'"
+            label="aaa"
+            :prop="'businessTypeList.' + index + '.aaa'"
             :rules="{
               required: true,
               message: '必填项不能为空',
               trigger: 'blur'
             }"
           >
-            <el-button v-if="!item.logo" @click="uploadHandle(item, 'logo', 'img')">上传图片</el-button>
-            <FileImgPreview
-              v-else
-              fileType="img"
-              :url="item.logo"
-              delete
-              :deleteParams="{ id: item.id, filePath: item.logo, fieldName: 'logo', type: 2 }"
-              @deleteFileImg="item.logo = ''"
-            />
-          </el-form-item>
-          <el-form-item
-            label="身份证"
-            :prop="'businessTypeList.' + index + '.idcard'"
-            :rules="{
-              required: true,
-              message: '必填项不能为空',
-              trigger: 'blur'
-            }"
-          >
-            <el-button v-if="!item.idcard" @click="uploadHandle(item, 'idcard', 'file')">上传文件</el-button>
+            <el-button v-if="!item.aaa" @click="uploadHandle(item, 'aaa', 'file')">上传文件</el-button>
             <FileImgPreview
               v-else
               fileType="file"
-              :url="item.idcard"
+              :url="item.aaa"
               delete
-              :deleteParams="{ id: item.id, filePath: item.idcard, fieldName: 'idcard', type: 2 }"
-              @deleteFileImg="item.idcard = ''"
+              :deleteParams="{ id: item.id, filePath: item.aaa, fieldName: 'aaa', type: 2 }"
+              @deleteFileImg="item.aaa = ''"
             />
           </el-form-item>
           <el-form-item
-            label="申请书"
-            :prop="'businessTypeList.' + index + '.applyBook'"
+            label="bbb"
+            :prop="'businessTypeList.' + index + '.bbb'"
             :rules="{
               required: true,
               message: '必填项不能为空',
               trigger: 'blur'
             }"
           >
-            <el-button v-if="!item.applyBook" @click="uploadHandle(item, 'applyBook', 'file')">上传文件</el-button>
+            <el-button v-if="!item.bbb" @click="uploadHandle(item, 'bbb', 'file')">上传文件</el-button>
             <FileImgPreview
               v-else
               fileType="file"
-              :url="item.applyBook"
+              :url="item.bbb"
               delete
-              :deleteParams="{ id: item.id, filePath: item.applyBook, fieldName: 'applyBook', type: 2 }"
-              @deleteFileImg="item.applyBook = ''"
+              :deleteParams="{ id: item.id, filePath: item.bbb, fieldName: 'bbb', type: 2 }"
+              @deleteFileImg="item.bbb = ''"
             />
           </el-form-item>
           <el-form-item
-            label="委托书"
-            :prop="'businessTypeList.' + index + '.commission'"
+            label="ccc"
+            :prop="'businessTypeList.' + index + '.ccc'"
             :rules="{
               required: true,
               message: '必填项不能为空',
               trigger: 'blur'
             }"
           >
-            <el-button v-if="!item.commission" @click="uploadHandle(item, 'commission', 'file')">上传文件</el-button>
+            <el-button v-if="!item.ccc" @click="uploadHandle(item, 'ccc', 'file')">上传文件</el-button>
             <FileImgPreview
               v-else
               fileType="file"
-              :url="item.commission"
+              :url="item.ccc"
               delete
-              :deleteParams="{ id: item.id, filePath: item.commission, fieldName: 'commission', type: 2 }"
-              @deleteFileImg="item.commission = ''"
+              :deleteParams="{ id: item.id, filePath: item.ccc, fieldName: 'ccc', type: 2 }"
+              @deleteFileImg="item.ccc = ''"
             />
           </el-form-item>
           <el-form-item
-            label="营业执照"
-            :prop="'businessTypeList.' + index + '.businessLicense'"
+            label="ddd"
+            :prop="'businessTypeList.' + index + '.ddd'"
             :rules="{
               required: true,
               message: '必填项不能为空',
               trigger: 'blur'
             }"
           >
-            <el-button v-if="!item.businessLicense" @click="uploadHandle(item, 'businessLicense', 'file')">
-              上传文件
-            </el-button>
+            <el-button v-if="!item.ddd" @click="uploadHandle(item, 'ddd', 'file')">上传文件</el-button>
             <FileImgPreview
               v-else
               fileType="file"
-              :url="item.businessLicense"
+              :url="item.ddd"
               delete
-              :deleteParams="{ id: item.id, filePath: item.businessLicense, fieldName: 'businessLicense', type: 2 }"
-              @deleteFileImg="item.businessLicense = ''"
-            />
-          </el-form-item>
-          <el-form-item
-            label="盖章合同"
-            :prop="'businessTypeList.' + index + '.sealedContract'"
-            :rules="{
-              required: true,
-              message: '必填项不能为空',
-              trigger: 'blur'
-            }"
-          >
-            <el-button v-if="!item.sealedContract" @click="uploadHandle(item, 'sealedContract', 'file')">
-              上传文件
-            </el-button>
-            <FileImgPreview
-              v-else
-              fileType="file"
-              :url="item.sealedContract"
-              delete
-              :deleteParams="{ id: item.id, filePath: item.sealedContract, fieldName: 'sealedContract', type: 2 }"
-              @deleteFileImg="item.sealedContract = ''"
+              :deleteParams="{ id: item.id, filePath: item.ddd, fieldName: 'ddd', type: 2 }"
+              @deleteFileImg="item.ddd = ''"
             />
           </el-form-item>
         </el-collapse-item>
@@ -172,12 +130,10 @@ const dataForm: any = reactive({
   businessTypeList: [
     // {
     //   businessType: "商标注册",
-    //   logo: "",
-    //   idcard: "",
-    //   applyBook: "",
-    //   commission: "",
-    //   businessLicense: "",
-    //   sealedContract: ""
+    //   aaa: "",
+    //   bbb: "",
+    //   ccc: "",
+    //   ddd: ""
     // }
   ]
 });
@@ -194,17 +150,15 @@ const init = (detail: any) => {
 
   dataForm.id = id;
   dataForm.businessTypeList = businessTypeList.map((item: any) => {
-    const { id, businessType, logo, idcard, applyBook, commission, businessLicense, sealedContract } = item;
+    const { id, businessType, aaa, bbb, ccc, ddd } = item;
     return {
       id,
       orderId: dataForm.id,
       businessType,
-      logo,
-      idcard,
-      applyBook,
-      commission,
-      businessLicense,
-      sealedContract
+      aaa,
+      bbb,
+      ccc,
+      ddd
     };
   });
 };

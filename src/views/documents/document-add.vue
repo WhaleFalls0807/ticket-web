@@ -15,6 +15,7 @@
           :fileType="computeFileType(dataForm.filePath)"
           :url="dataForm.filePath"
           delete
+          :document="true"
           @deleteFileImg="dataForm.filePath = ''"
         />
       </el-form-item>

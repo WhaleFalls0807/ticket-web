@@ -10,7 +10,14 @@
     <el-form :model="dataForm" :rules="rules" ref="dataFormRef" label-width="120px">
       <el-form-item prop="payType" label="支付类型">
         <el-button v-if="!dataForm.payType" @click="uploadHandle('payType', 'img')">上传图片</el-button>
-        <FileImgPreview v-else fileType="img" :url="dataForm.payType" delete @deleteFileImg="dataForm.payType = ''" />
+        <FileImgPreview
+          v-else
+          fileType="img"
+          :url="dataForm.payType"
+          delete
+          :deleteParams="{ id: dataForm.id, filePath: dataForm.payType, fieldName: 'payType', type: 1 }"
+          @deleteFileImg="dataForm.payType = ''"
+        />
       </el-form-item>
       <el-form-item prop="contract" label="原始合同">
         <el-button v-if="!dataForm.contract" @click="uploadHandle('contract', 'file')">上传文件</el-button>
@@ -19,6 +26,7 @@
           fileType="file"
           :url="dataForm.contract"
           delete
+          :deleteParams="{ id: dataForm.id, filePath: dataForm.contract, fieldName: 'contract', type: 1 }"
           @deleteFileImg="dataForm.contract = ''"
         />
       </el-form-item>
@@ -114,7 +122,7 @@
         </el-table-column>
         <el-table-column label="操作" width="100">
           <template v-slot="scope">
-            <el-button @click="deleteRow(scope.row)">移除</el-button>
+            <el-button @click="deleteRow(scope.row)" :disabled="dataForm.businessTypeList.length === 1">移除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -217,6 +225,8 @@ const rules = ref({
 const close = () => {
   visible.value = false;
   dataFormRef.value.resetFields();
+  dataForm.businessTypeList = [];
+  emit("refreshDataList");
 };
 const init = (detail: any) => {
   visible.value = true;
@@ -233,14 +243,18 @@ const init = (detail: any) => {
     totalPrice,
     remark
   });
-  dataForm.businessTypeList = businessTypeList.map((item: any) => {
-    const { id, businessType, brandName, officialPrice, agencyPrice, totalPrice } = item;
-    if (id) {
-      return { id, orderId: dataForm.id, businessType, brandName, officialPrice, agencyPrice, totalPrice };
-    } else {
-      return { orderId: dataForm.id, businessType, brandName, officialPrice, agencyPrice, totalPrice };
-    }
-  });
+  if (!businessTypeList.length) {
+    add();
+  } else {
+    dataForm.businessTypeList = businessTypeList.map((item: any) => {
+      const { id, businessType, brandName, officialPrice, agencyPrice, totalPrice } = item;
+      if (id) {
+        return { id, orderId: dataForm.id, businessType, brandName, officialPrice, agencyPrice, totalPrice };
+      } else {
+        return { orderId: dataForm.id, businessType, brandName, officialPrice, agencyPrice, totalPrice };
+      }
+    });
+  }
 };
 
 // 表单提交

@@ -102,11 +102,26 @@
                     </div>
                     <el-form-item label="支付类型">
                       <span v-if="!detail.payType">暂无数据</span>
-                      <FileImgPreview v-else fileType="img" :url="detail.payType" />
+                      <FileImgPreview
+                        v-else
+                        fileType="img"
+                        :url="detail.payType"
+                        :delete="showOperate.delete"
+                        :deleteParams="{ id: detail.id, filePath: detail.payType, fieldName: 'payType', type: 1 }"
+                        @deleteFileImg="detail.payType = ''"
+                      />
                     </el-form-item>
                     <el-form-item label="原始合同">
                       <span v-if="!detail.contract">暂无数据</span>
-                      <FileImgPreview v-else fileType="file" :url="detail.contract" download />
+                      <FileImgPreview
+                        v-else
+                        fileType="file"
+                        :url="detail.contract"
+                        download
+                        :delete="showOperate.delete"
+                        :deleteParams="{ id: detail.id, filePath: detail.contract, fieldName: 'contract', type: 1 }"
+                        @deleteFileImg="detail.contract = ''"
+                      />
                     </el-form-item>
                     <el-form-item label="甲方承担金额">
                       <span>{{ convertCurrency(detail.aprice) }}</span>
@@ -162,7 +177,11 @@
                         <div class="section-title">二次提交资料</div>
                       </div>
                       <el-button class="fr" type="primary" @click="addSecond" v-if="showOperate.update">
-                        <!--  v-if="detail.orderStatus == 3 || detail.orderStatus == 5 || detail.orderStatus == 6" -->
+                        <!-- &&
+                          (detail.orderStatus == 3 ||
+                            detail.orderStatus == 4 ||
+                            detail.orderStatus == 5 ||
+                            detail.orderStatus == 6) -->
                         填写
                       </el-button>
                     </div>
@@ -175,27 +194,174 @@
                           </template>
                           <el-form-item label="logo">
                             <span v-if="!item.logo">暂无数据</span>
-                            <FileImgPreview v-else fileType="img" :url="item.logo" />
+                            <FileImgPreview
+                              v-else
+                              fileType="img"
+                              :url="item.logo"
+                              :delete="showOperate.delete"
+                              :deleteParams="{ id: item.id, filePath: item.logo, fieldName: 'logo', type: 2 }"
+                              @deleteFileImg="item.logo = ''"
+                            />
                           </el-form-item>
                           <el-form-item label="身份证">
                             <span v-if="!item.idcard">暂无数据</span>
-                            <FileImgPreview v-else fileType="file" :url="item.idcard" download />
+                            <FileImgPreview
+                              v-else
+                              fileType="file"
+                              :url="item.idcard"
+                              download
+                              :delete="showOperate.delete"
+                              :deleteParams="{ id: item.id, filePath: item.idcard, fieldName: 'idcard', type: 2 }"
+                              @deleteFileImg="item.idcard = ''"
+                            />
                           </el-form-item>
                           <el-form-item label="申请书">
                             <span v-if="!item.applyBook">暂无数据</span>
-                            <FileImgPreview v-else fileType="file" :url="item.applyBook" download />
+                            <FileImgPreview
+                              v-else
+                              fileType="file"
+                              :url="item.applyBook"
+                              download
+                              :delete="showOperate.delete"
+                              :deleteParams="{ id: item.id, filePath: item.applyBook, fieldName: 'applyBook', type: 2 }"
+                              @deleteFileImg="item.applyBook = ''"
+                            />
                           </el-form-item>
                           <el-form-item label="委托书">
                             <span v-if="!item.commission">暂无数据</span>
-                            <FileImgPreview v-else fileType="file" :url="item.commission" download />
+                            <FileImgPreview
+                              v-else
+                              fileType="file"
+                              :url="item.commission"
+                              download
+                              :delete="showOperate.delete"
+                              :deleteParams="{
+                                id: item.id,
+                                filePath: item.commission,
+                                fieldName: 'commission',
+                                type: 2
+                              }"
+                              @deleteFileImg="item.commission = ''"
+                            />
                           </el-form-item>
                           <el-form-item label="营业执照">
                             <span v-if="!item.businessLicense">暂无数据</span>
-                            <FileImgPreview v-else fileType="file" :url="item.businessLicense" download />
+                            <FileImgPreview
+                              v-else
+                              fileType="file"
+                              :url="item.businessLicense"
+                              download
+                              :delete="showOperate.delete"
+                              :deleteParams="{
+                                id: item.id,
+                                filePath: item.businessLicense,
+                                fieldName: 'businessLicense',
+                                type: 2
+                              }"
+                              @deleteFileImg="item.businessLicense = ''"
+                            />
                           </el-form-item>
                           <el-form-item label="盖章合同">
                             <span v-if="!item.sealedContract">暂无数据</span>
-                            <FileImgPreview v-else fileType="file" :url="item.sealedContract" download />
+                            <FileImgPreview
+                              v-else
+                              fileType="file"
+                              :url="item.sealedContract"
+                              download
+                              :delete="showOperate.delete"
+                              :deleteParams="{
+                                id: item.id,
+                                filePath: item.sealedContract,
+                                fieldName: 'sealedContract',
+                                type: 2
+                              }"
+                              @deleteFileImg="item.sealedContract = ''"
+                            />
+                          </el-form-item>
+                        </el-collapse-item>
+                      </div>
+                    </el-collapse>
+                  </div>
+                  <!-- 回传资料 -->
+                  <div v-if="detail.orderStatus === 8">
+                    <div class="section-header">
+                      <div class="flex align-center">
+                        <div class="section-mark"></div>
+                        <div class="section-title">回传资料</div>
+                      </div>
+                      <el-button class="fr" type="primary" @click="addThird" v-if="showOperate['upload-admin']">
+                        填写
+                      </el-button>
+                    </div>
+
+                    <el-collapse class="mt20 mb20">
+                      <div v-for="(item, index) in detail.businessTypeList" :key="index">
+                        <el-collapse-item>
+                          <template #title>
+                            {{ getDictLabel("businessType", item.businessType) }}
+                          </template>
+                          <el-form-item label="aaa">
+                            <span v-if="!item.aaa">暂无数据</span>
+                            <FileImgPreview
+                              v-else
+                              fileType="file"
+                              :url="item.aaa"
+                              download
+                              :delete="showOperate.delete"
+                              :deleteParams="{ id: item.id, filePath: item.aaa, fieldName: 'aaa', type: 2 }"
+                              @deleteFileImg="item.aaa = ''"
+                            />
+                          </el-form-item>
+                          <el-form-item label="bbb">
+                            <span v-if="!item.bbb">暂无数据</span>
+                            <FileImgPreview
+                              v-else
+                              fileType="file"
+                              :url="item.bbb"
+                              download
+                              :delete="showOperate.delete"
+                              :deleteParams="{
+                                id: item.id,
+                                filePath: item.bbb,
+                                fieldName: 'bbb',
+                                type: 2
+                              }"
+                              @deleteFileImg="item.bbb = ''"
+                            />
+                          </el-form-item>
+                          <el-form-item label="ccc">
+                            <span v-if="!item.ccc">暂无数据</span>
+                            <FileImgPreview
+                              v-else
+                              fileType="file"
+                              :url="item.ccc"
+                              download
+                              :delete="showOperate.delete"
+                              :deleteParams="{
+                                id: item.id,
+                                filePath: item.ccc,
+                                fieldName: 'ccc',
+                                type: 2
+                              }"
+                              @deleteFileImg="item.ccc = ''"
+                            />
+                          </el-form-item>
+                          <el-form-item label="ddd">
+                            <span v-if="!item.ddd">暂无数据</span>
+                            <FileImgPreview
+                              v-else
+                              fileType="file"
+                              :url="item.ddd"
+                              download
+                              :delete="showOperate.delete"
+                              :deleteParams="{
+                                id: item.id,
+                                filePath: item.ddd,
+                                fieldName: 'ddd',
+                                type: 2
+                              }"
+                              @deleteFileImg="item.ddd = ''"
+                            />
                           </el-form-item>
                         </el-collapse-item>
                       </div>
@@ -219,6 +385,7 @@
   <add-or-update ref="addOrUpdateRef" @refreshDataList="getInfo(detail.id)"></add-or-update>
   <OrderUpdateFirst ref="addFirstRef" @refreshDataList="getInfo(detail.id)" />
   <OrderUpdateSecond ref="addSecondRef" @refreshDataList="getInfo(detail.id)" />
+  <OrderUpdateThird ref="addThirdRef" @refreshDataList="getInfo(detail.id)" />
 
   <!-- 提交审核 -->
   <SubmitApprove ref="submitApproveRef" @refreshDataList="getInfo(detail.id)" />
@@ -235,6 +402,7 @@ import FileImgPreview from "@/components/FileImgPreview.vue";
 import { useMediaQuery } from "@vueuse/core";
 import OrderUpdateFirst from "./order-update-first.vue";
 import OrderUpdateSecond from "./order-update-second.vue";
+import OrderUpdateThird from "./order-update-third.vue";
 import Activity from "@/components/activity/index.vue";
 import useUtils from "@/hooks/useUtils";
 import SubmitApprove from "./SubmitApprove.vue";
@@ -336,6 +504,12 @@ const addFirst = () => {
 const addSecondRef = ref();
 const addSecond = () => {
   addSecondRef.value.init(detail);
+};
+
+// 回传资料
+const addThirdRef = ref();
+const addThird = () => {
+  addThirdRef.value.init(detail);
 };
 
 // 提交审核

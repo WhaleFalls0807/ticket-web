@@ -3,7 +3,7 @@
     <div class="header">
       <div class="left">您好！欢迎访问商标服务官方网站！</div>
       <div class="right">
-        <span>全国统一免费服务热线 xxx</span>
+        <span>全国统一免费服务热线 4008776313</span>
       </div>
     </div>
     <div class="banner1">
