@@ -6,6 +6,7 @@ import NProgress from "nprogress";
 import "nprogress/nprogress.css";
 import {
   createRouter,
+  createWebHistory,
   createWebHashHistory,
   RouteLocationNormalized,
   RouteRecordRaw
@@ -23,7 +24,8 @@ interface dynamicRouteParams {
 NProgress.configure({ showSpinner: false });
 
 const router = createRouter({
-  history: createWebHashHistory(), //createWebHashHistory() hash模式
+  // history: createWebHashHistory(), //createWebHashHistory() hash模式
+  history: createWebHistory(), //history 模式
   routes: baseRoutes
 });
 
