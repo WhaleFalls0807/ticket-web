@@ -5,9 +5,6 @@
         {{ detail.orderName }}
       </div>
       <div class="mr10">
-        <el-button v-if="showOperate.commit && detail.orderStatus !== 7" type="primary" @click="submitOrder">
-          提交审核
-        </el-button>
         <el-button v-if="showOperate.commit && detail.orderStatus === 7" type="primary" @click="completedOrder">
           成单
         </el-button>
@@ -19,9 +16,6 @@
         </el-button>
         <el-button v-if="showOperate.assign" type="primary" link @click="emit('assign', detail.orderName, detail.id)">
           指派
-        </el-button>
-        <el-button v-if="showOperate.approve" type="primary" @click="emit('approve', detail.orderName, detail.id)">
-          审批
         </el-button>
         <el-button type="danger" v-if="showOperate.delete" link @click="emit('deleteHandle', detail.id)">
           删除
@@ -54,8 +48,8 @@
           </el-descriptions>
         </div>
         <div class="drawer-main">
-          <el-tabs type="border-card">
-            <el-tab-pane label="详细资料">
+          <el-tabs type="border-card" v-model="activeName">
+            <el-tab-pane label="详细资料" name="first">
               <el-form label-width="100" :label-position="isMobile ? 'top' : 'left'">
                 <div>
                   <!-- 基本信息 -->
@@ -84,9 +78,6 @@
                     <el-form-item label="客户行业">
                       <span>{{ getDictLabel("industry", detail.industry) }}</span>
                     </el-form-item>
-                    <el-form-item label="备注">
-                      <span>{{ detail.content }}</span>
-                    </el-form-item>
                   </div>
                   <!-- 提交 -->
                   <div>
@@ -95,10 +86,30 @@
                         <div class="section-mark"></div>
                         <div class="section-title">首次提交资料</div>
                       </div>
-                      <el-button class="fr" type="primary" @click="addFirst" v-if="showOperate.update">
-                        <!--  v-if="detail.orderStatus == 1 || detail.orderStatus == 2 || detail.orderStatus == 4" -->
-                        填写
-                      </el-button>
+                      <el-space>
+                        <el-button
+                          class="fr"
+                          type="primary"
+                          @click="addFirst"
+                          v-if="showOperate.update && (detail.orderStatus == 1 || detail.orderStatus == 4)"
+                        >
+                          填写
+                        </el-button>
+                        <el-button
+                          v-if="showOperate.commit && (detail.orderStatus == 1 || detail.orderStatus == 4)"
+                          type="primary"
+                          @click="submitOrder"
+                        >
+                          提交审核
+                        </el-button>
+                        <el-button
+                          v-if="showOperate.approve && (detail.orderStatus == 2 || detail.orderStatus == 4)"
+                          type="primary"
+                          @click="emit('approve', detail.orderName, detail.id)"
+                        >
+                          审批
+                        </el-button>
+                      </el-space>
                     </div>
                     <el-form-item label="支付类型">
                       <span v-if="!detail.payType">暂无数据</span>
@@ -165,8 +176,8 @@
                     <el-form-item label="总费用">
                       <span>{{ convertCurrency(detail.totalPrice) }}</span>
                     </el-form-item>
-                    <el-form-item prop="remark" label="备注">
-                      <span>{{ detail.remark }}</span>
+                    <el-form-item prop="content" label="备注">
+                      <span>{{ detail.content }}</span>
                     </el-form-item>
                   </div>
                   <!-- 提交 -->
@@ -176,14 +187,30 @@
                         <div class="section-mark"></div>
                         <div class="section-title">二次提交资料</div>
                       </div>
-                      <el-button class="fr" type="primary" @click="addSecond" v-if="showOperate.update">
-                        <!-- &&
-                          (detail.orderStatus == 3 ||
-                            detail.orderStatus == 4 ||
-                            detail.orderStatus == 5 ||
-                            detail.orderStatus == 6) -->
-                        填写
-                      </el-button>
+                      <el-space>
+                        <el-button
+                          class="fr"
+                          type="primary"
+                          @click="addSecond"
+                          v-if="showOperate.update && (detail.orderStatus == 3 || detail.orderStatus == 6)"
+                        >
+                          填写
+                        </el-button>
+                        <el-button
+                          v-if="showOperate.commit && (detail.orderStatus == 3 || detail.orderStatus == 6)"
+                          type="primary"
+                          @click="submitOrder"
+                        >
+                          提交审核
+                        </el-button>
+                        <el-button
+                          v-if="showOperate.approve && (detail.orderStatus == 5 || detail.orderStatus == 6)"
+                          type="primary"
+                          @click="emit('approve', detail.orderName, detail.id)"
+                        >
+                          审批
+                        </el-button>
+                      </el-space>
                     </div>
 
                     <el-collapse class="mt20 mb20">
@@ -283,7 +310,7 @@
                     </el-collapse>
                   </div>
                   <!-- 回传资料 -->
-                  <div v-if="detail.orderStatus === 8">
+                  <div v-if="detail.orderStatus === 8||detail.orderStatus === 10">
                     <div class="section-header">
                       <div class="flex align-center">
                         <div class="section-mark"></div>
@@ -300,67 +327,72 @@
                           <template #title>
                             {{ getDictLabel("businessType", item.businessType) }}
                           </template>
-                          <el-form-item label="aaa">
-                            <span v-if="!item.aaa">暂无数据</span>
+                          <el-form-item label-width="140" label="回执文件">
+                            <span v-if="!item.regiAppReceipt">暂无数据</span>
                             <FileImgPreview
                               v-else
                               fileType="file"
-                              :url="item.aaa"
-                              download
-                              :delete="showOperate.delete"
-                              :deleteParams="{ id: item.id, filePath: item.aaa, fieldName: 'aaa', type: 2 }"
-                              @deleteFileImg="item.aaa = ''"
-                            />
-                          </el-form-item>
-                          <el-form-item label="bbb">
-                            <span v-if="!item.bbb">暂无数据</span>
-                            <FileImgPreview
-                              v-else
-                              fileType="file"
-                              :url="item.bbb"
+                              :url="item.regiAppReceipt"
                               download
                               :delete="showOperate.delete"
                               :deleteParams="{
                                 id: item.id,
-                                filePath: item.bbb,
-                                fieldName: 'bbb',
+                                filePath: item.regiAppReceipt,
+                                fieldName: 'regiAppReceipt',
                                 type: 2
                               }"
-                              @deleteFileImg="item.bbb = ''"
+                              @deleteFileImg="item.regiAppReceipt = ''"
                             />
                           </el-form-item>
-                          <el-form-item label="ccc">
-                            <span v-if="!item.ccc">暂无数据</span>
+                          <el-form-item label-width="140" label="受理通知书">
+                            <span v-if="!item.regiAppAcceptNotice">暂无数据</span>
                             <FileImgPreview
                               v-else
                               fileType="file"
-                              :url="item.ccc"
+                              :url="item.regiAppAcceptNotice"
                               download
                               :delete="showOperate.delete"
                               :deleteParams="{
                                 id: item.id,
-                                filePath: item.ccc,
-                                fieldName: 'ccc',
+                                filePath: item.regiAppAcceptNotice,
+                                fieldName: 'regiAppAcceptNotice',
                                 type: 2
                               }"
-                              @deleteFileImg="item.ccc = ''"
+                              @deleteFileImg="item.regiAppAcceptNotice = ''"
                             />
                           </el-form-item>
-                          <el-form-item label="ddd">
-                            <span v-if="!item.ddd">暂无数据</span>
+                          <el-form-item label-width="140" label="初步审定公告通知书">
+                            <span v-if="!item.regiAppPreApproveNotice">暂无数据</span>
                             <FileImgPreview
                               v-else
                               fileType="file"
-                              :url="item.ddd"
+                              :url="item.regiAppPreApproveNotice"
                               download
                               :delete="showOperate.delete"
                               :deleteParams="{
                                 id: item.id,
-                                filePath: item.ddd,
-                                fieldName: 'ddd',
+                                filePath: item.regiAppPreApproveNotice,
+                                fieldName: 'regiAppPreApproveNotice',
                                 type: 2
                               }"
-                              @deleteFileImg="item.ddd = ''"
+                              @deleteFileImg="item.regiAppPreApproveNotice = ''"
+                            />
+                          </el-form-item>
+                          <el-form-item label-width="140" label="注册证">
+                            <span v-if="!item.regiCertificate">暂无数据</span>
+                            <FileImgPreview
+                              v-else
+                              fileType="file"
+                              :url="item.regiCertificate"
+                              download
+                              :delete="showOperate.delete"
+                              :deleteParams="{
+                                id: item.id,
+                                filePath: item.regiCertificate,
+                                fieldName: 'regiCertificate',
+                                type: 2
+                              }"
+                              @deleteFileImg="item.regiCertificate = ''"
                             />
                           </el-form-item>
                         </el-collapse-item>
@@ -370,11 +402,11 @@
                 </div>
               </el-form>
             </el-tab-pane>
-            <el-tab-pane label="跟进记录">
-              <Activity :associationId="detail.id" :activityType="3" />
+            <el-tab-pane label="跟进记录" name="second">
+              <Activity :associationId="detail.id" :activityType="3" v-if="activeName === 'second'" />
             </el-tab-pane>
-            <el-tab-pane label="操作记录">
-              <Activity :associationId="detail.id" :activityType="1" />
+            <el-tab-pane label="操作记录" name="third">
+              <Activity :associationId="detail.id" :activityType="1" v-if="activeName === 'third'" />
             </el-tab-pane>
           </el-tabs>
         </div>
@@ -453,8 +485,9 @@ const detail: any = reactive({
     }
   ],
   totalPrice: 0,
-  remark: ""
+  content: ""
 });
+const activeName = ref("first");
 // 添加或编辑
 const addOrUpdateRef = ref();
 const addOrUpdateHandle = () => {
@@ -557,6 +590,7 @@ const completedOrder = () => {
 };
 const close = () => {
   drawer.value = false;
+  activeName.value = "first";
 };
 const init = (id: string) => {
   drawer.value = true;

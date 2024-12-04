@@ -34,7 +34,6 @@ http.interceptors.request.use(
 );
 http.interceptors.response.use(
   (response) => {
-    console.log("http.interceptors.response", response);
     if (response.request.responseType === "blob") {
       return response;
     }

@@ -130,8 +130,8 @@
       <el-form-item prop="totalPrice" label="总费用">
         <el-input-number v-model="dataForm.totalPrice" :min="0" :precision="2" :step="0.1" disabled />
       </el-form-item>
-      <el-form-item prop="remark" label="备注">
-        <el-input v-model="dataForm.remark" type="textarea" :autosize="{ minRows: 3, maxRows: 6 }" />
+      <el-form-item prop="content" label="备注">
+        <el-input v-model="dataForm.content" type="textarea" :autosize="{ minRows: 3, maxRows: 6 }" />
       </el-form-item>
     </el-form>
     <template v-slot:footer>
@@ -181,7 +181,7 @@ const dataForm: any = reactive({
     // }
   ],
   totalPrice: 0,
-  remark: ""
+  content: ""
 });
 const totalPrice = computed(() => {
   return dataForm.businessTypeList.reduce((sum: any, item: any) => sum + item.totalPrice, 0);
@@ -228,7 +228,7 @@ const close = () => {
 };
 const init = (detail: any) => {
   visible.value = true;
-  const { id, payType, contract, aprice, bprice, businessName, applyMethod, businessTypeList, totalPrice, remark } =
+  const { id, payType, contract, aprice, bprice, businessName, applyMethod, businessTypeList, totalPrice, content } =
     detail;
   Object.assign(dataForm, {
     id,
@@ -239,7 +239,7 @@ const init = (detail: any) => {
     businessName,
     applyMethod,
     totalPrice,
-    remark
+    content
   });
   if (!businessTypeList.length) {
     add();

@@ -6,83 +6,104 @@
     :close-on-press-escape="false"
     :before-close="close"
   >
-    <el-form :model="dataForm" ref="dataFormRef" label-width="120px">
+    <el-form :model="dataForm" ref="dataFormRef" label-width="150px">
       <el-collapse>
         <el-collapse-item v-for="(item, index) in dataForm.businessTypeList" :key="index" :title="item.businessType">
           <el-form-item
-            label="aaa"
-            :prop="'businessTypeList.' + index + '.aaa'"
+            label="回执文件"
+            :prop="'businessTypeList.' + index + '.regiAppReceipt'"
             :rules="{
               required: true,
               message: '必填项不能为空',
               trigger: 'blur'
             }"
           >
-            <el-button v-if="!item.aaa" @click="uploadHandle(item, 'aaa', 'file')">上传文件</el-button>
+            <el-button v-if="!item.regiAppReceipt" @click="uploadHandle(item, 'regiAppReceipt', 'file')">
+              上传文件
+            </el-button>
             <FileImgPreview
               v-else
               fileType="file"
-              :url="item.aaa"
+              :url="item.regiAppReceipt"
               delete
-              :deleteParams="{ id: item.id, filePath: item.aaa, fieldName: 'aaa', type: 2 }"
-              @deleteFileImg="item.aaa = ''"
+              :deleteParams="{ id: item.id, filePath: item.regiAppReceipt, fieldName: 'regiAppReceipt', type: 2 }"
+              @deleteFileImg="item.regiAppReceipt = ''"
             />
           </el-form-item>
           <el-form-item
-            label="bbb"
-            :prop="'businessTypeList.' + index + '.bbb'"
+            label="受理通知书"
+            :prop="'businessTypeList.' + index + '.regiAppAcceptNotice'"
             :rules="{
               required: true,
               message: '必填项不能为空',
               trigger: 'blur'
             }"
           >
-            <el-button v-if="!item.bbb" @click="uploadHandle(item, 'bbb', 'file')">上传文件</el-button>
+            <el-button v-if="!item.regiAppAcceptNotice" @click="uploadHandle(item, 'regiAppAcceptNotice', 'file')">
+              上传文件
+            </el-button>
             <FileImgPreview
               v-else
               fileType="file"
-              :url="item.bbb"
+              :url="item.regiAppAcceptNotice"
               delete
-              :deleteParams="{ id: item.id, filePath: item.bbb, fieldName: 'bbb', type: 2 }"
-              @deleteFileImg="item.bbb = ''"
+              :deleteParams="{
+                id: item.id,
+                filePath: item.regiAppAcceptNotice,
+                fieldName: 'regiAppAcceptNotice',
+                type: 2
+              }"
+              @deleteFileImg="item.regiAppAcceptNotice = ''"
             />
           </el-form-item>
           <el-form-item
-            label="ccc"
-            :prop="'businessTypeList.' + index + '.ccc'"
+            label="初步审定公告通知书"
+            :prop="'businessTypeList.' + index + '.regiAppPreApproveNotice'"
             :rules="{
               required: true,
               message: '必填项不能为空',
               trigger: 'blur'
             }"
           >
-            <el-button v-if="!item.ccc" @click="uploadHandle(item, 'ccc', 'file')">上传文件</el-button>
+            <el-button
+              v-if="!item.regiAppPreApproveNotice"
+              @click="uploadHandle(item, 'regiAppPreApproveNotice', 'file')"
+            >
+              上传文件
+            </el-button>
             <FileImgPreview
               v-else
               fileType="file"
-              :url="item.ccc"
+              :url="item.regiAppPreApproveNotice"
               delete
-              :deleteParams="{ id: item.id, filePath: item.ccc, fieldName: 'ccc', type: 2 }"
-              @deleteFileImg="item.ccc = ''"
+              :deleteParams="{
+                id: item.id,
+                filePath: item.regiAppPreApproveNotice,
+                fieldName: 'regiAppPreApproveNotice',
+                type: 2
+              }"
+              @deleteFileImg="item.regiAppPreApproveNotice = ''"
             />
           </el-form-item>
           <el-form-item
-            label="ddd"
-            :prop="'businessTypeList.' + index + '.ddd'"
+            label="注册证"
+            :prop="'businessTypeList.' + index + '.regiCertificate'"
             :rules="{
               required: true,
               message: '必填项不能为空',
               trigger: 'blur'
             }"
           >
-            <el-button v-if="!item.ddd" @click="uploadHandle(item, 'ddd', 'file')">上传文件</el-button>
+            <el-button v-if="!item.regiCertificate" @click="uploadHandle(item, 'regiCertificate', 'file')">
+              上传文件
+            </el-button>
             <FileImgPreview
               v-else
               fileType="file"
-              :url="item.ddd"
+              :url="item.regiCertificate"
               delete
-              :deleteParams="{ id: item.id, filePath: item.ddd, fieldName: 'ddd', type: 2 }"
-              @deleteFileImg="item.ddd = ''"
+              :deleteParams="{ id: item.id, filePath: item.regiCertificate, fieldName: 'regiCertificate', type: 2 }"
+              @deleteFileImg="item.regiCertificate = ''"
             />
           </el-form-item>
         </el-collapse-item>
@@ -126,10 +147,10 @@ const dataForm: any = reactive({
   businessTypeList: [
     // {
     //   businessType: "商标注册",
-    //   aaa: "",
-    //   bbb: "",
-    //   ccc: "",
-    //   ddd: ""
+    //   regiAppReceipt: "",
+    //   regiAppAcceptNotice: "",
+    //   regiAppPreApproveNotice: "",
+    //   regiCertificate: ""
     // }
   ]
 });
@@ -146,15 +167,15 @@ const init = (detail: any) => {
 
   dataForm.id = id;
   dataForm.businessTypeList = businessTypeList.map((item: any) => {
-    const { id, businessType, aaa, bbb, ccc, ddd } = item;
+    const { id, businessType, regiAppReceipt, regiAppAcceptNotice, regiAppPreApproveNotice, regiCertificate } = item;
     return {
       id,
       orderId: dataForm.id,
       businessType,
-      aaa,
-      bbb,
-      ccc,
-      ddd
+      regiAppReceipt,
+      regiAppAcceptNotice,
+      regiAppPreApproveNotice,
+      regiCertificate
     };
   });
 };

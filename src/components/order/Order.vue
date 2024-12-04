@@ -60,7 +60,7 @@
         align="center"
       ></el-table-column>
       <el-table-column
-        v-if="state.hasPermission('sys:user:page') && (type === 'grab' || type === 'seas')"
+        v-if="state.hasPermission('sys:user:page') && type !== 'seas'"
         prop="ownerUsername"
         label="负责人"
         header-align="center"
@@ -70,6 +70,15 @@
       <el-table-column prop="orderStatus" label="工单状态" header-align="center" align="center">
         <template v-slot="scope">
           {{ state.getDictLabel("orderStatus", scope.row.orderStatus) }}
+        </template>
+      </el-table-column>
+      <el-table-column prop="payType" label="已付款" header-align="center" align="center">
+        <template v-slot="scope">
+          <el-tag v-if="scope.row.payType" type="success">是</el-tag>
+          <template v-else>
+            <el-tag type="info">否</el-tag>
+            <div>未付款时间为{{ scope.row.daysUnPay }}天</div>
+          </template>
         </template>
       </el-table-column>
       <el-table-column
@@ -177,8 +186,10 @@
     <Approve
       ref="approveRef"
       @refreshDataList="
-        state.getDataList;
-        detailRef.value.close;
+        () => {
+          state.getDataList();
+          detailRef.close();
+        }
       "
     />
     <!-- 详情 -->

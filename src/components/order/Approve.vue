@@ -73,11 +73,7 @@ const dataFormSubmitHandle = (status: number) => {
     fn.then((res) => {
       ElMessage.success({
         message: "操作成功",
-        duration: 500,
-        onClose: () => {
-          close();
-          emit("refreshDataList");
-        }
+        duration: 500
       });
 
       if (status === 1) {
@@ -87,6 +83,7 @@ const dataFormSubmitHandle = (status: number) => {
       } else {
         loading3.value = false;
       }
+      emit("refreshDataList");
       // 关闭页面
       close();
     }).catch(() => {

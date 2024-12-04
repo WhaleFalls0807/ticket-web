@@ -24,8 +24,8 @@
           </div>
         </div>
         <div class="drawer-main">
-          <el-tabs type="border-card">
-            <el-tab-pane label="详细资料">
+          <el-tabs type="border-card" v-model="activeName">
+            <el-tab-pane label="详细资料" name="first">
               <el-form label-width="100" :label-position="isMobile ? 'top' : 'left'">
                 <el-form-item label="客户名称">
                   <span>{{ detail.customerName }}</span>
@@ -65,11 +65,11 @@
                 </el-form-item>
               </el-form>
             </el-tab-pane>
-            <el-tab-pane label="跟进记录">
-              <Activity :associationId="detail.id" :activityType="2" />
+            <el-tab-pane label="跟进记录" name="second">
+              <Activity :associationId="detail.id" :activityType="2" v-if="activeName === 'second'" />
             </el-tab-pane>
-            <el-tab-pane label="操作记录">
-              <Activity :associationId="detail.id" :activityType="1" />
+            <el-tab-pane label="操作记录" name="third">
+              <Activity :associationId="detail.id" :activityType="1" v-if="activeName === 'third'" />
             </el-tab-pane>
           </el-tabs>
         </div>
@@ -123,6 +123,8 @@ const detail: any = reactive({
 const view = reactive({});
 const state = reactive({ ...useView(view), ...toRefs(view) });
 const isMobile = useMediaQuery("(max-width: 768px)");
+
+const activeName = ref("first");
 
 const init = (id: string) => {
   drawer.value = true;

@@ -1,18 +1,18 @@
 <template>
-  <el-drawer v-model="drawer" title="通知" :size="isMobile ? '90%' : '40%'" class="message-drawer">
+  <el-drawer v-model="drawer" title="通知" :size="isMobile ? '90%' : '40%'" class="message-drawer" @close="close">
     <div class="infinite-list-wrapper">
       <div v-infinite-scroll="getInfo" :infinite-scroll-disabled="disabled">
         <div
           class="message-cell"
           v-for="message in state.messageList"
           :key="message.id"
-          :class="{ 'is-unread': message.read === 0 }"
+          :class="{ 'is-unread': message.isRead === 0 }"
         >
-          <div class="content-box">{{ message.content }}</div>
+          <div class="content-box">{{ message.createName + "    " + message.content }}</div>
           <div class="right-box">
             <div>{{ message.createDate }}</div>
             <div class="handle">
-              <span class="check" @click="handleMarkRead([message.id])" v-if="message.read === 0">标记已读</span>
+              <span class="check" @click="handleMarkRead([message.id])" v-if="message.isRead === 0">标记已读</span>
               <span class="delete" @click="handleDelete(message.id)">删除</span>
             </div>
           </div>
@@ -24,7 +24,7 @@
     <template #footer>
       <div class="drawer-footer">
         <div class="switch-read">
-          <el-switch v-model="state.read" @change="readChange" :active-value="0" :inactive-value="2" />
+          <el-switch v-model="state.isRead" @change="readChange" :active-value="0" :inactive-value="2" />
           <span class="switch-read__title">仅显示未读消息</span>
         </div>
         <el-dropdown trigger="click" @command="handleCommand">
@@ -52,7 +52,7 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref, computed, onMounted } from "vue";
+import { reactive, ref, computed, onMounted, onUnmounted } from "vue";
 import baseService from "@/service/baseService";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { Delete, Check } from "@element-plus/icons-vue";
@@ -66,14 +66,14 @@ const state: any = reactive({
   messageList: [
     // {
     //   id: "1",
-    //   read: 0,
+    //   isRead: 0,
     //   content: "ceshi测试",
     //   createDate: "2024-11-11 10:11:11"
     // }
   ],
   page: 1,
-  limit: 10,
-  read: 2, //未读0 已读1 全部2
+  limit: 30,
+  isRead: 2, //未读0 已读1 全部2
   total: 0
 });
 const loading = ref(false);
@@ -81,6 +81,13 @@ const noMore = ref(false);
 const disabled = computed(() => loading.value || noMore.value);
 const isMobile = useMediaQuery("(max-width: 768px)");
 
+const close = () => {
+  state.messageList = [];
+  state.page = 1;
+  state.limit = 30;
+  state.isRead = 2;
+  state.total = 0;
+};
 const handleCommand = (action: any) => {
   if (action === "delete") {
     handleDeleteAllRead();
@@ -99,23 +106,20 @@ const handleMarkRead = (ids?: any) => {
     type: "warning"
   })
     .then(() => {
-      ids.length === 1
-        ? baseService.post(`/notification/read/` + ids[0])
-        : baseService.post(`/notification/read`).then((res) => {
-            if (res.code === 0) {
-              ElMessage.success({
-                message: "标记成功",
-                duration: 500,
-                onClose: () => {}
-              });
-              state.messageList.forEach((item: any) => {
-                if (ids.includes(item.id)) {
-                  item.read = 1;
-                }
-              });
-              getMessageCount();
-            }
-          });
+      const fn =
+        ids.length === 1 ? baseService.post(`/notification/read/` + ids[0]) : baseService.post(`/notification/read`);
+      fn.then((res) => {
+        ElMessage.success({
+          message: "标记成功"
+        });
+        state.messageList.forEach((item: any) => {
+          if (ids.includes(item.id)) {
+            item.isRead = 1;
+          }
+        });
+        console.log(state.messageList);
+        getMessageCount();
+      });
     })
     .catch(() => {
       //
@@ -158,7 +162,7 @@ const handleDeleteAllRead = () => {
           onClose: () => {}
         });
         state.messageList = state.messageList.map((item: any) => {
-          if (item.read !== 1) {
+          if (item.isRead !== 1) {
             return item;
           }
         });
@@ -179,19 +183,28 @@ const readChange = (value: any) => {
 };
 
 // 获取未读消息数
-const getMessageCount = () => {
-  baseService.get(`/`).then((res) => {
+const getMessageCount: any = () => {
+  baseService.get(`/notification/total/count`).then((res) => {
     store.state.unReadMessage = res.data;
     store.updateUnReadMessage(res.data);
   });
 };
+
+const timerId = ref();
 onMounted(() => {
-  getMessageCount();
+  if (store.state.user.id) {
+    getMessageCount();
+    timerId.value = setInterval(() => {
+      getMessageCount();
+    }, 1000 * 10);
+  }
 });
+onUnmounted(() => {
+  clearInterval(timerId.value);
+});
+
 const init = () => {
   drawer.value = true;
-
-  getInfo();
 };
 // 获取信息
 const getInfo = () => {
@@ -200,7 +213,7 @@ const getInfo = () => {
     .get(`/notification/page`, {
       page: state.page,
       limit: state.limit,
-      read: state.read
+      isRead: state.isRead
     })
     .then((res) => {
       state.messageList.push(...res.data.list);

@@ -1,7 +1,12 @@
 <template>
-  <el-button type="primary" @click="addFollow">写跟进</el-button>
+  <el-button type="primary" @click="addFollow" v-if="activityType == 2 || activityType == 3">写跟进</el-button>
   <div class="infinite-list-wrapper">
-    <el-timeline class="list" v-infinite-scroll="getInfo" :infinite-scroll-disabled="disabled">
+    <el-timeline
+      class="list"
+      v-infinite-scroll="getInfo"
+      :infinite-scroll-disabled="disabled"
+      :infinite-scroll-distance="200"
+    >
       <el-timeline-item
         class="list-item"
         center
@@ -28,9 +33,10 @@
           <div class="content">{{ item.content }}</div>
         </el-card>
       </el-timeline-item>
+
+      <p v-if="loading" class="text-center pb10">加载中...</p>
+      <p v-if="noMore" class="text-center pb10">没有更多了……</p>
     </el-timeline>
-    <p v-if="loading" class="text-center">加载中...</p>
-    <p v-if="noMore" class="text-center">没有更多了……</p>
   </div>
   <FollowAddUpdate
     ref="addFollowRef"
@@ -116,9 +122,6 @@ const getInfo = () => {
       loading.value = false;
     });
 };
-onMounted(() => {
-  getInfo();
-});
 </script>
 
 <style scoped lang="less">
@@ -126,8 +129,11 @@ onMounted(() => {
 
 .infinite-list-wrapper {
   margin-top: 10px;
-  height: calc(100% - 50px);
-  overflow: auto;
+  height: 100%;
+  .list {
+    height: 100%;
+    overflow: auto;
+  }
 }
 
 .header {
