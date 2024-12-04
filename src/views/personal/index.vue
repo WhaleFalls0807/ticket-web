@@ -16,18 +16,14 @@
         <el-button @click="getData()">查询</el-button>
       </el-form-item>
     </el-form>
+    <Charts v-if="dataForm.chartVisible" :chartsData="dataForm.chartsData" />
   </div>
 </template>
 
 <script lang="ts" setup>
-import useView from "@/hooks/useView";
 import { computed, reactive, ref, toRefs, onMounted } from "vue";
 import baseService from "@/service/baseService";
-import { IObject } from "@/types/interface";
-import Assign from "./Assign.vue";
-import Approve from "./Approve.vue";
-import OrderDetails from "./OrderDetails.vue";
-import { ElMessage, ElMessageBox } from "element-plus";
+import Charts from "./charts.vue";
 const props = defineProps(["type", "getDataListURL", "dataForm"]);
 const emit = defineEmits(["refreshDataList"]);
 const selectTime = ref([new Date().getTime() - 7 * 24 * 60 * 60 * 1000, new Date().getTime()]);
@@ -62,18 +58,23 @@ const shortcuts = [
   }
 ];
 
-const dataForm: any = {
+const dataForm: any = reactive({
   startTime: selectTime.value ? selectTime.value[0] : "",
-  endTime: selectTime.value ? selectTime.value[1] : ""
-};
+  endTime: selectTime.value ? selectTime.value[1] : "",
+  chartsData: {},
+  chartVisible: false
+});
 
 const getData = () => {
   baseService
     .get(`/userPortrait/grapedCount`, {
-      ...dataForm
+      startTime: dataForm.startTime,
+      endTime: dataForm.endTime
     })
     .then((res) => {
-      console.log("res", res);
+      dataForm.chartVisible = true;
+      dataForm.chartsData.seriesData = res.data.count;
+      dataForm.chartsData.yAxisData = res.data.username;
     });
 };
 onMounted(() => {

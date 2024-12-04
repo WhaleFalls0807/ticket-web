@@ -9,8 +9,8 @@
   >
     <el-form :model="dataForm" :rules="rules" ref="dataFormRef" label-width="120px">
       <el-form-item prop="userId" label="指派给：">
-        <el-select v-model="dataForm.userId" placeholder="Select" style="width: 240px">
-          <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
+        <el-select v-model="dataForm.userId" style="width: 240px">
+          <el-option v-for="item in options" :key="item.id" :label="item.username" :value="item.id" />
         </el-select>
       </el-form-item>
     </el-form>

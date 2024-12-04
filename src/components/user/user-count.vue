@@ -1,14 +1,21 @@
 <template>
   <el-dialog
     v-model="visible"
-    title="设置抢单次数"
+    title="抢单配置"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
-    width="30%"
+    width="40%"
   >
     <el-form :model="dataForm" :rules="rules" ref="dataFormRef" label-width="120px">
-      <el-form-item prop="totalCount" label="抢单次数">
-        <el-input-number v-model="dataForm.totalCount" :min="0" :step="1" />
+      <el-form-item prop="totalCount" label="抢单配置">
+        <div class="flex">
+          <el-input-number v-model="dataForm.gap" :min="0" :step="1" :controls="false" class="mr10" />
+          <el-select v-model="dataForm.grain" class="mr10">
+            <el-option v-for="item in grainList" :key="item.value" :label="item.label" :value="item.value" />
+          </el-select>
+          <el-input-number v-model="dataForm.totalCount" :min="0" :step="1" :controls="false" class="mr10" />
+          <span>次</span>
+        </div>
       </el-form-item>
     </el-form>
     <template v-slot:footer>
@@ -23,26 +30,54 @@ import { reactive, ref } from "vue";
 import baseService from "@/service/baseService";
 import { ElMessage } from "element-plus";
 
-const emit = defineEmits(["refreshDataList"]);
-
 const visible = ref(false);
 const dataFormRef = ref();
 
 const dataForm = reactive({
-  id: "",
-  totalCount: 10
+  userId: "",
+  username:'',
+  gap: 1,
+  grain: 3,
+  totalCount: 30
 });
-
+const grainList = [
+  {
+    label: "月",
+    value: 1
+  },
+  {
+    label: "周",
+    value: 2
+  },
+  {
+    label: "天",
+    value: 3
+  }
+];
 const rules = ref({
+  gap: [{ required: true, message: "必填项不能为空", trigger: "blur" }],
+  grain: [{ required: true, message: "必填项不能为空", trigger: "blur" }],
   totalCount: [{ required: true, message: "必填项不能为空", trigger: "blur" }]
 });
 
 const init = (user: any) => {
   visible.value = true;
-  dataForm.id = user.id;
-  dataForm.totalCount = user.totalCount;
-};
+  dataForm.userId = user.id;
+  dataForm.username = user.username;
 
+  // 重置表单数据
+  if (dataFormRef.value) {
+    dataFormRef.value.resetFields();
+  }
+
+  getCount();
+};
+const getCount = () => {
+  baseService.get("/orderGrab/config/" + dataForm.userId).then((res) => {
+    const { gap, grain, totalCount } = res.data;
+    Object.assign(dataForm, { gap, grain, totalCount });
+  });
+};
 // 表单提交
 const dataFormSubmitHandle = () => {
   dataFormRef.value.validate((valid: boolean) => {
@@ -59,7 +94,6 @@ const dataFormSubmitHandle = () => {
           duration: 500,
           onClose: () => {
             visible.value = false;
-            emit("refreshDataList");
           }
         });
       });

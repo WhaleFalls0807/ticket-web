@@ -25,6 +25,7 @@
       </el-form-item>
       <el-form-item>
         <el-button @click="state.getDataList()">查询</el-button>
+        <el-button v-if="showOperate.choose" type="primary" @click="chooseOrder()">领取</el-button>
         <el-button v-if="showOperate.seas" type="danger" @click="seas()">放回公海</el-button>
         <el-button v-if="showOperate.assign" type="danger" @click="assign()">指派</el-button>
         <el-button v-if="showOperate.approve" type="danger" @click="approve()">审批</el-button>
@@ -43,7 +44,7 @@
       <el-table-column prop="orderName" label="商标名称" show-overflow-tooltip header-align="center" align="center">
         <template v-slot="scope">
           <template v-if="showDetailVisible">
-            <el-link type="primary" @click="showDetail(scope.row.id, scope.row.customerName)">
+            <el-link type="primary" @click="showDetail(scope.row.id)">
               {{ scope.row.orderName }}
             </el-link>
           </template>
@@ -53,6 +54,7 @@
         </template>
       </el-table-column>
       <el-table-column
+        v-if="type !== 'grab' && type !== 'seas'"
         prop="customerName"
         label="客户名称"
         show-overflow-tooltip
@@ -60,7 +62,7 @@
         align="center"
       ></el-table-column>
       <el-table-column
-        v-if="state.hasPermission('sys:user:page') && type !== 'seas'"
+        v-if="state.hasPermission('sys:user:page') && type !== 'grab' && type !== 'seas'"
         prop="ownerUsername"
         label="负责人"
         header-align="center"
@@ -72,7 +74,13 @@
           {{ state.getDictLabel("orderStatus", scope.row.orderStatus) }}
         </template>
       </el-table-column>
-      <el-table-column prop="payType" label="已付款" header-align="center" align="center">
+      <el-table-column
+        prop="payType"
+        label="已付款"
+        header-align="center"
+        align="center"
+        v-if="type !== 'grab' && type !== 'seas'"
+      >
         <template v-slot="scope">
           <el-tag v-if="scope.row.payType" type="success">是</el-tag>
           <template v-else>
@@ -138,33 +146,11 @@
         v-if="Object.values(showOperate).some((item) => item === true)"
       >
         <template v-slot="scope">
-          <el-button
-            v-if="showOperate.grab"
-            type="primary"
-            link
-            @click="grabOrder(scope.row.customerName, scope.row.id)"
-          >
-            抢单
-          </el-button>
-          <el-button v-if="showOperate.seas" type="primary" link @click="seas(scope.row.customerName, scope.row.id)">
-            放回公海
-          </el-button>
-          <el-button
-            v-if="showOperate.assign"
-            type="primary"
-            link
-            @click="assign(scope.row.customerName, scope.row.id)"
-          >
-            指派
-          </el-button>
-          <el-button
-            v-if="showOperate.approve"
-            type="primary"
-            link
-            @click="approve(scope.row.customerName, scope.row.id)"
-          >
-            审批
-          </el-button>
+          <el-button v-if="showOperate.grab" type="primary" link @click="grabOrder(scope.row.id)">抢单</el-button>
+          <el-button v-if="showOperate.choose" type="primary" link @click="chooseOrder(scope.row.id)">领取</el-button>
+          <el-button v-if="showOperate.seas" type="primary" link @click="seas(scope.row.id)">放回公海</el-button>
+          <el-button v-if="showOperate.assign" type="primary" link @click="assign(scope.row.id)">指派</el-button>
+          <el-button v-if="showOperate.approve" type="primary" link @click="approve(scope.row.id)">审批</el-button>
           <el-button v-if="showOperate.delete" type="primary" link @click="state.deleteHandle(scope.row.id)">
             删除
           </el-button>
@@ -318,7 +304,8 @@ const showDetailVisible = computed(() => {
 const showOperate = computed(() => {
   return {
     see: props.type === "grab" && state.hasPermission("grab:list"),
-    grab: props.type === "seas" && state.hasPermission("seas:grab"),
+    grab: props.type === "grab" && state.hasPermission("grab:grab"),
+    choose: props.type === "seas" && state.hasPermission("seas:choose"),
     seas:
       (props.type === "grab" && state.hasPermission("grab:seas")) ||
       (props.type === "todo" && state.hasPermission("todo:seas")),
@@ -339,7 +326,7 @@ const showOperate = computed(() => {
   };
 });
 // 抢单
-const grabOrder = (customerName?: string, id?: string) => {
+const grabOrder = (id?: string) => {
   if (!id && state.dataListSelections && state.dataListSelections.length <= 0) {
     return ElMessage({
       message: "请选择操作项",
@@ -375,8 +362,48 @@ const grabOrder = (customerName?: string, id?: string) => {
       //
     });
 };
+// 领取
+const chooseOrder = (id?: string) => {
+  if (!id && state.dataListSelections && state.dataListSelections.length <= 0) {
+    return ElMessage({
+      message: "请选择操作项",
+      type: "warning",
+      duration: 500
+    });
+  }
+  ElMessageBox.confirm("确定进行[领取]操作?", "提示", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    type: "warning"
+  })
+    .then(() => {
+      baseService
+        .post("/order/choose", {
+          userId: state.user.id,
+          orderIds: id ? [id] : state.dataListSelections && state.dataListSelections.map((item: IObject) => item.id)
+        })
+        .then((res) => {
+          ElMessage.success({
+            message: "领取成功",
+            duration: 500,
+            onClose: () => {
+              state.getDataList();
+            }
+          });
+        })
+        .catch(() => {
+          ElMessage.error({
+            message: "领取失败",
+            duration: 500
+          });
+        });
+    })
+    .catch(() => {
+      //
+    });
+};
 // 放回公海
-const seas = (customerName?: string, id?: string) => {
+const seas = (id?: string) => {
   if (!id && state.dataListSelections && state.dataListSelections.length <= 0) {
     return ElMessage({
       message: "请选择操作项",
@@ -418,7 +445,7 @@ const seas = (customerName?: string, id?: string) => {
 };
 // 指派
 const assignRef = ref();
-const assign = (customerName?: string, id?: string) => {
+const assign = (id?: string) => {
   if (!id && state.dataListSelections && state.dataListSelections.length <= 0) {
     return ElMessage({
       message: "请选择操作项",
@@ -432,7 +459,7 @@ const assign = (customerName?: string, id?: string) => {
 };
 // 审批
 const approveRef = ref();
-const approve = (customerName?: string, id?: string) => {
+const approve = (id?: any) => {
   if (!id && state.dataListSelections && state.dataListSelections.length <= 0) {
     return ElMessage({
       message: "请选择操作项",
@@ -446,7 +473,7 @@ const approve = (customerName?: string, id?: string) => {
 };
 // 查看详情
 const detailRef = ref();
-const showDetail = (id: string, customerName: string) => {
-  detailRef.value.init(id, customerName);
+const showDetail = (id: string) => {
+  detailRef.value.init(id);
 };
 </script>

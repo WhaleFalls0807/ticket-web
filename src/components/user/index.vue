@@ -92,7 +92,7 @@
             删除
           </el-button>
           <el-button v-if="state.hasPermission('sys:user:count')" type="primary" link @click="setCount(scope.row)">
-            抢单次数
+            抢单配置
           </el-button>
         </template>
       </el-table-column>
@@ -108,7 +108,7 @@
     ></el-pagination>
     <!-- 弹窗, 新增 / 修改 -->
     <add-or-update ref="addOrUpdateRef" @refreshDataList="state.getDataList"></add-or-update>
-    <UserCount ref="userCountRef" @refreshDataList="state.getDataList" />
+    <UserCount ref="userCountRef"/>
   </div>
 </template>
 

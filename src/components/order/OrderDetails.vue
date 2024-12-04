@@ -8,15 +8,9 @@
         <el-button v-if="showOperate.commit && detail.orderStatus === 7" type="primary" @click="completedOrder">
           成单
         </el-button>
-        <el-button v-if="showOperate.grab" type="primary" link @click="emit('grabOrder', detail.orderName, detail.id)">
-          抢单
-        </el-button>
-        <el-button v-if="showOperate.seas" type="primary" link @click="emit('seas', detail.orderName, detail.id)">
-          放回公海
-        </el-button>
-        <el-button v-if="showOperate.assign" type="primary" link @click="emit('assign', detail.orderName, detail.id)">
-          指派
-        </el-button>
+        <el-button v-if="showOperate.grab" type="primary" link @click="emit('grabOrder', detail.id)">抢单</el-button>
+        <el-button v-if="showOperate.seas" type="primary" link @click="emit('seas', detail.id)">放回公海</el-button>
+        <el-button v-if="showOperate.assign" type="primary" link @click="emit('assign', detail.id)">指派</el-button>
         <el-button type="danger" v-if="showOperate.delete" link @click="emit('deleteHandle', detail.id)">
           删除
         </el-button>
@@ -98,14 +92,14 @@
                         <el-button
                           v-if="showOperate.commit && (detail.orderStatus == 1 || detail.orderStatus == 4)"
                           type="primary"
-                          @click="submitOrder"
+                          @click="submitOrder(1)"
                         >
                           提交审核
                         </el-button>
                         <el-button
                           v-if="showOperate.approve && (detail.orderStatus == 2 || detail.orderStatus == 4)"
                           type="primary"
-                          @click="emit('approve', detail.orderName, detail.id)"
+                          @click="emit('approve', detail.id)"
                         >
                           审批
                         </el-button>
@@ -199,14 +193,14 @@
                         <el-button
                           v-if="showOperate.commit && (detail.orderStatus == 3 || detail.orderStatus == 6)"
                           type="primary"
-                          @click="submitOrder"
+                          @click="submitOrder(2)"
                         >
                           提交审核
                         </el-button>
                         <el-button
                           v-if="showOperate.approve && (detail.orderStatus == 5 || detail.orderStatus == 6)"
                           type="primary"
-                          @click="emit('approve', detail.orderName, detail.id)"
+                          @click="emit('approve', detail.id)"
                         >
                           审批
                         </el-button>
@@ -310,7 +304,7 @@
                     </el-collapse>
                   </div>
                   <!-- 回传资料 -->
-                  <div v-if="detail.orderStatus === 8||detail.orderStatus === 10">
+                  <div v-if="detail.orderStatus === 8 || detail.orderStatus === 10">
                     <div class="section-header">
                       <div class="flex align-center">
                         <div class="section-mark"></div>
@@ -428,7 +422,7 @@
 
 <script lang="ts" setup>
 import { reactive, ref, nextTick, toRefs, computed } from "vue";
-import { ElMessage, ElMessageBox } from "element-plus";
+import { ElMessage, ElMessageBox, ElNotification } from "element-plus";
 import baseService from "@/service/baseService";
 import FileImgPreview from "@/components/FileImgPreview.vue";
 import { useMediaQuery } from "@vueuse/core";
@@ -547,13 +541,90 @@ const addThird = () => {
 
 // 提交审核
 const submitApproveRef = ref();
-const submitOrder = () => {
-  submitApproveRef.value.init(detail.id);
+const submitOrder = (type: any) => {
   // if (detail.orderStatus == 1 || detail.orderStatus == 2 || detail.orderStatus == 4") {
   //   ElMessage.error("点击下方“填写资料”按钮，把需要的资料填写完整后再提交审核！");
   // 首次提交按钮
   // }
+  let errors: any = [];
+  if (type == 1) {
+    const { customerName, payType, contract, aprice, bprice, businessName, applyMethod, businessTypeList, totalPrice } =
+      detail;
+    const validateObj = {
+      customerName,
+      payType,
+      contract,
+      aprice,
+      bprice,
+      businessName,
+      applyMethod,
+      businessTypeList: businessTypeList.map((item: any) => {
+        const { businessType, brandName, officialPrice, agencyPrice, totalPrice } = item;
+        return { businessType, brandName, officialPrice, agencyPrice, totalPrice };
+      }),
+      totalPrice
+    };
+    errors = validateDetail(validateObj);
+  } else if (type == 2) {
+    const { businessTypeList } = detail;
+    const validateObj = {
+      businessTypeList: businessTypeList.map((item: any) => {
+        const { logo, idcard, applyBook, commission, businessLicense, sealedContract } = item;
+        return { logo, idcard, applyBook, commission, businessLicense, sealedContract };
+      })
+    };
+    errors = validateDetail(validateObj);
+  }
+  if (errors.length) {
+    ElNotification({
+      title: "提示",
+      dangerouslyUseHTMLString: true,
+      message: "请填写以下内容:<br/>" + errors.join("<br/>"),
+      duration: 5000
+    });
+  } else {
+    submitApproveRef.value.init(detail.id);
+  }
 };
+const validateDetail = (detail: any) => {
+  const keyName: any = {
+    customerName: "客户名称",
+    payType: "支付类型",
+    contract: "原始合同",
+    aprice: "甲方承担金额",
+    bprice: "乙方承担金额",
+    businessName: "业务名称",
+    applyMethod: "申请方式",
+    businessType: "业务类型",
+    brandName: "商标名称",
+    officialPrice: "官费",
+    agencyPrice: "代理费",
+    totalPrice: "总费用",
+    logo: "LOGO",
+    idcard: "身份证",
+    applyBook: "申请书",
+    commission: "委托书",
+    businessLicense: "营业执照",
+    sealedContract: "盖章合同"
+  };
+  const errors = [];
+  for (const key in detail) {
+    if (key === "businessTypeList" && Array.isArray(detail[key])) {
+      detail[key].forEach((item, index) => {
+        for (const subKey in item) {
+          if (!item[subKey]) {
+            errors.push(`业务类型列表第 ${index + 1} 项的 ` + keyName[subKey] + ` 需要填写`);
+          }
+        }
+      });
+    } else if (!detail[key] && detail[key] !== 0) {
+      errors.push(`${keyName[key]} 需要填写`);
+    }
+  }
+
+  return errors;
+};
+
 // 成单
 const completedOrder = () => {
   ElMessageBox.confirm("确定进行[成单]操作?", "提示", {

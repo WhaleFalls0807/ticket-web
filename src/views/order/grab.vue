@@ -7,14 +7,15 @@
         </div>
       </template>
       <div class="item">
-        <div class="left">
+        <div>
           <span class="mr10">总单数</span>
           <el-tag class="mr10">{{ state.totalCount }}</el-tag>
-          <span class="mr10">/</span>
+        </div>
+        <div>
           <span class="mr10">剩余可抢单数</span>
           <el-tag>{{ state.remainCount }}</el-tag>
         </div>
-        <div class="right">
+        <div>
           <span class="mr10">已抢单数量</span>
           <el-tag>{{ state.grapedCount }}</el-tag>
         </div>
@@ -28,14 +29,15 @@
         </div>
       </template>
       <div class="item">
-        <div class="left">
+        <div>
           <span class="mr10">总可抢次数</span>
           <el-tag class="mr10">{{ state.userTotalCount }}</el-tag>
-          <span class="mr10">/</span>
+        </div>
+        <div>
           <span class="mr10">剩余可抢次数</span>
           <el-tag>{{ state.userRemainCount }}</el-tag>
         </div>
-        <div class="right">
+        <div>
           <span class="mr10">已抢单数量</span>
           <el-tag>{{ state.userGrapedCount }}</el-tag>
         </div>
@@ -71,7 +73,7 @@
     <template v-else>
       <el-table :data="state.virtualTableData" border style="width: 100%">
         <el-table-column label="工单名称" prop="orderName" header-align="center" align="center"></el-table-column>
-        <el-table-column label="客户名称" prop="customerName" header-align="center" align="center"></el-table-column>
+        <!-- <el-table-column label="客户名称" prop="customerName" header-align="center" align="center"></el-table-column> -->
         <el-table-column label="手机号" prop="phone" header-align="center" align="center"></el-table-column>
         <el-table-column label="备注" prop="remark" header-align="center" align="center"></el-table-column>
       </el-table>
@@ -201,5 +203,18 @@ onBeforeUnmount(() => {
 
 .el-tag {
   font-size: 22px;
+}
+
+@media screen and (max-width: 768px) {
+  .grab-contianer {
+    width: 100%;
+
+    .item {
+      flex-direction: column;
+    }
+    .item-right {
+      margin-top: 10px;
+    }
+  }
 }
 </style>

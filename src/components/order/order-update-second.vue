@@ -10,7 +10,7 @@
       <el-collapse>
         <el-collapse-item v-for="(item, index) in dataForm.businessTypeList" :key="index" :title="item.businessType">
           <el-form-item
-            label="logo"
+            label="LOGO"
             :prop="'businessTypeList.' + index + '.logo'"
             :rules="{
               required: true,
