@@ -1,7 +1,7 @@
 <template>
   <el-dialog
     v-model="visible"
-    :width="isMobile ? '90%' : '30%'"
+    width="30%"
     title="关联客户"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
@@ -23,9 +23,7 @@
 import { nextTick, reactive, ref } from "vue";
 import baseService from "@/service/baseService";
 import { ElMessage } from "element-plus";
-import { useMediaQuery } from "@vueuse/core";
 import SelectRelative from "@/components/SelectRelative.vue";
-const isMobile = useMediaQuery("(max-width: 768px)");
 
 const emit = defineEmits(["refreshDataList"]);
 

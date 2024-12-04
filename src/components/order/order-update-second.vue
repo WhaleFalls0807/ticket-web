@@ -1,7 +1,6 @@
 <template>
   <el-dialog
     v-model="visible"
-    :width="isMobile ? '90%' : '50%'"
     title="提交资料"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
@@ -150,11 +149,8 @@
 import { nextTick, reactive, ref } from "vue";
 import baseService from "@/service/baseService";
 import { ElMessage } from "element-plus";
-import { useMediaQuery } from "@vueuse/core";
 import Upload from "@/components/Upload.vue";
 import FileImgPreview from "@/components/FileImgPreview.vue";
-
-const isMobile = useMediaQuery("(max-width: 768px)");
 
 const emit = defineEmits(["refreshDataList"]);
 

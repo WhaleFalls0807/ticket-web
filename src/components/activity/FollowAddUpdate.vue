@@ -1,7 +1,6 @@
 <template>
   <el-dialog
     v-model="visible"
-    :width="isMobile ? '90%' : '50%'"
     :title="!dataForm.id ? '新增' : '修改'"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
@@ -26,9 +25,7 @@
 import { reactive, ref } from "vue";
 import baseService from "@/service/baseService";
 import { ElMessage } from "element-plus";
-import { useMediaQuery } from "@vueuse/core";
 import { useAppStore } from "@/store";
-const isMobile = useMediaQuery("(max-width: 768px)");
 const props = defineProps(["associationId", "activityType"]);
 const emit = defineEmits(["refreshDataList"]);
 const store = useAppStore();

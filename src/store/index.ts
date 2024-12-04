@@ -35,7 +35,8 @@ export const useAppStore = defineStore("useAppStore", {
       routeToMeta: {}, //url对应标题meta信息
       tabs: [], //tab标签页集合
       activeTabName: "", //tab当前焦点页
-      closedTabs: [] //存储已经关闭过的tab
+      closedTabs: [], //存储已经关闭过的tab
+      unReadMessage: 0
     } as IObject
   }),
   actions: {
@@ -77,6 +78,11 @@ export const useAppStore = defineStore("useAppStore", {
         routes: [],
         tabs: [],
         activeTabName: ""
+      });
+    },
+    updateUnReadMessage(count: any) {
+      this.updateState({
+        unReadMessage: count
       });
     }
   }

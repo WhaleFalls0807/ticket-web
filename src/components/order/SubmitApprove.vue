@@ -2,7 +2,6 @@
   <el-dialog
     v-model="visible"
     title="提交审核"
-    :width="isMobile ? '90%' : '50%'"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
     :before-close="close"
@@ -28,8 +27,6 @@
 import { reactive, ref } from "vue";
 import baseService from "@/service/baseService";
 import { ElMessage } from "element-plus";
-import { useMediaQuery } from "@vueuse/core";
-const isMobile = useMediaQuery("(max-width: 768px)");
 
 const emit = defineEmits(["refreshDataList"]);
 

@@ -91,6 +91,9 @@
           >
             删除
           </el-button>
+          <el-button v-if="state.hasPermission('sys:user:count')" type="primary" link @click="setCount(scope.row)">
+            抢单次数
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -105,6 +108,7 @@
     ></el-pagination>
     <!-- 弹窗, 新增 / 修改 -->
     <add-or-update ref="addOrUpdateRef" @refreshDataList="state.getDataList"></add-or-update>
+    <UserCount ref="userCountRef" @refreshDataList="state.getDataList" />
   </div>
 </template>
 
@@ -112,6 +116,7 @@
 import useView from "@/hooks/useView";
 import { reactive, ref, toRefs } from "vue";
 import AddOrUpdate from "./user-add-or-update.vue";
+import UserCount from "./user-count.vue";
 import type { TableInstance } from "element-plus";
 
 const props = defineProps({
@@ -141,6 +146,10 @@ const addOrUpdateHandle = (id?: number) => {
   addOrUpdateRef.value.init(id);
 };
 
+const userCountRef = ref();
+const setCount = (user: any) => {
+  userCountRef.value.init(user);
+};
 const tableRef = ref<TableInstance>();
 const selectionChange = (val: any) => {
   if (props.selectionRadio && val.length > 1) {

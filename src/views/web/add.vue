@@ -1,7 +1,7 @@
 <template>
   <el-dialog
     v-model="visible"
-    :width="isMobile ? '90%' : '40%'"
+    width="40%"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
     :before-close="close"
@@ -34,10 +34,7 @@
 import { reactive, ref } from "vue";
 import baseService from "@/service/baseService";
 import { ElMessage } from "element-plus";
-import { useMediaQuery } from "@vueuse/core";
 import { isMobile as isPhone } from "@/utils/utils";
-
-const isMobile = useMediaQuery("(max-width: 768px)");
 
 const emit = defineEmits(["refreshDataList"]);
 

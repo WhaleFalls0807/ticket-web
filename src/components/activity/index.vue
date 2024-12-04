@@ -43,14 +43,12 @@
 <script lang="ts" setup>
 import { reactive, ref, onMounted, computed } from "vue";
 import baseService from "@/service/baseService";
-import { useMediaQuery } from "@vueuse/core";
 import FollowAddUpdate from "./FollowAddUpdate.vue";
 import SvgIcon from "@/components/base/svg-icon";
 import { ElMessage, ElMessageBox } from "element-plus";
 import useUtils from "@/hooks/useUtils";
 const { getDictLabel } = useUtils();
 
-const isMobile = useMediaQuery("(max-width: 768px)");
 const props = defineProps(["associationId", "activityType"]);
 const emit = defineEmits(["refreshDataList"]);
 const state: any = reactive({

@@ -7,7 +7,7 @@
     </div>
   </div>
   <!-- 展示图片 -->
-  <el-dialog v-model="dialogVisible" :width="isMobile ? '90%' : '50%'">
+  <el-dialog v-model="dialogVisible">
     <img style="width: 100%" :src="dialogImageUrl" alt="Preview Image" />
   </el-dialog>
 </template>
@@ -15,7 +15,6 @@
 <script lang="ts" setup>
 import { ref } from "vue";
 import SvgIcon from "@/components/base/svg-icon";
-import { useMediaQuery } from "@vueuse/core";
 import app from "@/constants/app";
 
 const props = defineProps({
@@ -30,7 +29,6 @@ const props = defineProps({
 });
 
 const emit = defineEmits(["deleteImg"]);
-const isMobile = useMediaQuery("(max-width: 768px)");
 
 const dialogImageUrl = ref("");
 const dialogVisible = ref(false);

@@ -1,7 +1,6 @@
 <template>
   <el-dialog
     v-model="visible"
-    :width="isMobile ? '90%' : '50%'"
     title="创建工单"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
@@ -41,11 +40,8 @@
 import { reactive, ref } from "vue";
 import baseService from "@/service/baseService";
 import { ElMessage } from "element-plus";
-import { useMediaQuery } from "@vueuse/core";
 import { isMobile as isPhone, isEmail } from "@/utils/utils";
 import SelectRelative from "@/components/SelectRelative.vue";
-
-const isMobile = useMediaQuery("(max-width: 768px)");
 
 const visible = ref(false);
 const dataFormRef = ref();

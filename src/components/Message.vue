@@ -52,11 +52,13 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref, computed } from "vue";
+import { reactive, ref, computed, onMounted } from "vue";
 import baseService from "@/service/baseService";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { Delete, Check } from "@element-plus/icons-vue";
 import { useMediaQuery } from "@vueuse/core";
+import useUtils from "@/hooks/useUtils";
+const { store } = useUtils();
 
 const drawer = ref(false);
 
@@ -111,6 +113,7 @@ const handleMarkRead = (ids?: any) => {
                   item.read = 1;
                 }
               });
+              getMessageCount();
             }
           });
     })
@@ -134,6 +137,8 @@ const handleDelete = (id: any) => {
         });
         const index = state.messageList.findIndex((item: any) => item.id === id);
         state.messageList.splice(index, 1);
+
+        getMessageCount();
       }
     });
   });
@@ -157,6 +162,8 @@ const handleDeleteAllRead = () => {
             return item;
           }
         });
+
+        getMessageCount();
       }
     });
   });
@@ -173,8 +180,14 @@ const readChange = (value: any) => {
 
 // 获取未读消息数
 const getMessageCount = () => {
-  const unReadMessage = 0;
+  baseService.get(`/`).then((res) => {
+    store.state.unReadMessage = res.data;
+    store.updateUnReadMessage(res.data);
+  });
 };
+onMounted(() => {
+  getMessageCount();
+});
 const init = () => {
   drawer.value = true;
 

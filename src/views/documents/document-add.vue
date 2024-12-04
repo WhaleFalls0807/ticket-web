@@ -1,7 +1,6 @@
 <template>
   <el-dialog
     v-model="visible"
-    :width="isMobile ? '90%' : '50%'"
     :title="!dataForm.id ? '上传文件' : '修改文件'"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
@@ -45,7 +44,6 @@
 import { nextTick, reactive, ref } from "vue";
 import baseService from "@/service/baseService";
 import { ElMessage } from "element-plus";
-import { useMediaQuery } from "@vueuse/core";
 import Upload from "@/components/Upload.vue";
 import FileImgPreview from "@/components/FileImgPreview.vue";
 import useUtils from "@/hooks/useUtils";
@@ -56,7 +54,6 @@ const generateNumberId = customAlphabet("0123456789", 16);
 // 定义一个唯一 ID
 const uniqueId = ref(generateNumberId());
 
-const isMobile = useMediaQuery("(max-width: 768px)");
 const { computeFileType } = useUtils();
 const emit = defineEmits(["refreshDataList"]);
 

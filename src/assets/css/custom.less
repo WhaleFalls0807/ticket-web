@@ -2,7 +2,17 @@
   margin: 0;
   padding: 0;
 }
-
+@media screen and (max-width: 768px) {
+  .el-dialog{
+    width: 90% !important;
+  }
+  .el-drawer__header{
+    flex-wrap: wrap;
+  }
+  .el-pagination__jump{
+    display: none !important;
+  }
+}
 .el-dialog__footer {
   text-align: center !important;
 }

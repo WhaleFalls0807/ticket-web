@@ -1,7 +1,7 @@
 <template>
   <el-dialog
     v-model="visible"
-    :width="isMobile ? '90%' : '70%'"
+    width="70%"
     :title="relative?.title"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
@@ -19,11 +19,8 @@
 import { computed, reactive, ref } from "vue";
 import baseService from "@/service/baseService";
 import { ElMessage } from "element-plus";
-import { useMediaQuery } from "@vueuse/core";
 import Customer from "@/components/customer/index.vue";
 import User from "@/components/user/index.vue";
-
-const isMobile = useMediaQuery("(max-width: 768px)");
 
 const props = defineProps(["type"]);
 const emit = defineEmits(["getSelected"]);

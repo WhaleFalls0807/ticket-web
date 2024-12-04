@@ -1,7 +1,7 @@
 <template>
   <el-dialog
     v-model="visible"
-    :width="isMobile ? '90%' : '70%'"
+    width="70%"
     title="提交资料"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
@@ -89,7 +89,7 @@
                 :min="0"
                 :precision="2"
                 :step="0.1"
-                @input="computedTotal(scope.row)"
+                @change="computedTotal(scope.row)"
               />
             </el-form-item>
           </template>
@@ -110,7 +110,7 @@
                 :min="0"
                 :precision="2"
                 :step="0.1"
-                @input="computedTotal(scope.row)"
+                @change="computedTotal(scope.row)"
               />
             </el-form-item>
           </template>
@@ -153,10 +153,8 @@
 import { computed, nextTick, reactive, ref, watch } from "vue";
 import baseService from "@/service/baseService";
 import { ElMessage } from "element-plus";
-import { useMediaQuery } from "@vueuse/core";
 import Upload from "@/components/Upload.vue";
 import FileImgPreview from "@/components/FileImgPreview.vue";
-const isMobile = useMediaQuery("(max-width: 768px)");
 
 const emit = defineEmits(["refreshDataList"]);
 

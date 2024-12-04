@@ -84,7 +84,7 @@ export default defineComponent({
       <el-button type="success" size="large" @click="addOrder">创建工单</el-button>
     </div>
     <div>
-      <el-badge :value="12" :max="99">
+      <el-badge :hidden="store.state.unReadMessage == 0" :value="store.state.unReadMessage" :max="99">
         <span @click="showMessage()">
           <el-icon><BellFilled /></el-icon>
         </span>
