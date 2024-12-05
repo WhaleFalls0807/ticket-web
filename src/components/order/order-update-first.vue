@@ -9,14 +9,17 @@
   >
     <el-form :model="dataForm" :rules="rules" ref="dataFormRef" label-width="120px">
       <el-form-item prop="payType" label="支付类型">
-        <el-button v-if="!dataForm.payType" @click="uploadHandle('payType', 'img')">上传图片</el-button>
+        <ren-select v-model="dataForm.payType" dict-type="payType"></ren-select>
+      </el-form-item>
+      <el-form-item prop="payment" label="支付截图">
+        <el-button v-if="!dataForm.payment" @click="uploadHandle('payment', 'img')">上传图片</el-button>
         <FileImgPreview
           v-else
           fileType="img"
-          :url="dataForm.payType"
+          :url="dataForm.payment"
           delete
-          :deleteParams="{ id: dataForm.id, filePath: dataForm.payType, fieldName: 'payType', type: 1 }"
-          @deleteFileImg="dataForm.payType = ''"
+          :deleteParams="{ id: dataForm.id, filePath: dataForm.payment, fieldName: 'payment', type: 1 }"
+          @deleteFileImg="dataForm.payment = ''"
         />
       </el-form-item>
       <el-form-item prop="contract" label="原始合同">
@@ -166,6 +169,7 @@ const currentFileType = ref("img"); //img file
 const dataForm: any = reactive({
   id: "",
   payType: "",
+  payment: "",
   contract: "",
   aprice: 0,
   bprice: 0,
@@ -213,6 +217,7 @@ const deleteRow = (row: any) => {
 };
 const rules = ref({
   payType: [{ required: true, message: "必填项不能为空", trigger: "blur" }],
+  payment: [{ required: true, message: "必填项不能为空", trigger: "blur" }],
   contract: [{ required: true, message: "必填项不能为空", trigger: "blur" }],
   aprice: [{ required: true, message: "必填项不能为空", trigger: "blur" }],
   bprice: [{ required: true, message: "必填项不能为空", trigger: "blur" }],
@@ -228,11 +233,23 @@ const close = () => {
 };
 const init = (detail: any) => {
   visible.value = true;
-  const { id, payType, contract, aprice, bprice, businessName, applyMethod, businessTypeList, totalPrice, content } =
-    detail;
+  const {
+    id,
+    payType,
+    payment,
+    contract,
+    aprice,
+    bprice,
+    businessName,
+    applyMethod,
+    businessTypeList,
+    totalPrice,
+    content
+  } = detail;
   Object.assign(dataForm, {
     id,
     payType,
+    payment,
     contract,
     aprice,
     bprice,

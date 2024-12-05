@@ -75,14 +75,14 @@
         </template>
       </el-table-column>
       <el-table-column
-        prop="payType"
+        prop="payment"
         label="已付款"
         header-align="center"
         align="center"
         v-if="type !== 'grab' && type !== 'seas'"
       >
         <template v-slot="scope">
-          <el-tag v-if="scope.row.payType" type="success">是</el-tag>
+          <el-tag v-if="scope.row.payment" type="success">是</el-tag>
           <template v-else>
             <el-tag type="info">否</el-tag>
             <div>未付款时间为{{ scope.row.daysUnPay }}天</div>

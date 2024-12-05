@@ -53,9 +53,6 @@
                         <div class="section-mark"></div>
                         <div class="section-title">基本信息</div>
                       </div>
-                      <!-- <el-button class="fr" type="primary" v-if="showOperate.update" @click="addOrUpdateHandle">
-                        编辑
-                      </el-button> -->
                       <el-button class="fr" type="primary" v-if="showOperate.update" @click="relativeCustomer">
                         关联客户
                       </el-button>
@@ -106,14 +103,17 @@
                       </el-space>
                     </div>
                     <el-form-item label="支付类型">
-                      <span v-if="!detail.payType">暂无数据</span>
+                      <span>{{ getDictLabel("payType", detail.payType) }}</span>
+                    </el-form-item>
+                    <el-form-item label="支付截图">
+                      <span v-if="!detail.payment">暂无数据</span>
                       <FileImgPreview
                         v-else
                         fileType="img"
-                        :url="detail.payType"
+                        :url="detail.payment"
                         :delete="showOperate.delete"
-                        :deleteParams="{ id: detail.id, filePath: detail.payType, fieldName: 'payType', type: 1 }"
-                        @deleteFileImg="detail.payType = ''"
+                        :deleteParams="{ id: detail.id, filePath: detail.payment, fieldName: 'payment', type: 1 }"
+                        @deleteFileImg="detail.payment = ''"
                       />
                     </el-form-item>
                     <el-form-item label="原始合同">
@@ -408,7 +408,6 @@
     </template>
   </el-drawer>
   <!-- 弹窗, 新增 / 修改 -->
-  <add-or-update ref="addOrUpdateRef" @refreshDataList="getInfo(detail.id)"></add-or-update>
   <OrderUpdateFirst ref="addFirstRef" @refreshDataList="getInfo(detail.id)" />
   <OrderUpdateSecond ref="addSecondRef" @refreshDataList="getInfo(detail.id)" />
   <OrderUpdateThird ref="addThirdRef" @refreshDataList="getInfo(detail.id)" />
@@ -432,7 +431,6 @@ import OrderUpdateThird from "./order-update-third.vue";
 import Activity from "@/components/activity/index.vue";
 import useUtils from "@/hooks/useUtils";
 import SubmitApprove from "./SubmitApprove.vue";
-import AddOrUpdate from "./order-update.vue";
 import Relative from "@/components/Relative.vue";
 const { getDictLabel, convertCurrency } = useUtils();
 
@@ -451,6 +449,7 @@ const detail: any = reactive({
 
   // first
   payType: "",
+  payment: "",
   contract: "",
   aprice: 0,
   bprice: 0,
@@ -482,11 +481,7 @@ const detail: any = reactive({
   content: ""
 });
 const activeName = ref("first");
-// 添加或编辑
-const addOrUpdateRef = ref();
-const addOrUpdateHandle = () => {
-  addOrUpdateRef.value.init(detail);
-};
+
 // 关联客户
 const relativeVisible = ref(false);
 const relativeRef = ref();
@@ -548,11 +543,22 @@ const submitOrder = (type: any) => {
   // }
   let errors: any = [];
   if (type == 1) {
-    const { customerName, payType, contract, aprice, bprice, businessName, applyMethod, businessTypeList, totalPrice } =
-      detail;
+    const {
+      customerName,
+      payType,
+      payment,
+      contract,
+      aprice,
+      bprice,
+      businessName,
+      applyMethod,
+      businessTypeList,
+      totalPrice
+    } = detail;
     const validateObj = {
       customerName,
       payType,
+      payment,
       contract,
       aprice,
       bprice,
@@ -590,6 +596,7 @@ const validateDetail = (detail: any) => {
   const keyName: any = {
     customerName: "客户名称",
     payType: "支付类型",
+    payment: "支付截图",
     contract: "原始合同",
     aprice: "甲方承担金额",
     bprice: "乙方承担金额",
