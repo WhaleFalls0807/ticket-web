@@ -194,7 +194,7 @@
 
 <script lang="ts" setup>
 import useView from "@/hooks/useView";
-import { computed, reactive, ref, toRefs, onMounted } from "vue";
+import { computed, reactive, ref, toRefs, onMounted, watch } from "vue";
 import baseService from "@/service/baseService";
 import { IObject } from "@/types/interface";
 import Assign from "./Assign.vue";
@@ -203,7 +203,7 @@ import OrderDetails from "./OrderDetails.vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 const props = defineProps(["type", "getDataListURL", "dataForm"]);
 const emit = defineEmits(["refreshDataList"]);
-const selectTime = ref("");
+const selectTime = ref();
 const shortcuts = [
   {
     text: "Last week",
@@ -241,6 +241,10 @@ const dataForm: any = {
   startDate: selectTime.value ? selectTime.value[0] : "",
   endDate: selectTime.value ? selectTime.value[1] : ""
 };
+watch(selectTime, () => {
+  dataForm.startDate = selectTime.value ? selectTime.value[0] : "";
+  dataForm.endDate = selectTime.value ? selectTime.value[1] : "";
+});
 if (props.type === "grab") {
   dataForm.deal = 0;
   delete dataForm.ownerId;

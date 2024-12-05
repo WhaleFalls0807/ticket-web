@@ -21,11 +21,12 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, reactive, ref, toRefs, onMounted } from "vue";
+import { reactive, ref, onMounted, watch } from "vue";
 import baseService from "@/service/baseService";
 import Charts from "./charts.vue";
 const props = defineProps(["type", "getDataListURL", "dataForm"]);
 const emit = defineEmits(["refreshDataList"]);
+
 const selectTime = ref([new Date().getTime() - 7 * 24 * 60 * 60 * 1000, new Date().getTime()]);
 
 const shortcuts = [
@@ -64,7 +65,10 @@ const dataForm: any = reactive({
   chartsData: {},
   chartVisible: false
 });
-
+watch(selectTime, () => {
+  dataForm.startTime = selectTime.value ? selectTime.value[0] : "";
+  dataForm.endTime = selectTime.value ? selectTime.value[1] : "";
+});
 const getData = () => {
   baseService
     .get(`/userPortrait/grapedCount`, {
