@@ -251,11 +251,11 @@ const init = (detail: any) => {
     payType: payType || "",
     payment,
     contract,
-    aprice,
-    bprice,
+    aprice: aprice || 0,
+    bprice: bprice || 0,
     businessName,
     applyMethod,
-    totalPrice,
+    totalPrice: totalPrice || 0,
     content
   });
   if (!businessTypeList.length) {

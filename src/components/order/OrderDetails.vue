@@ -420,7 +420,7 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref, nextTick, toRefs, computed } from "vue";
+import { reactive, ref, nextTick } from "vue";
 import { ElMessage, ElMessageBox, ElNotification } from "element-plus";
 import baseService from "@/service/baseService";
 import FileImgPreview from "@/components/FileImgPreview.vue";
@@ -537,10 +537,6 @@ const addThird = () => {
 // 提交审核
 const submitApproveRef = ref();
 const submitOrder = (type: any) => {
-  // if (detail.orderStatus == 1 || detail.orderStatus == 2 || detail.orderStatus == 4") {
-  //   ElMessage.error("点击下方“填写资料”按钮，把需要的资料填写完整后再提交审核！");
-  // 首次提交按钮
-  // }
   let errors: any = [];
   if (type == 1) {
     const {
@@ -619,7 +615,7 @@ const validateDetail = (detail: any) => {
     if (key === "businessTypeList" && Array.isArray(detail[key])) {
       detail[key].forEach((item, index) => {
         for (const subKey in item) {
-          if (!item[subKey]) {
+          if (!item[subKey] && item[subKey] !== 0) {
             errors.push(`业务类型列表第 ${index + 1} 项的 ` + keyName[subKey] + ` 需要填写`);
           }
         }

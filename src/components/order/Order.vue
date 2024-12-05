@@ -97,15 +97,7 @@
         align="center"
         width="180"
       ></el-table-column>
-      <el-table-column
-        v-if="type === 'completed'"
-        prop="dealDate"
-        label="成单时间"
-        sortable="custom"
-        header-align="center"
-        align="center"
-        width="180"
-      ></el-table-column>
+
       <template v-if="type === 'awaitingApproval'">
         <el-table-column
           v-if="state.hasPermission('sys:user:page')"
@@ -137,7 +129,32 @@
           width="180"
         ></el-table-column>
       </template>
-
+      <template v-if="type === 'completed'">
+        <el-table-column
+          prop="reviewUsername"
+          label="审批人"
+          sortable="custom"
+          header-align="center"
+          align="center"
+          width="180"
+        ></el-table-column>
+        <el-table-column
+          prop="reviewDate"
+          label="审批时间"
+          sortable="custom"
+          header-align="center"
+          align="center"
+          width="180"
+        ></el-table-column>
+        <el-table-column
+          prop="dealDate"
+          label="成单时间"
+          sortable="custom"
+          header-align="center"
+          align="center"
+          width="180"
+        ></el-table-column>
+      </template>
       <el-table-column
         label="操作"
         header-align="center"

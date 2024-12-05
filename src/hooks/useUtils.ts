@@ -67,7 +67,7 @@ const useUtils = () => {
       var chineseStr = "";
       //分离金额后用的数组，预定义
       var parts;
-      if (money == "") {
+      if (money == "" && money !== 0) {
         return "";
       }
       money = parseFloat(money);
