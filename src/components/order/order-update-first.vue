@@ -248,7 +248,7 @@ const init = (detail: any) => {
   } = detail;
   Object.assign(dataForm, {
     id,
-    payType,
+    payType: payType || "",
     payment,
     contract,
     aprice,

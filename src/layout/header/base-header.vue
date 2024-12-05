@@ -47,11 +47,11 @@ export default defineComponent({
           :style="`display:${state.sidebarLayout === ESidebarLayoutEnum.Top ? 'none' : ''}`"
         >
           <collapse-sidebar-btn></collapse-sidebar-btn>
-          <div @click="onRefresh" style="cursor: pointer">
+          <!-- <div @click="onRefresh" style="cursor: pointer">
             <div class="el-badge">
               <el-icon><refresh-right /></el-icon>
             </div>
-          </div>
+          </div> -->
         </div>
         <div class="rr-header-right-left-br ele-scrollbar-hide hidden-xs-only">
           <base-sidebar

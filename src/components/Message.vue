@@ -52,7 +52,7 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref, computed, onMounted, onUnmounted } from "vue";
+import { reactive, ref, computed, onMounted, onUnmounted, watch } from "vue";
 import baseService from "@/service/baseService";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { Delete, Check } from "@element-plus/icons-vue";
@@ -206,6 +206,12 @@ onUnmounted(() => {
 const init = () => {
   drawer.value = true;
 };
+
+watch(drawer, (value) => {
+  if (value) {
+    getInfo();
+  }
+});
 // 获取信息
 const getInfo = () => {
   loading.value = true;
