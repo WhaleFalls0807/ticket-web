@@ -9,15 +9,7 @@
     <el-form :model="dataForm" ref="dataFormRef" label-width="120px">
       <el-collapse>
         <el-collapse-item v-for="(item, index) in dataForm.businessTypeList" :key="index" :title="item.businessType">
-          <el-form-item
-            label="LOGO"
-            :prop="'businessTypeList.' + index + '.logo'"
-            :rules="{
-              required: true,
-              message: '必填项不能为空',
-              trigger: 'blur'
-            }"
-          >
+          <el-form-item label="LOGO" :prop="'businessTypeList.' + index + '.logo'">
             <el-button v-if="!item.logo" @click="uploadHandle(item, 'logo', 'img')">上传图片</el-button>
             <FileImgPreview
               v-else
@@ -28,15 +20,7 @@
               @deleteFileImg="item.logo = ''"
             />
           </el-form-item>
-          <el-form-item
-            label="身份证"
-            :prop="'businessTypeList.' + index + '.idcard'"
-            :rules="{
-              required: true,
-              message: '必填项不能为空',
-              trigger: 'blur'
-            }"
-          >
+          <el-form-item label="身份证" :prop="'businessTypeList.' + index + '.idcard'">
             <el-button v-if="!item.idcard" @click="uploadHandle(item, 'idcard', 'file')">上传文件</el-button>
             <FileImgPreview
               v-else
@@ -47,15 +31,7 @@
               @deleteFileImg="item.idcard = ''"
             />
           </el-form-item>
-          <el-form-item
-            label="申请书"
-            :prop="'businessTypeList.' + index + '.applyBook'"
-            :rules="{
-              required: true,
-              message: '必填项不能为空',
-              trigger: 'blur'
-            }"
-          >
+          <el-form-item label="申请书" :prop="'businessTypeList.' + index + '.applyBook'">
             <el-button v-if="!item.applyBook" @click="uploadHandle(item, 'applyBook', 'file')">上传文件</el-button>
             <FileImgPreview
               v-else
