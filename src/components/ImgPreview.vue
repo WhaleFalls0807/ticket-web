@@ -14,7 +14,6 @@
 
 <script lang="ts" setup>
 import { ref } from "vue";
-import SvgIcon from "@/components/base/svg-icon";
 import app from "@/constants/app";
 
 const props = defineProps({

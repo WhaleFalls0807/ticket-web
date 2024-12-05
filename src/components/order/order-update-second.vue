@@ -8,7 +8,8 @@
   >
     <el-form :model="dataForm" ref="dataFormRef" label-width="120px">
       <el-collapse>
-        <el-collapse-item v-for="(item, index) in dataForm.businessTypeList" :key="index" :title="item.businessType">
+        <el-collapse-item v-for="(item, index) in dataForm.businessTypeList" :key="index">
+          <template #title>{{ getDictLabel("businessType", item.businessType) }}：{{ item.brandName }}</template>
           <el-form-item label="LOGO" :prop="'businessTypeList.' + index + '.logo'">
             <el-button v-if="!item.logo" @click="uploadHandle(item, 'logo', 'img')">上传图片</el-button>
             <FileImgPreview
@@ -127,6 +128,8 @@ import baseService from "@/service/baseService";
 import { ElMessage } from "element-plus";
 import Upload from "@/components/Upload.vue";
 import FileImgPreview from "@/components/FileImgPreview.vue";
+import useUtils from "@/hooks/useUtils";
+const { getDictLabel } = useUtils();
 
 const emit = defineEmits(["refreshDataList"]);
 
@@ -166,11 +169,12 @@ const init = (detail: any) => {
 
   dataForm.id = id;
   dataForm.businessTypeList = businessTypeList.map((item: any) => {
-    const { id, businessType, logo, idcard, applyBook, commission, businessLicense, sealedContract } = item;
+    const { id, businessType, brandName, logo, idcard, applyBook, commission, businessLicense, sealedContract } = item;
     return {
       id,
       orderId: dataForm.id,
       businessType,
+      brandName,
       logo,
       idcard,
       applyBook,

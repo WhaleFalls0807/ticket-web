@@ -47,10 +47,9 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref, onMounted, computed } from "vue";
+import { reactive, ref, computed } from "vue";
 import baseService from "@/service/baseService";
 import FollowAddUpdate from "./FollowAddUpdate.vue";
-import SvgIcon from "@/components/base/svg-icon";
 import { ElMessage, ElMessageBox } from "element-plus";
 import useUtils from "@/hooks/useUtils";
 const { getDictLabel } = useUtils();

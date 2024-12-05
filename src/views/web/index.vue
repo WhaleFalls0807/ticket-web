@@ -142,7 +142,6 @@ import { reactive, ref } from "vue";
 import { isMobile as isPhone } from "@/utils/utils";
 import baseService from "@/service/baseService";
 import { ElMessage } from "element-plus";
-import SvgIcon from "@/components/base/svg-icon";
 import Add from "./add.vue";
 
 const dataFormRef = ref();

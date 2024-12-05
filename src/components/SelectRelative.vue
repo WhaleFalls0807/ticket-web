@@ -10,9 +10,8 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, nextTick, ref, reactive } from "vue";
+import { nextTick, ref, reactive } from "vue";
 import Relative from "@/components/Relative.vue";
-import SvgIcon from "@/components/base/svg-icon";
 
 const props = defineProps(["modelValue"]);
 const emit = defineEmits(["update:modelValue"]);

@@ -79,11 +79,8 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref, nextTick, toRefs } from "vue";
-import { ElMessage } from "element-plus";
+import { reactive, ref, toRefs } from "vue";
 import baseService from "@/service/baseService";
-import SvgIcon from "@/components/base/svg-icon";
-import Upload from "@/components/Upload.vue";
 import useView from "@/hooks/useView";
 import { useMediaQuery } from "@vueuse/core";
 import Activity from "@/components/activity/index.vue";

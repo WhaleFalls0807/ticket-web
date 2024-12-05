@@ -1,5 +1,4 @@
 <script lang="ts">
-import SvgIcon from "@/components/base/svg-icon";
 import { EMitt, EThemeSetting } from "@/constants/enum";
 import emits from "@/utils/emits";
 import { getThemeConfigCacheByKey, setThemeConfigToCache } from "@/utils/theme";
@@ -10,7 +9,7 @@ import { defineComponent, reactive } from "vue";
  */
 export default defineComponent({
   name: "CollapseSidebarBtn",
-  components: { SvgIcon },
+  components: {},
   setup() {
     const state = reactive({
       collapseSidebar: getThemeConfigCacheByKey(EThemeSetting.SidebarCollapse)

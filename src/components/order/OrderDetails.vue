@@ -211,7 +211,7 @@
                       <div v-for="(item, index) in detail.businessTypeList" :key="index">
                         <el-collapse-item>
                           <template #title>
-                            {{ getDictLabel("businessType", item.businessType) }}
+                            {{ getDictLabel("businessType", item.businessType) }}：{{ item.brandName }}
                           </template>
                           <el-form-item label="logo">
                             <span v-if="!item.logo">暂无数据</span>
@@ -319,7 +319,7 @@
                       <div v-for="(item, index) in detail.businessTypeList" :key="index">
                         <el-collapse-item>
                           <template #title>
-                            {{ getDictLabel("businessType", item.businessType) }}
+                            {{ getDictLabel("businessType", item.businessType) }}：{{ item.brandName }}
                           </template>
                           <el-form-item label-width="140" label="回执文件">
                             <span v-if="!item.regiAppReceipt">暂无数据</span>

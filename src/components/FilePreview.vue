@@ -9,7 +9,6 @@
 </template>
 
 <script lang="ts" setup>
-import SvgIcon from "@/components/base/svg-icon";
 import useUtils from "@/hooks/useUtils";
 const { downloadFile } = useUtils();
 const props = defineProps({

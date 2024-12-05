@@ -14,7 +14,6 @@
 
 <script lang="ts" setup>
 import { ref } from "vue";
-import SvgIcon from "@/components/base/svg-icon";
 import { ElMessage } from "element-plus";
 
 const emit = defineEmits(["save"]);

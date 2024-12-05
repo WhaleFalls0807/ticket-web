@@ -1,5 +1,4 @@
 <script lang="ts">
-import SvgIcon from "@/components/base/svg-icon";
 import baseService from "@/service/baseService";
 import { useFullscreen } from "@vueuse/core";
 import { defineComponent, ref } from "vue";
@@ -20,7 +19,7 @@ interface IExpand {
  */
 export default defineComponent({
   name: "Expand",
-  components: { SvgIcon, AddOrder, Message },
+  components: { AddOrder, Message },
   props: {
     userName: String
   },

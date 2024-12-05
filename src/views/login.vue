@@ -77,7 +77,6 @@ import { setCache } from "@/utils/cache";
 import { ElMessage } from "element-plus";
 import { getUuid } from "@/utils/utils";
 import app from "@/constants/app";
-import SvgIcon from "@/components/base/svg-icon/index";
 import { useAppStore } from "@/store";
 import { useRouter } from "vue-router";
 import logo from "@/assets/images/logo.jpg";

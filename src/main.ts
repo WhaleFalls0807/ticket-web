@@ -3,6 +3,7 @@ import RenDeptTree from "@/components/ren-dept-tree";
 import RenRadioGroup from "@/components/ren-radio-group";
 import RenRegionTree from "@/components/ren-region-tree";
 import RenSelect from "@/components/ren-select";
+import SvgIcon from '@/components/base/svg-icon'
 import ElementPlus from "element-plus";
 import "element-plus/theme-chalk/display.css";
 import "element-plus/theme-chalk/index.css";
@@ -27,6 +28,7 @@ app
   .use(router)
   .use(RenRadioGroup)
   .use(RenSelect)
+  .use(SvgIcon)
   .use(RenDeptTree)
   .use(RenRegionTree)
   .use(ElementPlus, { size: "default", locale: locale })

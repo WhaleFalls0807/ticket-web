@@ -1,5 +1,4 @@
 <script lang="ts">
-import SvgIcon from "@/components/base/svg-icon";
 import { EMitt } from "@/constants/enum";
 import { IObject } from "@/types/interface";
 import emits from "@/utils/emits";
@@ -15,7 +14,7 @@ import { useAppStore } from "@/store";
  */
 export default defineComponent({
   name: "Tabs",
-  components: { SvgIcon },
+  components: {},
   props: {
     tabs: Array,
     activeTabName: String
@@ -29,7 +28,10 @@ export default defineComponent({
     const router = useRouter();
     const store = useAppStore();
     const firstRoute = (router.options.routes[0] || {}) as RouteLocationMatched;
-    const home: RouteLocationMatched = firstRoute.children && firstRoute.children.length > 0 ? (firstRoute.children[0] as RouteLocationMatched) : firstRoute;
+    const home: RouteLocationMatched =
+      firstRoute.children && firstRoute.children.length > 0
+        ? (firstRoute.children[0] as RouteLocationMatched)
+        : firstRoute;
     const defaultTab = { label: "", value: home.path };
     const state = reactive({
       activeTabName: props.activeTabName || defaultTab.value,
@@ -137,7 +139,13 @@ export default defineComponent({
           <svg-icon name="home"></svg-icon>
         </template>
       </el-tab-pane>
-      <el-tab-pane v-for="x in state.tabs.slice(1)" :key="x.value" :label="x.label" :name="x.value" :closable="true"></el-tab-pane>
+      <el-tab-pane
+        v-for="x in state.tabs.slice(1)"
+        :key="x.value"
+        :label="x.label"
+        :name="x.value"
+        :closable="true"
+      ></el-tab-pane>
     </el-tabs>
     <el-dropdown trigger="click" placement="bottom-end" class="rr-view-tab-ops" @command="onClose">
       <template #dropdown>
