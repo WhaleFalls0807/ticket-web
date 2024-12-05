@@ -62,7 +62,7 @@
         align="center"
       ></el-table-column>
       <el-table-column
-        v-if="state.hasPermission('sys:user:page') && type !== 'grab' && type !== 'seas'"
+        v-if="type !== 'grab' && type !== 'seas'"
         prop="ownerUsername"
         label="负责人"
         header-align="center"

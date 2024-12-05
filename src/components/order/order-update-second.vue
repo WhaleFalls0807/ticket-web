@@ -65,11 +65,6 @@
           <el-form-item
             label="营业执照"
             :prop="'businessTypeList.' + index + '.businessLicense'"
-            :rules="{
-              required: true,
-              message: '必填项不能为空',
-              trigger: 'blur'
-            }"
           >
             <el-button v-if="!item.businessLicense" @click="uploadHandle(item, 'businessLicense', 'file')">
               上传文件
