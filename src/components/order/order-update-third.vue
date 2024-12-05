@@ -9,15 +9,7 @@
     <el-form :model="dataForm" ref="dataFormRef" label-width="150px">
       <el-collapse>
         <el-collapse-item v-for="(item, index) in dataForm.businessTypeList" :key="index" :title="item.businessType">
-          <el-form-item
-            label="回执文件"
-            :prop="'businessTypeList.' + index + '.regiAppReceipt'"
-            :rules="{
-              required: true,
-              message: '必填项不能为空',
-              trigger: 'blur'
-            }"
-          >
+          <el-form-item label="回执文件" :prop="'businessTypeList.' + index + '.regiAppReceipt'">
             <el-button v-if="!item.regiAppReceipt" @click="uploadHandle(item, 'regiAppReceipt', 'file')">
               上传文件
             </el-button>
@@ -30,15 +22,7 @@
               @deleteFileImg="item.regiAppReceipt = ''"
             />
           </el-form-item>
-          <el-form-item
-            label="受理通知书"
-            :prop="'businessTypeList.' + index + '.regiAppAcceptNotice'"
-            :rules="{
-              required: true,
-              message: '必填项不能为空',
-              trigger: 'blur'
-            }"
-          >
+          <el-form-item label="受理通知书" :prop="'businessTypeList.' + index + '.regiAppAcceptNotice'">
             <el-button v-if="!item.regiAppAcceptNotice" @click="uploadHandle(item, 'regiAppAcceptNotice', 'file')">
               上传文件
             </el-button>
@@ -56,15 +40,7 @@
               @deleteFileImg="item.regiAppAcceptNotice = ''"
             />
           </el-form-item>
-          <el-form-item
-            label="初步审定公告通知书"
-            :prop="'businessTypeList.' + index + '.regiAppPreApproveNotice'"
-            :rules="{
-              required: true,
-              message: '必填项不能为空',
-              trigger: 'blur'
-            }"
-          >
+          <el-form-item label="初步审定公告通知书" :prop="'businessTypeList.' + index + '.regiAppPreApproveNotice'">
             <el-button
               v-if="!item.regiAppPreApproveNotice"
               @click="uploadHandle(item, 'regiAppPreApproveNotice', 'file')"
@@ -85,15 +61,7 @@
               @deleteFileImg="item.regiAppPreApproveNotice = ''"
             />
           </el-form-item>
-          <el-form-item
-            label="注册证"
-            :prop="'businessTypeList.' + index + '.regiCertificate'"
-            :rules="{
-              required: true,
-              message: '必填项不能为空',
-              trigger: 'blur'
-            }"
-          >
+          <el-form-item label="注册证" :prop="'businessTypeList.' + index + '.regiCertificate'">
             <el-button v-if="!item.regiCertificate" @click="uploadHandle(item, 'regiCertificate', 'file')">
               上传文件
             </el-button>
