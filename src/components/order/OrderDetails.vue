@@ -116,6 +116,12 @@
                         @deleteFileImg="detail.payment = ''"
                       />
                     </el-form-item>
+                    <el-form-item label="付款金额">
+                      <span>{{ convertCurrency(detail.paymentAmount) }}</span>
+                    </el-form-item>
+                    <el-form-item label="付款时间">
+                      <span>{{ detail.payDate }}</span>
+                    </el-form-item>
                     <el-form-item label="原始合同">
                       <span v-if="!detail.contract">暂无数据</span>
                       <FileImgPreview
@@ -450,6 +456,8 @@ const detail: any = reactive({
   // first
   payType: "",
   payment: "",
+  paymentAmount: "",
+  payDate: "",
   contract: "",
   aprice: 0,
   bprice: 0,
@@ -543,6 +551,8 @@ const submitOrder = (type: any) => {
       customerName,
       payType,
       payment,
+      paymentAmount,
+      payDate,
       contract,
       aprice,
       bprice,
@@ -555,6 +565,8 @@ const submitOrder = (type: any) => {
       customerName,
       payType,
       payment,
+      paymentAmount,
+      payDate,
       contract,
       aprice,
       bprice,
@@ -593,6 +605,8 @@ const validateDetail = (detail: any) => {
     customerName: "客户名称",
     payType: "支付类型",
     payment: "支付截图",
+    paymentAmount: "付款金额",
+    payDate: "付款时间",
     contract: "原始合同",
     aprice: "甲方承担金额",
     bprice: "乙方承担金额",

@@ -22,6 +22,12 @@
           @deleteFileImg="dataForm.payment = ''"
         />
       </el-form-item>
+      <el-form-item prop="paymentAmount" label="付款金额">
+        <el-input-number v-model="dataForm.paymentAmount" :min="0" :precision="2" :step="0.1" />
+      </el-form-item>
+      <el-form-item prop="payDate" label="付款时间">
+        <el-date-picker v-model="dataForm.payDate" type="datetime" format="YYYY/MM/DD hh:mm:ss" value-format="x" />
+      </el-form-item>
       <el-form-item prop="contract" label="原始合同">
         <el-button v-if="!dataForm.contract" @click="uploadHandle('contract', 'file')">上传文件</el-button>
         <FileImgPreview
@@ -170,6 +176,8 @@ const dataForm: any = reactive({
   id: "",
   payType: "",
   payment: "",
+  paymentAmount: "",
+  payDate:'',
   contract: "",
   aprice: 0,
   bprice: 0,
@@ -218,6 +226,8 @@ const deleteRow = (row: any) => {
 const rules = ref({
   payType: [{ required: true, message: "必填项不能为空", trigger: "blur" }],
   payment: [{ required: true, message: "必填项不能为空", trigger: "blur" }],
+  paymentAmount: [{ required: true, message: "必填项不能为空", trigger: "blur" }],
+  payDate: [{ required: true, message: "必填项不能为空", trigger: "blur" }],
   contract: [{ required: true, message: "必填项不能为空", trigger: "blur" }],
   aprice: [{ required: true, message: "必填项不能为空", trigger: "blur" }],
   bprice: [{ required: true, message: "必填项不能为空", trigger: "blur" }],
@@ -237,6 +247,8 @@ const init = (detail: any) => {
     id,
     payType,
     payment,
+    paymentAmount,
+    payDate,
     contract,
     aprice,
     bprice,
@@ -250,6 +262,8 @@ const init = (detail: any) => {
     id,
     payType: payType || "",
     payment,
+    paymentAmount: paymentAmount || 0,
+    payDate,
     contract,
     aprice: aprice || 0,
     bprice: bprice || 0,
