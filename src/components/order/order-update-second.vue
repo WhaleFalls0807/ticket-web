@@ -43,15 +43,7 @@
               @deleteFileImg="item.applyBook = ''"
             />
           </el-form-item>
-          <el-form-item
-            label="委托书"
-            :prop="'businessTypeList.' + index + '.commission'"
-            :rules="{
-              required: true,
-              message: '必填项不能为空',
-              trigger: 'blur'
-            }"
-          >
+          <el-form-item label="委托书" :prop="'businessTypeList.' + index + '.commission'">
             <el-button v-if="!item.commission" @click="uploadHandle(item, 'commission', 'file')">上传文件</el-button>
             <FileImgPreview
               v-else
@@ -62,10 +54,7 @@
               @deleteFileImg="item.commission = ''"
             />
           </el-form-item>
-          <el-form-item
-            label="营业执照"
-            :prop="'businessTypeList.' + index + '.businessLicense'"
-          >
+          <el-form-item label="营业执照" :prop="'businessTypeList.' + index + '.businessLicense'">
             <el-button v-if="!item.businessLicense" @click="uploadHandle(item, 'businessLicense', 'file')">
               上传文件
             </el-button>

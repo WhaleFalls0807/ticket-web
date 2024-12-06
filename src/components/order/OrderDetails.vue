@@ -571,8 +571,8 @@ const submitOrder = (type: any) => {
     const { businessTypeList } = detail;
     const validateObj = {
       businessTypeList: businessTypeList.map((item: any) => {
-        const { commission, businessLicense, sealedContract } = item;
-        return { commission, businessLicense, sealedContract };
+        const { sealedContract } = item;
+        return { sealedContract };
       })
     };
     errors = validateDetail(validateObj);
@@ -606,8 +606,8 @@ const validateDetail = (detail: any) => {
     // logo: "LOGO",
     // idcard: "身份证",
     // applyBook: "申请书",
-    commission: "委托书",
-    businessLicense: "营业执照",
+    // commission: "委托书",
+    // businessLicense: "营业执照",
     sealedContract: "盖章合同"
   };
   const errors = [];
