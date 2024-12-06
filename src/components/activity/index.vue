@@ -47,7 +47,7 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref, computed } from "vue";
+import { reactive, ref, computed, onMounted } from "vue";
 import baseService from "@/service/baseService";
 import FollowAddUpdate from "./FollowAddUpdate.vue";
 import { ElMessage, ElMessageBox } from "element-plus";
@@ -121,6 +121,10 @@ const getInfo = () => {
       loading.value = false;
     });
 };
+
+onMounted(() => {
+  getInfo();
+});
 </script>
 
 <style scoped lang="less">
@@ -128,7 +132,7 @@ const getInfo = () => {
 
 .infinite-list-wrapper {
   margin-top: 10px;
-  height: 100%;
+  height: calc(100% - 42px);
   .list {
     height: 100%;
     overflow: auto;

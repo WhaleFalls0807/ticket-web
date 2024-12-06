@@ -1,5 +1,5 @@
 <template>
-  <el-drawer v-model="drawer" :size="isMobile ? '90%' : '50%'" class="drawer-custom">
+  <el-drawer v-model="drawer" :size="isMobile ? '90%' : '50%'" class="drawer-custom" @close="close">
     <template #header>
       <div class="customer-name">
         {{ detail.orderName }}
@@ -663,8 +663,8 @@ const completedOrder = () => {
     });
 };
 const close = () => {
-  drawer.value = false;
   activeName.value = "first";
+  drawer.value = false;
 };
 const init = (id: string) => {
   drawer.value = true;

@@ -1,5 +1,5 @@
 <template>
-  <el-drawer v-model="drawer" :size="isMobile ? '90%' : '50%'" class="drawer-custom">
+  <el-drawer v-model="drawer" :size="isMobile ? '90%' : '50%'" class="drawer-custom" @close="close">
     <template #header>
       <div class="customer-name">
         {{ detail.customerName }}
@@ -122,7 +122,10 @@ const state = reactive({ ...useView(view), ...toRefs(view) });
 const isMobile = useMediaQuery("(max-width: 768px)");
 
 const activeName = ref("first");
-
+const close = () => {
+  activeName.value = "first";
+  drawer.value = false;
+};
 const init = (id: string) => {
   drawer.value = true;
   detail.id = id;

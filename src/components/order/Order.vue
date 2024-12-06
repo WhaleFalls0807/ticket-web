@@ -48,6 +48,14 @@
               {{ scope.row.orderName }}
             </el-link>
           </template>
+          <template v-else-if="state.hasPermission('sys:user:page')">
+            <el-link type="primary" @click="showDetail(scope.row.id)">
+              {{ scope.row.orderName }}
+            </el-link>
+          </template>
+          <template v-else-if="!state.hasPermission('sys:user:page') && type === 'seas'">
+            <span>{{ scope.row.orderName[0] + "****" + scope.row.orderName[scope.row.orderName.length - 1] }}</span>
+          </template>
           <template v-else>
             <span>{{ scope.row.orderName }}</span>
           </template>
