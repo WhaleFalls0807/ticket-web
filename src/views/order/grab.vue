@@ -108,22 +108,24 @@ const grabOrder = () => {
     .get(`/order/grab`)
     .then((res) => {
       loading.value = false;
-      ElMessage.success({
-        message: "抢单成功",
-        duration: 500
-      });
-      state.virtualTableData[0] = {
-        orderName: res.data.orderName,
-        customerName: res.data.customerName,
-        phone: res.data.phone,
-        remark: res.data.content
-      };
-      // ElNotification({
-      //   title: "工单信息",
-      //   dangerouslyUseHTMLString: true,
-      //   message: `<strong>商标名称：${res.data.orderName}<br/>客户名称：${res.data.customerName}<br/>手机号：${res.data.phone}<br/>备注：${res.data.content}</strong>`
-      // });
-      getCount();
+
+      if (!res.data.orderName && res.data.orderName !== 0) {
+        ElNotification({
+          title: "提示",
+          message: res.data
+        });
+      } else {
+        ElMessage.success({
+          message: "抢单成功"
+        });
+        state.virtualTableData[0] = {
+          orderName: res.data.orderName,
+          customerName: res.data.customerName,
+          phone: res.data.phone,
+          remark: res.data.content
+        };
+        getCount();
+      }
     })
     .catch(() => {
       loading.value = false;

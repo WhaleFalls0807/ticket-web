@@ -7,7 +7,7 @@
     width="40%"
   >
     <el-form :model="dataForm" :rules="rules" ref="dataFormRef" label-width="120px">
-      <el-form-item prop="totalCount" label="抢单配置">
+      <el-form-item prop="totalCount" label="抢单次数">
         <div class="flex">
           <el-input-number v-model="dataForm.gap" :min="0" :step="1" :controls="false" class="mr10" />
           <el-select v-model="dataForm.grain" class="mr10">
@@ -15,6 +15,12 @@
           </el-select>
           <el-input-number v-model="dataForm.totalCount" :min="0" :step="1" :controls="false" class="mr10" />
           <span>次</span>
+        </div>
+      </el-form-item>
+      <el-form-item prop="grabGap" label="抢单时间间隔">
+        <div class="flex">
+          <el-input-number v-model="dataForm.grabGap" :min="0" :step="1" :controls="false" class="mr10" />
+          <span>分钟/次</span>
         </div>
       </el-form-item>
     </el-form>
@@ -35,10 +41,11 @@ const dataFormRef = ref();
 
 const dataForm = reactive({
   userId: "",
-  username:'',
+  username: "",
   gap: 1,
   grain: 3,
-  totalCount: 30
+  totalCount: 30,
+  grabGap: 10
 });
 const grainList = [
   {
@@ -57,7 +64,8 @@ const grainList = [
 const rules = ref({
   gap: [{ required: true, message: "必填项不能为空", trigger: "blur" }],
   grain: [{ required: true, message: "必填项不能为空", trigger: "blur" }],
-  totalCount: [{ required: true, message: "必填项不能为空", trigger: "blur" }]
+  totalCount: [{ required: true, message: "必填项不能为空", trigger: "blur" }],
+  grabGap: [{ required: true, message: "必填项不能为空", trigger: "blur" }]
 });
 
 const init = (user: any) => {
@@ -74,8 +82,8 @@ const init = (user: any) => {
 };
 const getCount = () => {
   baseService.get("/orderGrab/config/" + dataForm.userId).then((res) => {
-    const { gap, grain, totalCount } = res.data;
-    Object.assign(dataForm, { gap, grain, totalCount });
+    const { gap, grain, totalCount, grabGap } = res.data;
+    Object.assign(dataForm, { gap, grain, totalCount, grabGap });
   });
 };
 // 表单提交

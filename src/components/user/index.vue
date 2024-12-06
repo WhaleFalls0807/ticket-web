@@ -108,7 +108,7 @@
     ></el-pagination>
     <!-- 弹窗, 新增 / 修改 -->
     <add-or-update ref="addOrUpdateRef" @refreshDataList="state.getDataList"></add-or-update>
-    <UserCount ref="userCountRef"/>
+    <UserSettings ref="userSettingsRef"/>
   </div>
 </template>
 
@@ -116,7 +116,7 @@
 import useView from "@/hooks/useView";
 import { reactive, ref, toRefs } from "vue";
 import AddOrUpdate from "./user-add-or-update.vue";
-import UserCount from "./user-count.vue";
+import UserSettings from "./user-settings.vue";
 import type { TableInstance } from "element-plus";
 
 const props = defineProps({
@@ -146,9 +146,9 @@ const addOrUpdateHandle = (id?: number) => {
   addOrUpdateRef.value.init(id);
 };
 
-const userCountRef = ref();
+const userSettingsRef = ref();
 const setCount = (user: any) => {
-  userCountRef.value.init(user);
+  userSettingsRef.value.init(user);
 };
 const tableRef = ref<TableInstance>();
 const selectionChange = (val: any) => {
