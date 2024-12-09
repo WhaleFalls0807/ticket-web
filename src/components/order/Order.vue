@@ -231,7 +231,7 @@ const emit = defineEmits(["refreshDataList"]);
 const selectTime = ref();
 const shortcuts = [
   {
-    text: "Last week",
+    text: "近一周",
     value: () => {
       const end = new Date();
       const start = new Date();
@@ -240,7 +240,7 @@ const shortcuts = [
     }
   },
   {
-    text: "Last month",
+    text: "近一个月",
     value: () => {
       const end = new Date();
       const start = new Date();
@@ -249,7 +249,7 @@ const shortcuts = [
     }
   },
   {
-    text: "Last 3 months",
+    text: "近三个月",
     value: () => {
       const end = new Date();
       const start = new Date();

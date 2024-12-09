@@ -18,9 +18,9 @@
       </el-form-item>
     </el-form>
     <template v-slot:footer>
-      <el-button @click="dataFormSubmitHandle(3)" :loading="loading3">删除</el-button>
-      <el-button type="danger" @click="dataFormSubmitHandle(2)" :loading="loading2">驳回</el-button>
-      <el-button type="success" @click="dataFormSubmitHandle(1)" :loading="loading1">通过</el-button>
+      <el-button @click="dataFormSubmitHandle('删除', 3)" :loading="loading3">删除</el-button>
+      <el-button type="danger" @click="dataFormSubmitHandle('驳回', 2)" :loading="loading2">驳回</el-button>
+      <el-button type="success" @click="dataFormSubmitHandle('通过', 1)" :loading="loading1">通过</el-button>
     </template>
   </el-dialog>
 </template>
@@ -28,7 +28,7 @@
 <script lang="ts" setup>
 import { reactive, ref } from "vue";
 import baseService from "@/service/baseService";
-import { ElMessage } from "element-plus";
+import { ElMessage, ElMessageBox } from "element-plus";
 const emit = defineEmits(["refreshDataList"]);
 
 const visible = ref(false);
@@ -57,43 +57,50 @@ const init = (ids: string[]) => {
 };
 
 // 表单提交
-const dataFormSubmitHandle = (status: number) => {
+const dataFormSubmitHandle = (text: string, status: number) => {
   dataFormRef.value.validate((valid: boolean) => {
     if (!valid) {
       return false;
     }
-    if (status === 1) {
-      loading1.value = true;
-    } else if (status === 2) {
-      loading2.value = true;
-    } else {
-      loading3.value = true;
-    }
-    const fn = baseService.post("/order/review", { ...dataForm, pass: status });
-    fn.then((res) => {
-      ElMessage.success({
-        message: "操作成功",
-        duration: 500
-      });
 
+    ElMessageBox.confirm(`确定进行[${text}]吗？`, "提示", {
+      confirmButtonText: "确定",
+      cancelButtonText: "取消",
+      type: "warning"
+    }).then(() => {
       if (status === 1) {
-        loading1.value = false;
+        loading1.value = true;
       } else if (status === 2) {
-        loading2.value = false;
+        loading2.value = true;
       } else {
-        loading3.value = false;
+        loading3.value = true;
       }
-      emit("refreshDataList");
-      // 关闭页面
-      close();
-    }).catch(() => {
-      if (status === 1) {
-        loading1.value = false;
-      } else if (status === 2) {
-        loading2.value = false;
-      } else {
-        loading3.value = false;
-      }
+      const fn = baseService.post("/order/review", { ...dataForm, pass: status });
+      fn.then((res) => {
+        ElMessage.success({
+          message: "操作成功",
+          duration: 500
+        });
+
+        if (status === 1) {
+          loading1.value = false;
+        } else if (status === 2) {
+          loading2.value = false;
+        } else {
+          loading3.value = false;
+        }
+        emit("refreshDataList");
+        // 关闭页面
+        close();
+      }).catch(() => {
+        if (status === 1) {
+          loading1.value = false;
+        } else if (status === 2) {
+          loading2.value = false;
+        } else {
+          loading3.value = false;
+        }
+      });
     });
   });
 };
