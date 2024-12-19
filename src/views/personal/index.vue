@@ -17,6 +17,9 @@
       </el-form-item>
     </el-form>
     <Charts v-if="dataForm.chartVisible" :chartsData="dataForm.chartsData" />
+    <!-- <Charts :chartsData="dataForm.chartsData2" />
+    <Charts :chartsData="dataForm.chartsData3" />
+    <Charts :chartsData="dataForm.chartsData4" /> -->
   </div>
 </template>
 
@@ -63,6 +66,9 @@ const dataForm: any = reactive({
   startTime: selectTime.value ? selectTime.value[0] : "",
   endTime: selectTime.value ? selectTime.value[1] : "",
   chartsData: {},
+  chartsData2: {},
+  chartsData3: {},
+  chartsData4: {},
   chartVisible: false
 });
 watch(selectTime, () => {

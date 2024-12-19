@@ -4,8 +4,20 @@
       <el-form-item>
         <el-input v-model="state.dataForm.keyword" placeholder="关键字" clearable></el-input>
       </el-form-item>
-      <el-form-item v-if="type !== 'seas'">
+      <el-form-item v-if="type !== 'grab' || type !== 'seas'">
         <ren-select v-model="state.dataForm.orderStatus" dict-type="orderStatus" placeholder="工单状态"></ren-select>
+      </el-form-item>
+      <el-form-item v-if="type !== 'grab' || type !== 'seas'">
+        <el-select v-model="businessType" clearable multiple placeholder="业务类型" @change="businessTypeChange">
+          <el-option
+            :label="data.dictLabel"
+            v-for="data in getDictDataList(store.state.dicts, 'businessType')"
+            :key="data.dictValue"
+            :value="data.dictValue"
+          >
+            {{ data.dictLabel }}
+          </el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="负责人" v-if="type !== 'seas' && state.hasPermission('sys:user:page')">
         <el-select v-model="state.dataForm.ownerId">
@@ -226,6 +238,9 @@ import Assign from "./Assign.vue";
 import Approve from "./Approve.vue";
 import OrderDetails from "./OrderDetails.vue";
 import { ElMessage, ElMessageBox } from "element-plus";
+import { getDictDataList } from "@/utils/utils";
+import useUtils from "@/hooks/useUtils";
+const { store } = useUtils();
 const props = defineProps(["type", "getDataListURL", "dataForm"]);
 const emit = defineEmits(["refreshDataList"]);
 const selectTime = ref();
@@ -266,6 +281,8 @@ const dataForm: any = {
   startDate: selectTime.value ? selectTime.value[0] : "",
   endDate: selectTime.value ? selectTime.value[1] : ""
 };
+const businessType = ref([]);
+
 watch(selectTime, () => {
   dataForm.startDate = selectTime.value ? selectTime.value[0] : "";
   dataForm.endDate = selectTime.value ? selectTime.value[1] : "";
@@ -290,9 +307,12 @@ const view = reactive({
   getDataListIsPage: true,
   deleteURL: "/order/delete",
   deleteIsBatch: true,
-  dataForm: { ...dataForm }
+  dataForm: Object.assign(dataForm, { businessType: businessType.value.join(",") })
 });
-
+const businessTypeChange = (val: any) => {
+  const businessType = [...val];
+  view.dataForm.businessType = businessType.join(",");
+};
 const state: any = reactive({
   ...useView(view),
   ...toRefs(view)

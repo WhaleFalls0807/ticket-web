@@ -14,7 +14,7 @@ import { nextTick, ref, reactive } from "vue";
 import Relative from "@/components/Relative.vue";
 
 const props = defineProps(["modelValue"]);
-const emit = defineEmits(["update:modelValue"]);
+const emit = defineEmits(["update:modelValue", "getName"]);
 
 const relativeVisible = ref(false);
 const relativeRef = ref();
@@ -33,6 +33,7 @@ const getSelected = (s: any) => {
   relativeObj.name = s.name;
 
   emit("update:modelValue", relativeObj.id);
+  emit("getName", relativeObj.name);
 };
 const deleteRelative = () => {
   relativeObj.id = "";

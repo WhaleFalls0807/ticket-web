@@ -53,7 +53,6 @@ export default {
     this.option.yAxis.data = this.chartsData.yAxisData;
     this.option.series[0].data = this.chartsData.seriesData;
 
-    console.log(this.option);
     myChart.setOption(this.option);
     window.addEventListener("resize", myChart.resize);
   }

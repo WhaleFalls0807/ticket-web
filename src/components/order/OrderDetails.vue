@@ -69,6 +69,9 @@
                     <el-form-item label="客户行业">
                       <span>{{ getDictLabel("industry", detail.industry) }}</span>
                     </el-form-item>
+                    <el-form-item label="客户网站首页">
+                      <span>{{ detail.website }}</span>
+                    </el-form-item>
                   </div>
                   <!-- 提交 -->
                   <div>
@@ -452,6 +455,7 @@ const detail: any = reactive({
   customerName: "",
   industry: "",
   phone: "",
+  website: "",
 
   // first
   payType: "",
