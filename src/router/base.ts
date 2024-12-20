@@ -37,11 +37,6 @@ const routes: Array<RouteRecordRaw> = [
     meta: { title: "修改密码", requiresAuth: true, isNavigationMenu: false }
   },
   {
-    path: "/personal",
-    component: () => import("@/views/personal/index.vue"),
-    meta: { title: "员工画像", requiresAuth: true, isNavigationMenu: false }
-  },
-  {
     path: "/iframe/:id?",
     component: Iframe,
     meta: { title: "iframe", isNavigationMenu: false }
