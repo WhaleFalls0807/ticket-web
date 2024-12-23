@@ -433,7 +433,7 @@ const dataFormSubmitHandle = () => {
         message: "提交成功",
         duration: 500
       });
-      close();
+    
     });
   });
 };

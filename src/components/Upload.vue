@@ -44,10 +44,11 @@ const imgTypesTips = "只支持 jpg、png 格式文件！";
 const fileTypes = [
   "application/pdf",
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "application/msword",
   "text/plain",
   "application/zip"
 ];
-const fileTypesTips = "只支持 pdf、docx、txt、zip 格式文件！";
+const fileTypesTips = "只支持 pdf、docx、doc、txt、zip 格式文件！";
 const tips = computed(() => {
   if (props.fileType === "img") {
     return imgTypesTips;

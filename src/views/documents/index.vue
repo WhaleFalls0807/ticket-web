@@ -91,6 +91,8 @@
     <!-- 弹窗, 上传文件 -->
     <DocumentAdd ref="addOrUpdateRef" @refreshDataList="state.getDataList"></DocumentAdd>
     <DownloadDetail v-if="state.downloadVisible" ref="downloadRef"></DownloadDetail>
+
+    <DocumentDownload ref="docDownloadRef" @refreshDataList="state.getDataList" />
   </div>
 </template>
 
@@ -99,10 +101,7 @@ import useView from "@/hooks/useView";
 import { nextTick, reactive, ref, toRefs } from "vue";
 import DownloadDetail from "./DownloadDetail.vue";
 import DocumentAdd from "./document-add.vue";
-import useUtils from "@/hooks/useUtils";
-import baseService from "@/service/baseService";
-
-const { downloadFileWithBuffer } = useUtils();
+import DocumentDownload from "./document-download.vue";
 const downloadRef = ref();
 
 const view = reactive({
@@ -132,15 +131,12 @@ const downloadDetail = (id: any) => {
     downloadRef.value.init(id);
   });
 };
-// 下载
+
+// 下载前填写信息
+const docDownloadRef = ref();
 const handleDownload = (item: any) => {
-  baseService.get(`/corDocument/download/${item.id}`).then((res) => {
-    state.getDataList();
-    // 文件要已/file开头，代理拦截到9090
-    baseService.getBlob("/file" + item.filePath).then((response) => {
-      console.log("http", response);
-      downloadFileWithBuffer(response, res.data);
-    });
+  nextTick(() => {
+    docDownloadRef.value.init(item);
   });
 };
 </script>

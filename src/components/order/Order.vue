@@ -110,6 +110,21 @@
         </template>
       </el-table-column>
       <el-table-column
+        prop="totalPrice"
+        label="总金额"
+        header-align="center"
+        align="center"
+        v-if="type !== 'grab' && type !== 'seas'"
+      >
+        <template v-slot="scope">
+          <span v-if="!scope.row.totalPrice && scope.row.totalPrice !== 0" type="success">无</span>
+          <template v-else>
+            <span>{{ convertCurrency(scope.row.totalPrice) }}</span>
+          </template>
+        </template>
+      </el-table-column>
+
+      <el-table-column
         prop="createDate"
         label="创建时间"
         sortable="custom"
@@ -240,7 +255,7 @@ import OrderDetails from "./OrderDetails.vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { getDictDataList } from "@/utils/utils";
 import useUtils from "@/hooks/useUtils";
-const { store } = useUtils();
+const { store, convertCurrency } = useUtils();
 const props = defineProps(["type", "getDataListURL", "dataForm"]);
 const emit = defineEmits(["refreshDataList"]);
 const selectTime = ref();
