@@ -24,7 +24,7 @@ interface dynamicRouteParams {
 NProgress.configure({ showSpinner: false });
 
 const router = createRouter({
-  history: createWebHashHistory(), //createWebHashHistory() hash模式
+  history: createWebHashHistory('/backstage/'), //createWebHashHistory() hash模式
   // history: createWebHistory(), //history 模式
   routes: baseRoutes
 });
