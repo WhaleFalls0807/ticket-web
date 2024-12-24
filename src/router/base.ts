@@ -20,11 +20,11 @@ const routes: Array<RouteRecordRaw> = [
       }
     ]
   },
-  {
-    path: "/",
-    component: Web,
-    meta: { title: "web", isNavigationMenu: false }
-  },
+  // {
+  //   path: "/",
+  //   component: Web,
+  //   meta: { title: "web", isNavigationMenu: false }
+  // },
 
   {
     path: "/login",
